@@ -66,7 +66,24 @@
                     "description" : "Path for the AppStudio bin folder"
                 }
             }
-        }
+        },
+        
+        "languages": [{
+            "id": "qml",
+            "extensions": [
+                ".qml",
+                ".qmlproject"
+            ],
+            "configuration": "./qml.configuration.json"
+        }],
+
+        "grammars": [
+            {
+                "language": "qml",
+                "scopeName": "source.qml",
+                "path": "./syntaxes/qml.tmLanguage.json"
+            }
+        ]
     },
     "scripts": {
         "postinstall": "node ./node_modules/vscode/bin/install",
