@@ -36,7 +36,6 @@
                 "title": "appUpload"
             }
         ],
-
         "keybindings": [
             {
                 "command": "appRun",
@@ -55,28 +54,29 @@
                 "key": "alt+shift+up"
             }
         ],
-
         "configuration": {
             "type": "object",
             "title": "AppStudio",
             "properties": {
                 "AppStudio Bin Folder": {
-                    "type": ["string"],
+                    "type": [
+                        "string"
+                    ],
                     "default": "",
-                    "description" : "Path for the AppStudio bin folder"
+                    "description": "Path for the AppStudio bin folder"
                 }
             }
         },
-        
-        "languages": [{
-            "id": "qml",
-            "extensions": [
-                ".qml",
-                ".qmlproject"
-            ],
-            "configuration": "./qml.configuration.json"
-        }],
-
+        "languages": [
+            {
+                "id": "qml",
+                "extensions": [
+                    ".qml",
+                    ".qmlproject"
+                ],
+                "configuration": "./qml.configuration.json"
+            }
+        ],
         "grammars": [
             {
                 "language": "qml",
@@ -95,5 +95,8 @@
         "eslint": "^4.11.0",
         "@types/node": "^8.10.25",
         "@types/mocha": "^2.2.42"
+    },
+    "dependencies": {
+        "read-ini-file": "^2.0.0"
     }
 }

@@ -3,6 +3,8 @@
 const vscode = require('vscode');
 const { spawn } = require('child_process');
 const { window, workspace, commands } = vscode;
+const loadIniFile = require('read-ini-file');
+const path = require('path');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -71,12 +73,25 @@ function activate(context) {
         createCommand('\\appUpload.exe', qmlProjectPaths, consoleOutput);
     });
 
+    let readFile = commands.registerCommand('readFile', () => {
+        let env = process.env.APPDATA;
+        let filePath = path.join(env, '\\Esri\\AppStudio.ini');
+
+        console.log(filePath);
+
+        let data = loadIniFile(filePath + "sda").catch( () => {
+            console.log("Reading .ini file failed.")
+        });
+        //console.log(data);
+    })
+
     // Add to a list of disposables which are disposed when this extension is deactivated.
     context.subscriptions.push(selectBinFolderCmd);
     context.subscriptions.push(appRunCmd);
     context.subscriptions.push(appMakeCmd);
     context.subscriptions.push(appSettingCmd);
     context.subscriptions.push(appUploadCmd);
+    context.subscriptions.push(readFile);
 
     // Create status bar items for the commands
     createStatusBarItem('$(file-directory)', 'selectBinFolder', "Select Bin Folder");
@@ -84,6 +99,7 @@ function activate(context) {
     createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload');
     createStatusBarItem('$(circuit-board)', 'appMake', 'appMake');
     createStatusBarItem('$(triangle-right)', 'appRun', 'appRun');
+    createStatusBarItem('$(rocket)', 'readFile', 'Read');
     
 }
 exports.activate = activate;
@@ -139,24 +155,24 @@ function runProcess(consoleOutput, appStudioBinPath, executable, qmlProjectPath)
     consoleOutput.show();
     consoleOutput.appendLine("Starting external tool " + "\"" + appStudioBinPath + executable + " " + qmlProjectPath + "\"");
     //let process = execFile(appStudioBinPath + '\\AppRun.exe ' + projectPath, { env:
-    let process = spawn(appStudioBinPath + executable, [qmlProjectPath], { env:
+    let childProcess = spawn(appStudioBinPath + executable, [qmlProjectPath], { env:
     {
         'QT_ASSUME_STDERR_HAS_CONSOLE':'1',
         'QT_FORCE_STDERR_LOGGING':'1'
     }}
     );
 
-    process.stdout.on('data', data => {
+    childProcess.stdout.on('data', data => {
         consoleOutput.show();
         consoleOutput.append(data.toString());
     });
 
-    process.stderr.on('data', data => {
+    childProcess.stderr.on('data', data => {
         consoleOutput.show();
         consoleOutput.append(data.toString());
     });
 
-    process.on('error', err => {
+    childProcess.on('error', err => {
         window.showErrorMessage('Error occured during execution, see console output for more details.');
         window.showWarningMessage('Please ensure correct path for AppStudio bin folder is selected.');
         consoleOutput.show();
@@ -164,7 +180,7 @@ function runProcess(consoleOutput, appStudioBinPath, executable, qmlProjectPath)
         console.error(`exec error: ${err}`);
     })
 
-    process.on('exit', (code) => {
+    childProcess.on('exit', (code) => {
         console.log(`child process exited with code ${code}`);
         consoleOutput.appendLine("\"" + appStudioBinPath + executable + "\"" + " finished");
     });
