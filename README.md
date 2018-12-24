@@ -5,15 +5,15 @@ AppStudio Extension for Visual Studio Code
 
 * QML Syntax Highlighting
 
-* Run current app project via AppRun
+* Run current app project via AppRun (Alt+Shift+R)
 
 * Show console output from AppRun
 
-* AppStudio settings tool for current project via AppSetting
+* AppStudio settings tool for current project via AppSetting (Alt+Shift+S)
 
-* Upload current project via AppUpload
+* Upload current project via AppUpload (Alt+Shift+UpArrow)
 
-* AppStudio make tool for current project via AppMake
+* AppStudio make tool for current project via AppMake (Alt+Shift+M)
 
 ## Installation
 
@@ -29,7 +29,9 @@ Clone this repository under your local VS code extensions folder and enable the 
 * Windows: %USERPROFILE%\.vscode\extensions
 * Mac / Linux: $HOME/.vscode/extensions
 
-> **Note**: You must select the AppStudio bin folder path when you run the extension for the first time. You can do this by clicking on the select bin folder icon on the bottom left corner of the status bar, or setting directly in the Visual Studio Code Extension Settings.
+> **Note**: When the extension is activated for the first time, it will detect the AppStudio automatically on your machine. You can also change the AppStudio bin folder manually by clicking on the 'Select bin folder' icon on the status bar, or directly in the Visual Studio Code Extension Settings.
+
+> **Note**: The extension only works on Windows at the moment.
 
 ## Extension Settings
 

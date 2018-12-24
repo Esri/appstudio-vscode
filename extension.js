@@ -14,6 +14,50 @@ function activate(context) {
     // This line of code will only be executed once when your extension is activated
     console.log('Congratulations, your extension "appstudio" is now active!');
 
+    // Function to select the AppStudio folder automatically from the AppStudio.ini file
+    let autoSelectBinFolder = () => {
+        let appData = process.env.APPDATA;
+        let filePath = path.join(appData, '\\Esri\\AppStudio.ini');
+
+        loadIniFile(filePath).then( data => {
+
+            let appStudioPath = data.General.installDir;
+            if (appStudioPath !== undefined) {
+                workspace.getConfiguration().update('AppStudio Bin Folder', appStudioPath + '\\bin',true);
+                window.showInformationMessage('AppStudio bin folder updated: ' + appStudioPath + '\\bin');
+            } else {
+                manualSelectBinFolder();
+                console.log('No such property');
+            }
+
+        }, (reason) => {
+            manualSelectBinFolder();
+            console.log("Reading .ini file failed.")
+            console.log(reason);
+        });
+    }
+
+    // Function to select the AppStudio folder manually
+    let manualSelectBinFolder = () => {
+        window.showErrorMessage('System cannot find AppStudio on this machine');
+        window.showWarningMessage('Select Yes above if you wish to find the folder manually');
+
+        window.showQuickPick(['Yes', 'No'], {
+            placeHolder: 'Would you like to select the AppStudio bin folder manually?',
+        }).then( choice => {
+            if(choice === 'Yes') {
+                commands.executeCommand('selectBinFolder');
+            }
+        });
+    }
+
+    // If the configuration value is a empty string, i.e. the extension is run for the first time on the machine, 
+    // select the AppStudio automatically
+    if (workspace.getConfiguration().get('AppStudio Bin Folder') === "") {
+        window.showInformationMessage("Locating AppStudio folder...");
+        autoSelectBinFolder();
+    }
+    
     // Array containing the paths of all qml projects in the workspace
     let qmlProjectPaths = [];
     // Console ouput for the AppStudio Apps
@@ -73,17 +117,11 @@ function activate(context) {
         createCommand('\\appUpload.exe', qmlProjectPaths, consoleOutput);
     });
 
-    let readFile = commands.registerCommand('readFile', () => {
-        let env = process.env.APPDATA;
-        let filePath = path.join(env, '\\Esri\\AppStudio.ini');
-
-        console.log(filePath);
-
-        let data = loadIniFile(filePath + "sda").catch( () => {
-            console.log("Reading .ini file failed.")
-        });
-        //console.log(data);
-    })
+    /*
+    let testCmd = commands.registerCommand('testCmd', () => {
+        manualSelectBinFolder();
+    });
+    */
 
     // Add to a list of disposables which are disposed when this extension is deactivated.
     context.subscriptions.push(selectBinFolderCmd);
@@ -91,15 +129,15 @@ function activate(context) {
     context.subscriptions.push(appMakeCmd);
     context.subscriptions.push(appSettingCmd);
     context.subscriptions.push(appUploadCmd);
-    context.subscriptions.push(readFile);
+    //context.subscriptions.push(testCmd);
 
     // Create status bar items for the commands
     createStatusBarItem('$(file-directory)', 'selectBinFolder', "Select Bin Folder");
-    createStatusBarItem('$(gear)', 'appSetting', 'appSetting');
-    createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload');
-    createStatusBarItem('$(circuit-board)', 'appMake', 'appMake');
-    createStatusBarItem('$(triangle-right)', 'appRun', 'appRun');
-    createStatusBarItem('$(rocket)', 'readFile', 'Read');
+    createStatusBarItem('$(gear)', 'appSetting', 'appSetting(Alt+Shift+S)');
+    createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload(Alt+Shift+UpArrow)');
+    createStatusBarItem('$(circuit-board)', 'appMake', 'appMake(Alt+Shift+M)');
+    createStatusBarItem('$(triangle-right)', 'appRun', 'appRun(Alt+Shift+R)');
+    //createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
     
 }
 exports.activate = activate;
@@ -142,8 +180,8 @@ function createCommand (executable, qmlProjectPaths, consoleOutputs) {
                     runProcess(consoleOutputs,appStudioBinPath,executable,folder);
                 }
             });
-           
         } else {
+            // there is one qml project in the workspace
             runProcess(consoleOutputs,appStudioBinPath,executable,qmlProjectPaths[0]);
         }
     }
