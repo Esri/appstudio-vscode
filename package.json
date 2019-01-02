@@ -16,8 +16,8 @@
     "contributes": {
         "commands": [
             {
-                "command": "selectBinFolder",
-                "title": "Select Bin Folder"
+                "command": "selectAppStudioPath",
+                "title": "Select AppStudio Folder"
             },
             {
                 "command": "appRun",
@@ -58,12 +58,12 @@
             "type": "object",
             "title": "AppStudio",
             "properties": {
-                "AppStudio Bin Folder": {
+                "AppStudio Path": {
                     "type": [
                         "string"
                     ],
                     "default": "",
-                    "description": "Path for the AppStudio bin folder"
+                    "description": "Path for the AppStudio folder"
                 }
             }
         },

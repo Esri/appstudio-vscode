@@ -29,12 +29,12 @@ Clone this repository under your local VS code extensions folder and enable the 
 * Windows: `%USERPROFILE%\.vscode\extensions`
 * Mac / Linux: `$HOME/.vscode/extensions`
 
-> **Note**: When the extension is activated for the first time, it will detect the AppStudio automatically on your machine. You can also change the AppStudio bin folder manually by clicking on the 'Select bin folder' icon on the status bar, or directly in the Visual Studio Code Extension Settings.
+> **Note**: When the extension is activated for the first time, it will detect the AppStudio installation automatically on your machine. You can also change the AppStudio folder manually by clicking on the 'Select folder' icon on the status bar, or directly in the Visual Studio Code Extension Settings.
 
-> **Note**: The extension only works on Windows at the moment.
+> **Note**: The extension only works on Windows and MacOS at the moment.
 
 ## Extension Settings
 
 This extension contributes the following settings:
 
-* `AppStudio.Bin Folder`: path for the AppStudio bin folder, default to be an empty string ""
+* `AppStudio.AppStudio Path`: path for the AppStudio installation folder, default to be an empty string ""
