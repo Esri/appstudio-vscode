@@ -26,8 +26,8 @@ Copy this repository onto your local machine and open it in VS code. Hit F5 to e
 ### Install the extension locally
 
 Clone this repository under your local VS code extensions folder and enable the extension: 
-* Windows: %USERPROFILE%\.vscode\extensions
-* Mac / Linux: $HOME/.vscode/extensions
+* Windows: `%USERPROFILE%\.vscode\extensions`
+* Mac / Linux: `$HOME/.vscode/extensions`
 
 > **Note**: When the extension is activated for the first time, it will detect the AppStudio automatically on your machine. You can also change the AppStudio bin folder manually by clicking on the 'Select bin folder' icon on the status bar, or directly in the Visual Studio Code Extension Settings.
 
