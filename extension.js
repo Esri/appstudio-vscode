@@ -15,7 +15,7 @@ function activate(context) {
     console.log('Congratulations, your extension "appstudio" is now active!');
     const osVer = process.platform;
 
-    if(osVer !== 'darwin' && osVer !== 'win32') {
+    if (osVer !== 'darwin' && osVer !== 'win32' && osVer !== 'linux') {
         window.showErrorMessage('Unsupported Operating System. Abort.');
         return
     }
@@ -25,7 +25,7 @@ function activate(context) {
         
         let filePath;
 
-        if (osVer === 'darwin') {
+        if (osVer === 'darwin' || osVer === 'linux') {
             let HOME = process.env.HOME;
             filePath = HOME + '/.config/Esri/AppStudio.ini'
         } else if (osVer === 'win32') {
@@ -111,57 +111,43 @@ function activate(context) {
             } 
         });
     });
+    context.subscriptions.push(selectPathCmd);
 
-    let appRunCmd, appMakeCmd, appSettingCmd, appUploadCmd;
+    // Register all the executable related commands with the appropriate paths for the operating system
+    let commandNames = ['appRun', 'appMake', 'appSetting', 'appUpload'];
     if (osVer === 'darwin') {
-        appRunCmd = commands.registerCommand('appRun', () => {
-            createCommand('/AppRun.app/Contents/MacOS/AppRun', qmlProjectPaths, consoleOutput);
-        });
-    
-        appMakeCmd = commands.registerCommand('appMake', () => {
-            createCommand('/AppMake.app/Contents/MacOS/AppMake', qmlProjectPaths, consoleOutput);
-        }); 
-    
-        appSettingCmd = commands.registerCommand('appSetting', () => {
-            createCommand('/AppSettings.app/Contents/MacOS/AppSettings', qmlProjectPaths, consoleOutput);
-        }); 
-    
-        appUploadCmd = commands.registerCommand('appUpload', () => {
-            createCommand('/AppUpload.app/Contents/MacOS/AppUpload', qmlProjectPaths, consoleOutput);
-        });
-    } else if (osVer === 'win32') {
-        appRunCmd = commands.registerCommand('appRun', () => {
-            createCommand('\\bin\\appRun.exe', qmlProjectPaths, consoleOutput);
-        });
-    
-        appMakeCmd = commands.registerCommand('appMake', () => {
-            createCommand('\\bin\\appMake.exe', qmlProjectPaths, consoleOutput);
-        }); 
-    
-        appSettingCmd = commands.registerCommand('appSetting', () => {
-            createCommand('\\bin\\appSettings.exe', qmlProjectPaths, consoleOutput);
-        }); 
-    
-        appUploadCmd = commands.registerCommand('appUpload', () => {
-            createCommand('\\bin\\appUpload.exe', qmlProjectPaths, consoleOutput);
-        });
-    }
 
-    // Commands to run all executables 
+        registerExecutableCommands([
+            '/AppRun.app/Contents/MacOS/AppRun',
+            '/AppMake.app/Contents/MacOS/AppMake',
+            '/AppSettings.app/Contents/MacOS/AppSettings',
+            '/AppUpload.app/Contents/MacOS/AppUpload'
+        ]);
+        
+    } else if (osVer === 'win32') {
+
+        registerExecutableCommands([
+            '\\bin\\appRun.exe',
+            '\\bin\\appMake.exe',
+            '\\bin\\appSettings.exe',
+            '\\bin\\appUpload.exe'
+        ])
+        
+    } else if (osVer === 'linux') {
+
+        registerExecutableCommands([
+            '/scripts/AppRun.sh',
+            '/scripts/AppMake.sh',
+            '/scripts/AppSettings.sh',
+            '/scripts/AppUpload.sh'
+        ]);
+    }
 
     /*
     let testCmd = commands.registerCommand('testCmd', () => {
 
     });
     */
-
-    // Add to a list of disposables which are disposed when this extension is deactivated.
-    context.subscriptions.push(selectPathCmd);
-    context.subscriptions.push(appRunCmd);
-    context.subscriptions.push(appMakeCmd);
-    context.subscriptions.push(appSettingCmd);
-    context.subscriptions.push(appUploadCmd);
-    //context.subscriptions.push(testCmd);
 
     // Create status bar items for the commands
     createStatusBarItem('$(file-directory)', 'selectAppStudioPath', "Select AppStudio Folder");
@@ -170,7 +156,93 @@ function activate(context) {
     createStatusBarItem('$(circuit-board)', 'appMake', 'appMake(Alt+Shift+M)');
     createStatusBarItem('$(triangle-right)', 'appRun', 'appRun(Alt+Shift+R)');
     //createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
+
+    // Register all the executable commands with the corresponding command names and executable paths
+    function registerExecutableCommands (cmdPaths) {
+        commandNames.forEach( (value, index) => {
+            let cmd = commands.registerCommand(value, ()=> {
+                createCommand(cmdPaths[index], qmlProjectPaths, consoleOutput);
+            });
+            // Add to a list of disposables which are disposed when this extension is deactivated.
+            context.subscriptions.push(cmd);
+        });
+    }
     
+    function createStatusBarItem(itemText, itemCommand, itemTooltip) {
+        const statusBarItem = window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        statusBarItem.text = itemText;
+        statusBarItem.command = itemCommand;
+        statusBarItem.tooltip = itemTooltip;
+        statusBarItem.show();
+    }
+    
+    // Create commands to run the executables
+    function createCommand (executable, qmlProjectPaths, consoleOutputs) {
+        let appStudioPath = workspace.getConfiguration().get('AppStudio Path');
+    
+        if (appStudioPath === "") {
+            window.showWarningMessage("Please select the AppStudio folder first.");
+            return;
+        }
+    
+        if (!workspace.workspaceFolders) {
+            window.showWarningMessage('No folder opened.');
+        } else {
+    
+            if (qmlProjectPaths.length === 0) {
+                window.showErrorMessage("No qmlproject found.");
+            } else if (qmlProjectPaths.length > 1) {
+                // if there are more than one qml projects in the workspace, prompts the user to select one of them to run the command
+    
+                window.showQuickPick(qmlProjectPaths, {
+                    placeHolder: 'Multiple qmlprojects detected in workspace, please choose one to proceed'
+                }).then( folder => {
+                    if(folder !== undefined) {
+                        runProcess(consoleOutputs,appStudioPath,executable,folder);
+                    }
+                });
+            } else {
+                // there is one qml project in the workspace
+                runProcess(consoleOutputs,appStudioPath,executable,qmlProjectPaths[0]);
+            }
+        }
+    }
+    
+    // run the executable with the corresponding paths and parameters
+    function runProcess(consoleOutput, appStudioPath, executable, qmlProjectPath) {
+    
+        consoleOutput.show();
+        consoleOutput.appendLine("Starting external tool " + "\"" + appStudioPath + executable + " " + qmlProjectPath + "\"");
+
+        // Add the necessary environment variables 
+        process.env.QT_ASSUME_STDERR_HAS_CONSOLE = '1';
+        process.env.QT_FORCE_STDERR_LOGGING = '1';
+
+        let childProcess = spawn(appStudioPath + executable, [qmlProjectPath], { env: process.env});
+    
+        childProcess.stdout.on('data', data => {
+            consoleOutput.show();
+            consoleOutput.append(data.toString());
+        });
+    
+        childProcess.stderr.on('data', data => {
+            consoleOutput.show();
+            consoleOutput.append(data.toString());
+        });
+    
+        childProcess.on('error', err => {
+            window.showErrorMessage('Error occured during execution, see console output for more details.');
+            window.showWarningMessage('Please ensure correct path for AppStudio folder is selected.');
+            consoleOutput.show();
+            consoleOutput.appendLine(err);
+            console.error(`exec error: ${err}`);
+        })
+    
+        childProcess.on('exit', (code) => {
+            console.log(`child process exited with code ${code}`);
+            consoleOutput.appendLine("\"" + appStudioPath + executable + "\"" + " finished");
+        });
+    }
 }
 exports.activate = activate;
 
@@ -179,79 +251,3 @@ function deactivate() {
 }
 exports.deactivate = deactivate;
 
-function createStatusBarItem(itemText, itemCommand, itemTooltip) {
-    const statusBarItem = window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-    statusBarItem.text = itemText;
-    statusBarItem.command = itemCommand;
-    statusBarItem.tooltip = itemTooltip;
-    statusBarItem.show();
-}
-
-// Create commands to run the executables
-function createCommand (executable, qmlProjectPaths, consoleOutputs) {
-    let appStudioPath = workspace.getConfiguration().get('AppStudio Path');
-
-    if (appStudioPath === "") {
-        window.showWarningMessage("Please select the AppStudio folder first.");
-        return;
-    }
-
-    if (!workspace.workspaceFolders) {
-        window.showWarningMessage('No folder opened.');
-    } else {
-
-        if (qmlProjectPaths.length === 0) {
-            window.showErrorMessage("No qmlproject found.");
-        } else if (qmlProjectPaths.length > 1) {
-            // if there are more than one qml projects in the workspace, prompts the user to select one of them to run the command
-
-            window.showQuickPick(qmlProjectPaths, {
-                placeHolder: 'Multiple qmlprojects detected in workspace, please choose one to proceed'
-            }).then( folder => {
-                if(folder !== undefined) {
-                    runProcess(consoleOutputs,appStudioPath,executable,folder);
-                }
-            });
-        } else {
-            // there is one qml project in the workspace
-            runProcess(consoleOutputs,appStudioPath,executable,qmlProjectPaths[0]);
-        }
-    }
-}
-
-// run the executable with the corresponding paths and parameters
-function runProcess(consoleOutput, appStudioPath, executable, qmlProjectPath) {
-
-    consoleOutput.show();
-    consoleOutput.appendLine("Starting external tool " + "\"" + appStudioPath + executable + " " + qmlProjectPath + "\"");
-    //let process = execFile(appStudioBinPath + '\\AppRun.exe ' + projectPath, { env:
-    let childProcess = spawn(appStudioPath + executable, [qmlProjectPath], { env:
-    {
-        'QT_ASSUME_STDERR_HAS_CONSOLE':'1',
-        'QT_FORCE_STDERR_LOGGING':'1'
-    }}
-    );
-
-    childProcess.stdout.on('data', data => {
-        consoleOutput.show();
-        consoleOutput.append(data.toString());
-    });
-
-    childProcess.stderr.on('data', data => {
-        consoleOutput.show();
-        consoleOutput.append(data.toString());
-    });
-
-    childProcess.on('error', err => {
-        window.showErrorMessage('Error occured during execution, see console output for more details.');
-        window.showWarningMessage('Please ensure correct path for AppStudio folder is selected.');
-        consoleOutput.show();
-        consoleOutput.appendLine(err);
-        console.error(`exec error: ${err}`);
-    })
-
-    childProcess.on('exit', (code) => {
-        console.log(`child process exited with code ${code}`);
-        consoleOutput.appendLine("\"" + appStudioPath + executable + "\"" + " finished");
-    });
-}
