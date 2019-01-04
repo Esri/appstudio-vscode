@@ -2,9 +2,10 @@
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 const { spawn } = require('child_process');
-const { window, workspace, commands } = vscode;
+const { window, workspace, commands, languages } = vscode;
 const loadIniFile = require('read-ini-file');
 const path = require('path');
+const fs = require('fs');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -243,6 +244,156 @@ function activate(context) {
             consoleOutput.appendLine("\"" + appStudioPath + executable + "\"" + " finished");
         });
     }
+
+
+    languages.registerHoverProvider('qml', {
+        provideHover(doc, pos){
+            return new vscode.Hover('I am a hover!');
+        }
+    });
+
+    languages.registerCompletionItemProvider('qml', {
+        provideCompletionItems(doc, pos, token, context) {
+            return [new vscode.CompletionItem('Hello world'), new vscode.CompletionItem('Hello there'), new vscode.CompletionItem('General Kenobi')];
+        }
+    });
+
+    languages.registerDocumentLinkProvider('qml', {
+        provideDocumentLinks() {
+        return [new vscode.DocumentLink(new vscode.Range(new vscode.Position(0,0), new vscode.Position(10,10)), 
+            vscode.Uri.parse('https://code.visualstudio.com/api/references/vscode-api'))];
+        }
+    });
+
+    fs.readFile(path.join(__dirname,'qmltest.json'), (err, data) => {
+        if(err) {console.log(err);}
+        else {
+            let json = JSON.parse(data.toString());
+            let components = json.Module.Components;
+            //console.log(components);
+
+            languages.registerCompletionItemProvider('qml', {
+                provideCompletionItems(doc, pos) {
+                    let items = [];
+
+                    for (let component of components) {
+                        items.push(new vscode.CompletionItem(component.name));
+                    }
+                    return items;
+                }
+            });
+
+            languages.registerCompletionItemProvider('qml', {
+                provideCompletionItems(doc, pos) {
+
+                    let items = [];
+                    let linePrefix = doc.lineAt(pos).text.substr(0, pos.character);
+
+                    for (let component of components) {
+                        if (linePrefix.endsWith(component.name + '.')) {
+                            if (component.Properties !== undefined) {
+                                for(let property of component.Properties) {
+                                    items.push(new vscode.CompletionItem(property.name));
+                                }
+                            }
+                            if (component.Method !== undefined) {
+                                for(let method of component.Method) {
+                                    items.push(new vscode.CompletionItem(method.name));
+                                }
+                            }
+                        }
+                    }
+                    return items;
+                }
+            }, '.');
+
+        }
+    })
+
+    fs.readFile('C:\\Users\\zhi10068\\Desktop\\New Text Document.txt',(err, data) => {
+        if(err) {
+            console.log(err);
+        } else {
+
+            //let text = ' Module {\n dependencies: [] \n Component { \n name: "QObject" \n exports: ["QtQml/QtObject 2.0"] \n exportMetaObjectRevisions: [0] \n Property { name: "objectName"; type: "string" } \n Signal {  \n name: "objectNameChanged" \n Parameter { name: "objectName"; type: "string" } \n } \n Method { name: "toString" } \n Method { name: "destroy" } \n Method {  \n name: "destroy"  \n Parameter { name: "delay"; type: "int" } \n }  \n }  \n  Component { \n  name: "QQmlComponentAttached" \n  prototype: "QObject" \n  Signal { name: "completed" } \n  Signal { name: "destruction" }  \n } \n } '
+            //let output = qmlParser.parse('//saxzczxcv  \n import QtQuick 2.7 \n Component { name: "Qml"   Method { name: "hello" }  Method { name: "world" } }');
+            let text = data.toString();
+
+            let regex = /exports: \[.*\]/g;
+            let result;
+
+            while (result = regex.exec(text)) {
+                //console.log(result);
+            }
+            //console.log(result);
+            //let output = qmlParser.parse(data.toString());
+            //let output = qmlParser.parse(text);
+            //console.log('---------------------------');
+            //console.log(output);
+        }
+    });
+
+    vscode.languages.registerCompletionItemProvider('qml', {
+        provideCompletionItems() {
+            const simpleCompletion = new vscode.CompletionItem('Hello World!');
+
+            const snippetCompletion = new vscode.CompletionItem('Good part of the day');
+            snippetCompletion.insertText = new vscode.SnippetString('Good ${1|morning,afternoon,evening|}. It is ${1}, right?');
+            snippetCompletion.documentation = new vscode.MarkdownString('Inserts a snippet that lets you select the _appropriate_ part of the day for your greeting.');
+
+            const commitCharacterCompletion = new vscode.CompletionItem('console');
+            commitCharacterCompletion.commitCharacters = ['.'];
+            commitCharacterCompletion.documentation = new vscode.MarkdownString('Press `.` to get `console.`');
+
+            const commandCompletion = new vscode.CompletionItem('new');
+            commandCompletion.kind = vscode.CompletionItemKind.Keyword;
+            commandCompletion.insertText = 'new ';
+            commandCompletion.command = { command: 'editor.action.triggerSuggest', title: 'Re-trigger completions...'};
+
+            return [
+                simpleCompletion,
+                snippetCompletion,
+                commitCharacterCompletion,
+                commandCompletion
+            ];
+        }
+    });
+
+    vscode.languages.registerCompletionItemProvider('qml', {
+        provideCompletionItems(doc, pos) {
+
+            let linePrefix = doc.lineAt(pos).text.substr(0, pos.character);
+            if (linePrefix.endsWith('console.')) {
+                return [
+                    new vscode.CompletionItem('log', vscode.CompletionItemKind.Method),
+                    new vscode.CompletionItem('warn', vscode.CompletionItemKind.Method),
+                    new vscode.CompletionItem('error', vscode.CompletionItemKind.Method)
+                ];
+            }
+
+            if (linePrefix.endsWith('java.')) {
+                return [
+                    new vscode.CompletionItem('System.out.print()', vscode.CompletionItemKind.Method),
+                    new vscode.CompletionItem('public static void main(String[] args)', vscode.CompletionItemKind.Class),
+                    new vscode.CompletionItem('class', vscode.CompletionItemKind.Property)
+                ];
+            }
+
+            if (linePrefix.endsWith('cpp.')) {
+                return [
+                    new vscode.CompletionItem('cout', vscode.CompletionItemKind.Method),
+                    new vscode.CompletionItem('struct', vscode.CompletionItemKind.Struct),
+                    new vscode.CompletionItem('using namespace', vscode.CompletionItemKind.Constructor)
+                ];
+            }
+
+            return [
+                new vscode.CompletionItem('hi', vscode.CompletionItemKind.Method),
+                new vscode.CompletionItem('bye', vscode.CompletionItemKind.Method)
+            ];
+        }
+    },'.');
+
 }
 exports.activate = activate;
 

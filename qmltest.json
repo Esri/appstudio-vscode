@@ -1,0 +1,30 @@
+
+{
+    "Module": {
+        "dependencies": [ ],
+        "Components": [ 
+            {
+                "name": "BiometricAuthenticator",
+                "prototype": "QObject",
+                "Properties": [ 
+                    {
+                        "name": "supported", "type": "bool", "isReadonly": true 
+                    }, {
+                        "name": "activated", "type": "bool", "isReadonly": true
+                    }
+                ]
+            }, 
+            {
+                "name": "SomeOtherComponent",
+                "Method": [
+                    {
+                        "name": "someMethod"
+                    }, {
+                        "name": "someOtherMethod"
+                    }
+                ]                 
+            }
+        ]
+    }
+}
+ 
