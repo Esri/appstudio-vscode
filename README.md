@@ -31,7 +31,7 @@ Clone this repository under your local VS code extensions folder and enable the 
 
 > **Note**: When the extension is activated for the first time, it will detect the AppStudio installation automatically on your machine. You can also change the AppStudio folder manually by clicking on the 'Select folder' icon on the status bar, or directly in the Visual Studio Code Extension Settings.
 
-> **Note**: The extension only works on Windows and MacOS at the moment.
+> **Note**: The extension works on Windows, Mac OS and Linux at the moment.
 
 ## Extension Settings
 
