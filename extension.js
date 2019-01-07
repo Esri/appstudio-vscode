@@ -80,10 +80,12 @@ function activate(context) {
     // Function to find files with extension '.qmlproject' across all workspace folders,
     // and add the folder path to the qmlProjectPaths array
     let addQmlProject = () => {
-        workspace.findFiles('*.qmlproject').then( result => {
+        workspace.findFiles('**/*.qmlproject').then( result => {
             result.forEach( uri => {
-                let folderPath = workspace.getWorkspaceFolder(uri).uri.fsPath;
-                qmlProjectPaths.push(folderPath);
+                //let folderPath = workspace.getWorkspaceFolder(uri).uri.fsPath;
+                
+                // use the directory name containing the .qmlproject file found as the project path
+                qmlProjectPaths.push(path.dirname(uri.fsPath));
             });
         });
     }
@@ -153,7 +155,7 @@ function activate(context) {
     createStatusBarItem('$(file-directory)', 'selectAppStudioPath', "Select AppStudio Folder");
     createStatusBarItem('$(gear)', 'appSetting', 'appSetting(Alt+Shift+S)');
     createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload(Alt+Shift+UpArrow)');
-    createStatusBarItem('$(circuit-board)', 'appMake', 'appMake(Alt+Shift+M)');
+    createStatusBarItem('$(tools)', 'appMake', 'appMake(Alt+Shift+M)');
     createStatusBarItem('$(triangle-right)', 'appRun', 'appRun(Alt+Shift+R)');
     //createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
 
