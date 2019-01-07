@@ -3,6 +3,8 @@ AppStudio Extension for Visual Studio Code
 
 ## Features implemented so far
 
+* Open QML project: To open QML projects, simply open a folder containing a .qmlproject file. The extension would select the directory containing the .qmlproject file as the path for runing the different executables. If the workspace contains more than one folders containing .qmlproject files, the extension will prompt the user to select one of them before running the executables.  
+
 * QML Syntax Highlighting
 
 * Run current app project via AppRun (Alt+Shift+R)
