@@ -2,19 +2,18 @@
     "name": "appstudio",
     "displayName": "AppStudio",
     "description": "AppStudio Extension for Visual Studio Code",
-    "version": "0.0.1",
-    "engines": {
-        "vscode": "^1.30.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "*"
-    ],
-    "main": "./extension",
-    "contributes": {
-        "commands": [
+	"license": "MIT",
+	"version": "1.0.0",
+	"categories": [],
+	"engines": {
+		"vscode": "^1.30.0"
+	},
+	"activationEvents": [
+		"*"
+	],
+	"main": "./client/out/extension",
+	"contributes": {
+		"commands": [
             {
                 "command": "selectAppStudioPath",
                 "title": "Select AppStudio Folder"
@@ -54,8 +53,8 @@
                 "key": "alt+shift+up"
             }
         ],
-        "configuration": {
-            "type": "object",
+		"configuration": {
+			"type": "object",
             "title": "AppStudio",
             "properties": {
                 "AppStudio Path": {
@@ -66,15 +65,15 @@
                     "description": "Path for the AppStudio folder"
                 }
             }
-        },
-        "languages": [
+		},
+		"languages": [
             {
                 "id": "qml",
                 "extensions": [
                     ".qml",
                     ".qmlproject"
                 ],
-                "configuration": "./qml.configuration.json"
+                "configuration": "./syntaxes/qml.configuration.json"
             }
         ],
         "grammars": [
@@ -84,19 +83,22 @@
                 "path": "./syntaxes/qml.tmLanguage.json"
             }
         ]
-    },
-    "scripts": {
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
-    },
-    "devDependencies": {
+	},
+	"scripts": {
+		"vscode:prepublish": "cd client && npm run update-vscode && cd .. && npm run compile",
+		"compile": "tsc -b",
+		"watch": "tsc -b -w",
+		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+		"test": "sh ./scripts/e2e.sh"
+	},
+	"devDependencies": {
+		"@types/mocha": "^5.2.0",
+		"@types/node": "^8.10.25",
+		"tslint": "^5.11.0",
         "typescript": "^3.1.4",
-        "vscode": "^1.1.25",
-        "eslint": "^4.11.0",
-        "@types/node": "^8.10.25",
-        "@types/mocha": "^2.2.42"
-    },
-    "dependencies": {
-        "read-ini-file": "^2.0.0"
-    }
+        "vscode": "^1.1.25"
+	},
+	"dependencies": {
+		"read-ini-file": "^2.0.0"
+	}
 }

@@ -1,0 +1,1779 @@
+{
+  "components": [
+    {
+      "defaultProperty": "",
+      "enums": [],
+      "exportMetaObjectRevisions": [
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "ArcGIS.AppFramework.Positioning/Position 1.0"
+      ],
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [],
+      "name": "Position",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "latitudeValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "longitudeValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "altitudeValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "coordinate",
+          "revision": 0,
+          "type": "QGeoCoordinate"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "timestamp",
+          "revision": 0,
+          "type": "QDateTime"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "speed",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "speedValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "horizontalAccuracy",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "verticalAccuracy",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "horizontalAccuracyValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "verticalAccuracyValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "directionValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "direction",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "verticalSpeedValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "verticalSpeed",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "magneticVariation",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "magneticVariationValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "hdopValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "hdop",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "pdopValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "pdop",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "vdopValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "vdop",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "fixTypeValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "fixType",
+          "revision": 0,
+          "type": "PositionInfo::FixType"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "differentialAgeValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "differentialAge",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "referenceStationIdValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "referenceStationId",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "satellitesVisibleValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "satellitesVisible",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "satellitesInUseValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "satellitesInUse",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "positionAccuracyValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "positionAccuracy",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "geoidSeparationValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "geoidSeparation",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "accuracyTypeValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "accuracyType",
+          "revision": 0,
+          "type": "PositionInfo::AccuracyType"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "latitudeErrorValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "latitudeError",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "longitudeErrorValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "longitudeError",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "altitudeErrorValid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "altitudeError",
+          "revision": 0,
+          "type": "double"
+        }
+      ],
+      "prototype": "QObject",
+      "signals": [
+        {
+          "name": "directionValidChanged",
+          "parameters": [],
+          "revision": 1
+        },
+        {
+          "name": "directionChanged",
+          "parameters": [],
+          "revision": 1
+        },
+        {
+          "name": "verticalSpeedValidChanged",
+          "parameters": [],
+          "revision": 1
+        },
+        {
+          "name": "verticalSpeedChanged",
+          "parameters": [],
+          "revision": 1
+        },
+        {
+          "name": "magneticVariationChanged",
+          "parameters": [],
+          "revision": 2
+        },
+        {
+          "name": "magneticVariationValidChanged",
+          "parameters": [],
+          "revision": 2
+        }
+      ]
+    },
+    {
+      "defaultProperty": "",
+      "enums": [
+        {
+          "name": "PositioningMethod",
+          "values": {
+            "AllPositioningMethods": -1,
+            "NoPositioningMethods": 0,
+            "NonSatellitePositioningMethods": -256,
+            "SatellitePositioningMethods": 255
+          }
+        },
+        {
+          "name": "PositioningMethods",
+          "values": {
+            "AllPositioningMethods": -1,
+            "NoPositioningMethods": 0,
+            "NonSatellitePositioningMethods": -256,
+            "SatellitePositioningMethods": 255
+          }
+        },
+        {
+          "name": "SourceError",
+          "values": {
+            "AccessError": 0,
+            "ClosedError": 1,
+            "NoError": 3,
+            "SocketError": 100,
+            "UnknownSourceError": 2
+          }
+        }
+      ],
+      "exportMetaObjectRevisions": [
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "ArcGIS.AppFramework.Positioning/PositionSource 1.0"
+      ],
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [
+        {
+          "name": "update",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "start",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "stop",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        }
+      ],
+      "name": "PositionSource",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": true,
+          "isReadonly": true,
+          "name": "position",
+          "revision": 0,
+          "type": "Position"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "active",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "valid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "nmeaSource",
+          "revision": 0,
+          "type": "QVariant"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "updateInterval",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "supportedPositioningMethods",
+          "revision": 0,
+          "type": "PositioningMethods"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "preferredPositioningMethods",
+          "revision": 0,
+          "type": "PositioningMethods"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "sourceError",
+          "revision": 0,
+          "type": "SourceError"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "name",
+          "revision": 0,
+          "type": "string"
+        }
+      ],
+      "prototype": "QObject",
+      "signals": [
+        {
+          "name": "validityChanged",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "updateTimeout",
+          "parameters": [],
+          "revision": 0
+        }
+      ]
+    },
+    {
+      "defaultProperty": "",
+      "enums": [],
+      "exportMetaObjectRevisions": [
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "ArcGIS.AppFramework.Positioning/Positioning 1.0"
+      ],
+      "isCompsite": false,
+      "isCreatable": false,
+      "isSingleton": true,
+      "methods": [],
+      "name": "PositioningSingleton",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "availablePositionSources",
+          "revision": 0,
+          "type": "QStringList"
+        }
+      ],
+      "prototype": "QObject",
+      "signals": []
+    },
+    {
+      "defaultProperty": "",
+      "enums": [
+        {
+          "name": "LayoutChangeHint",
+          "values": {
+            "HorizontalSortHint": 2,
+            "NoLayoutChangeHint": 0,
+            "VerticalSortHint": 1
+          }
+        },
+        {
+          "name": "CheckIndexOption",
+          "values": {
+            "DoNotUseParent": 2,
+            "IndexIsValid": 1,
+            "NoOption": 0,
+            "ParentIsInvalid": 4
+          }
+        }
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [
+        {
+          "name": "submit",
+          "parameters": [],
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "name": "revert",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "hasIndex",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "row",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "column",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "name": "hasIndex",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "row",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "column",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "name": "index",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "row",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "column",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0,
+          "type": "QModelIndex"
+        },
+        {
+          "name": "index",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "row",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "column",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": "QModelIndex"
+        },
+        {
+          "name": "parent",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "child",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0,
+          "type": "QModelIndex"
+        },
+        {
+          "name": "sibling",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "row",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "column",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "idx",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0,
+          "type": "QModelIndex"
+        },
+        {
+          "name": "rowCount",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "name": "rowCount",
+          "parameters": [],
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "name": "columnCount",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "name": "columnCount",
+          "parameters": [],
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "name": "hasChildren",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "name": "hasChildren",
+          "parameters": [],
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "name": "data",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "index",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "role",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": "QVariant"
+        },
+        {
+          "name": "data",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "index",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0,
+          "type": "QVariant"
+        },
+        {
+          "name": "setData",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "index",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "value",
+              "type": "QVariant"
+            },
+            {
+              "isPointer": false,
+              "name": "role",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "name": "setData",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "index",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "value",
+              "type": "QVariant"
+            }
+          ],
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "name": "headerData",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "section",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "orientation",
+              "type": "Qt::Orientation"
+            },
+            {
+              "isPointer": false,
+              "name": "role",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": "QVariant"
+        },
+        {
+          "name": "headerData",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "section",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "orientation",
+              "type": "Qt::Orientation"
+            }
+          ],
+          "revision": 0,
+          "type": "QVariant"
+        },
+        {
+          "name": "fetchMore",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "canFetchMore",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "name": "flags",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "index",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0,
+          "type": "Qt::ItemFlags"
+        },
+        {
+          "name": "match",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "start",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "role",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "value",
+              "type": "QVariant"
+            },
+            {
+              "isPointer": false,
+              "name": "hits",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "flags",
+              "type": "Qt::MatchFlags"
+            }
+          ],
+          "revision": 0,
+          "type": "QModelIndexList"
+        },
+        {
+          "name": "match",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "start",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "role",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "value",
+              "type": "QVariant"
+            },
+            {
+              "isPointer": false,
+              "name": "hits",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": "QModelIndexList"
+        },
+        {
+          "name": "match",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "start",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "role",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "value",
+              "type": "QVariant"
+            }
+          ],
+          "revision": 0,
+          "type": "QModelIndexList"
+        }
+      ],
+      "name": "QAbstractItemModel",
+      "properties": [],
+      "prototype": "QObject",
+      "signals": [
+        {
+          "name": "dataChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "topLeft",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "bottomRight",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "roles",
+              "type": "QVector<int>"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "dataChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "topLeft",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "bottomRight",
+              "type": "QModelIndex"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "headerDataChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "orientation",
+              "type": "Qt::Orientation"
+            },
+            {
+              "isPointer": false,
+              "name": "first",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "last",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "layoutChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parents",
+              "type": "QList<QPersistentModelIndex>"
+            },
+            {
+              "isPointer": false,
+              "name": "hint",
+              "type": "QAbstractItemModel::LayoutChangeHint"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "layoutChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parents",
+              "type": "QList<QPersistentModelIndex>"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "layoutChanged",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "layoutAboutToBeChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parents",
+              "type": "QList<QPersistentModelIndex>"
+            },
+            {
+              "isPointer": false,
+              "name": "hint",
+              "type": "QAbstractItemModel::LayoutChangeHint"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "layoutAboutToBeChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parents",
+              "type": "QList<QPersistentModelIndex>"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "layoutAboutToBeChanged",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "rowsAboutToBeInserted",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "first",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "last",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "rowsInserted",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "first",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "last",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "rowsAboutToBeRemoved",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "first",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "last",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "rowsRemoved",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "first",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "last",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "columnsAboutToBeInserted",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "first",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "last",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "columnsInserted",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "first",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "last",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "columnsAboutToBeRemoved",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "first",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "last",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "columnsRemoved",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "first",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "last",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "modelAboutToBeReset",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "modelReset",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "rowsAboutToBeMoved",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "sourceParent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "sourceStart",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "sourceEnd",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "destinationParent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "destinationRow",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "rowsMoved",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "start",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "end",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "destination",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "row",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "columnsAboutToBeMoved",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "sourceParent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "sourceStart",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "sourceEnd",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "destinationParent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "destinationColumn",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "columnsMoved",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "parent",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "start",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "end",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "destination",
+              "type": "QModelIndex"
+            },
+            {
+              "isPointer": false,
+              "name": "column",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        }
+      ]
+    },
+    {
+      "defaultProperty": "",
+      "enums": [],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QAbstractListModel",
+      "properties": [],
+      "prototype": "QAbstractItemModel",
+      "signals": []
+    },
+    {
+      "defaultProperty": "",
+      "enums": [],
+      "exportMetaObjectRevisions": [
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "ArcGIS.AppFramework.Positioning/SatelliteInfo 1.0"
+      ],
+      "isCompsite": false,
+      "isCreatable": false,
+      "isSingleton": false,
+      "methods": [],
+      "name": "SatelliteInfo",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "elevation",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "azimuth",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "satelliteIdentifier",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "signalStrength",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "isInUse",
+          "revision": 0,
+          "type": "bool"
+        }
+      ],
+      "prototype": "QObject",
+      "signals": [
+        {
+          "name": "objectChanged",
+          "parameters": [],
+          "revision": 0
+        }
+      ]
+    },
+    {
+      "defaultProperty": "",
+      "enums": [
+        {
+          "name": "SourceError",
+          "values": {
+            "AccessError": 0,
+            "ClosedError": 1,
+            "NoError": 2,
+            "SocketError": 100,
+            "UnknownSourceError": -1
+          }
+        },
+        {
+          "name": "TalkerType",
+          "values": {
+            "Beidou": 256,
+            "Dsc": 64,
+            "Ecdis": 32,
+            "Galileo": 128,
+            "Glonass": 1,
+            "Gps": 2,
+            "IntegratedInstrumentation": 8,
+            "IntegratedNavigation": 16,
+            "LoranC": 4,
+            "Mixed": 3,
+            "Qzss": 512,
+            "Unknown": 0
+          }
+        }
+      ],
+      "exportMetaObjectRevisions": [
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "ArcGIS.AppFramework.Positioning/SatelliteInfoSource 1.0"
+      ],
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [
+        {
+          "name": "requestUpdate",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "start",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "stop",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        }
+      ],
+      "name": "SatelliteInfoSource",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": true,
+          "isReadonly": true,
+          "name": "satellitesInUse",
+          "revision": 0,
+          "type": "SatelliteListModel"
+        },
+        {
+          "isList": false,
+          "isPointer": true,
+          "isReadonly": true,
+          "name": "satellitesInView",
+          "revision": 0,
+          "type": "SatelliteListModel"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "nmeaSource",
+          "revision": 0,
+          "type": "QVariant"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "active",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "valid",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "updateInterval",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "sourceError",
+          "revision": 0,
+          "type": "SourceError"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "name",
+          "revision": 0,
+          "type": "string"
+        }
+      ],
+      "prototype": "QObject",
+      "signals": [
+        {
+          "name": "requestUpdateTimeout",
+          "parameters": [],
+          "revision": 0
+        }
+      ]
+    },
+    {
+      "defaultProperty": "",
+      "enums": [
+        {
+          "name": "SatelliteRoles",
+          "values": {
+            "AzimuthRole": 261,
+            "ElevationRole": 260,
+            "IdentifierRole": 257,
+            "InUseRole": 258,
+            "SignalStrengthRole": 259
+          }
+        }
+      ],
+      "exportMetaObjectRevisions": [
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "ArcGIS.AppFramework.Positioning/SatelliteListModel 1.0"
+      ],
+      "isCompsite": false,
+      "isCreatable": false,
+      "isSingleton": false,
+      "methods": [
+        {
+          "name": "get",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "index",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": "SatelliteInfo*"
+        }
+      ],
+      "name": "SatelliteListModel",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "count",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "satelliteInfoAvailable",
+          "revision": 0,
+          "type": "bool"
+        }
+      ],
+      "prototype": "QAbstractListModel",
+      "signals": [
+        {
+          "name": "canProvideSatelliteInfoChanged",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "resetSatellitesInUse",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "inUseList",
+              "type": "QList<QGeoSatelliteInfo>"
+            }
+          ],
+          "revision": 0
+        }
+      ]
+    }
+  ],
+  "dependencies": []
+}
