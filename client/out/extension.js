@@ -87,6 +87,10 @@ function activate(context) {
         qmlProjectPaths = [];
         addQmlProject();
     });
+    let openApiRefCmd = vscode_1.commands.registerCommand('openApiRefLink', function () {
+        vscode_1.commands.executeCommand('vscode.open', vscode.Uri.parse('https://doc.arcgis.com/en/appstudio/api/reference/'));
+    });
+    context.subscriptions.push(openApiRefCmd);
     // Command to select the AppStudio folder for executables
     let selectPathCmd = vscode_1.commands.registerCommand('selectAppStudioPath', function () {
         vscode_1.window.showOpenDialog({
@@ -134,6 +138,7 @@ function activate(context) {
     */
     // Create status bar items for the commands
     createStatusBarItem('$(file-directory)', 'selectAppStudioPath', "Select AppStudio Folder");
+    createStatusBarItem('$(globe)', 'openApiRefLink', 'Open Api Reference');
     createStatusBarItem('$(gear)', 'appSetting', 'appSetting(Alt+Shift+S)');
     createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload(Alt+Shift+UpArrow)');
     createStatusBarItem('$(tools)', 'appMake', 'appMake(Alt+Shift+M)');
