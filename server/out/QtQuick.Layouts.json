@@ -1,0 +1,431 @@
+{
+  "components": [
+    {
+      "attachedType": "",
+      "defaultProperty": "data",
+      "enums": [],
+      "exportMetaObjectRevisions": [
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "QtQuick.Layouts/ColumnLayout 1.0"
+      ],
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QQuickColumnLayout",
+      "properties": [],
+      "prototype": "QQuickLinearLayout",
+      "signals": []
+    },
+    {
+      "attachedType": "",
+      "defaultProperty": "data",
+      "enums": [
+        {
+          "name": "Flow",
+          "values": {
+            "LeftToRight": 0,
+            "TopToBottom": 1
+          }
+        }
+      ],
+      "exportMetaObjectRevisions": [
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "QtQuick.Layouts/GridLayout 1.0"
+      ],
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QQuickGridLayout",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "columnSpacing",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "rowSpacing",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "columns",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "rows",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "flow",
+          "revision": 0,
+          "type": "Flow"
+        }
+      ],
+      "prototype": "QQuickGridLayoutBase",
+      "signals": []
+    },
+    {
+      "attachedType": "",
+      "defaultProperty": "data",
+      "enums": [],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QQuickGridLayoutBase",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "layoutDirection",
+          "revision": 1,
+          "type": "Qt::LayoutDirection"
+        }
+      ],
+      "prototype": "QQuickLayout",
+      "signals": [
+        {
+          "name": "layoutDirectionChanged",
+          "parameters": [],
+          "revision": 1
+        }
+      ]
+    },
+    {
+      "attachedType": "QQuickLayoutAttached",
+      "defaultProperty": "data",
+      "enums": [],
+      "exportMetaObjectRevisions": [
+        0,
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "QtQuick.Layouts/Layout 1.0",
+        "QtQuick.Layouts/Layout 1.2"
+      ],
+      "isCompsite": false,
+      "isCreatable": false,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QQuickLayout",
+      "properties": [],
+      "prototype": "QQuickItem",
+      "signals": []
+    },
+    {
+      "attachedType": "",
+      "defaultProperty": "",
+      "enums": [],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QQuickLayoutAttached",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "minimumWidth",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "minimumHeight",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "preferredWidth",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "preferredHeight",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "maximumWidth",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "maximumHeight",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "fillHeight",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "fillWidth",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "row",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "column",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "rowSpan",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "columnSpan",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "alignment",
+          "revision": 0,
+          "type": "Qt::Alignment"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "margins",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "leftMargin",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "topMargin",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "rightMargin",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "bottomMargin",
+          "revision": 0,
+          "type": "double"
+        }
+      ],
+      "prototype": "QObject",
+      "signals": []
+    },
+    {
+      "attachedType": "",
+      "defaultProperty": "data",
+      "enums": [],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QQuickLinearLayout",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "spacing",
+          "revision": 0,
+          "type": "double"
+        }
+      ],
+      "prototype": "QQuickGridLayoutBase",
+      "signals": []
+    },
+    {
+      "attachedType": "",
+      "defaultProperty": "data",
+      "enums": [],
+      "exportMetaObjectRevisions": [
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "QtQuick.Layouts/RowLayout 1.0"
+      ],
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QQuickRowLayout",
+      "properties": [],
+      "prototype": "QQuickLinearLayout",
+      "signals": []
+    },
+    {
+      "attachedType": "",
+      "defaultProperty": "data",
+      "enums": [],
+      "exportMetaObjectRevisions": [
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "QtQuick.Layouts/StackLayout 1.3"
+      ],
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [
+        {
+          "name": "itemAt",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "index",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": "QQuickItem*"
+        }
+      ],
+      "name": "QQuickStackLayout",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "count",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "currentIndex",
+          "revision": 0,
+          "type": "int"
+        }
+      ],
+      "prototype": "QQuickLayout",
+      "signals": []
+    }
+  ],
+  "dependencies": [
+    "QtQuick 2.8"
+  ]
+}

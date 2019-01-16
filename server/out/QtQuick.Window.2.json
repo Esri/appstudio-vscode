@@ -1,0 +1,1236 @@
+{
+  "components": [
+    {
+      "attachedType": "",
+      "defaultProperty": "data",
+      "enums": [],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [
+        {
+          "name": "setWidth",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "w",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setHeight",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "h",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        }
+      ],
+      "name": "QQuickRootItem",
+      "properties": [],
+      "prototype": "QQuickItem",
+      "signals": []
+    },
+    {
+      "attachedType": "QQuickScreenAttached",
+      "defaultProperty": "",
+      "enums": [],
+      "exportMetaObjectRevisions": [
+        0,
+        1
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "QtQuick.Window/Screen 2.0",
+        "QtQuick.Window/Screen 2.3"
+      ],
+      "isCompsite": false,
+      "isCreatable": false,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QQuickScreen",
+      "properties": [],
+      "prototype": "QObject",
+      "signals": []
+    },
+    {
+      "attachedType": "",
+      "defaultProperty": "",
+      "enums": [],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [
+        {
+          "name": "angleBetween",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "a",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "b",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": "int"
+        }
+      ],
+      "name": "QQuickScreenAttached",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "orientationUpdateMask",
+          "revision": 0,
+          "type": "Qt::ScreenOrientations"
+        }
+      ],
+      "prototype": "QQuickScreenInfo",
+      "signals": []
+    },
+    {
+      "attachedType": "",
+      "defaultProperty": "",
+      "enums": [],
+      "exportMetaObjectRevisions": [
+        10,
+        2
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "QtQuick.Window/ScreenInfo 2.10",
+        "QtQuick.Window/ScreenInfo 2.3"
+      ],
+      "isCompsite": false,
+      "isCreatable": false,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QQuickScreenInfo",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "name",
+          "revision": 0,
+          "type": "string"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "manufacturer",
+          "revision": 10,
+          "type": "string"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "model",
+          "revision": 10,
+          "type": "string"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "serialNumber",
+          "revision": 10,
+          "type": "string"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "width",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "height",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "desktopAvailableWidth",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "desktopAvailableHeight",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "logicalPixelDensity",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "pixelDensity",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "devicePixelRatio",
+          "revision": 0,
+          "type": "double"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "primaryOrientation",
+          "revision": 0,
+          "type": "Qt::ScreenOrientation"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "orientation",
+          "revision": 0,
+          "type": "Qt::ScreenOrientation"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "virtualX",
+          "revision": 1,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "virtualY",
+          "revision": 1,
+          "type": "int"
+        }
+      ],
+      "prototype": "QObject",
+      "signals": [
+        {
+          "name": "manufacturerChanged",
+          "parameters": [],
+          "revision": 10
+        },
+        {
+          "name": "modelChanged",
+          "parameters": [],
+          "revision": 10
+        },
+        {
+          "name": "serialNumberChanged",
+          "parameters": [],
+          "revision": 10
+        },
+        {
+          "name": "desktopGeometryChanged",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "virtualXChanged",
+          "parameters": [],
+          "revision": 1
+        },
+        {
+          "name": "virtualYChanged",
+          "parameters": [],
+          "revision": 1
+        }
+      ]
+    },
+    {
+      "attachedType": "",
+      "defaultProperty": "data",
+      "enums": [
+        {
+          "name": "SceneGraphError",
+          "values": {
+            "ContextNotAvailable": 1
+          }
+        },
+        {
+          "name": "TextRenderType",
+          "values": {
+            "NativeTextRendering": 1,
+            "QtTextRendering": 0
+          }
+        }
+      ],
+      "exportMetaObjectRevisions": [
+        0
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "QtQuick.Window/Window 2.0"
+      ],
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [
+        {
+          "name": "update",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "releaseResources",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        }
+      ],
+      "name": "QQuickWindow",
+      "properties": [
+        {
+          "isList": true,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "data",
+          "revision": 0,
+          "type": "QObject"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "color",
+          "revision": 0,
+          "type": "QColor"
+        },
+        {
+          "isList": false,
+          "isPointer": true,
+          "isReadonly": true,
+          "name": "contentItem",
+          "revision": 0,
+          "type": "QQuickItem"
+        },
+        {
+          "isList": false,
+          "isPointer": true,
+          "isReadonly": true,
+          "name": "activeFocusItem",
+          "revision": 1,
+          "type": "QQuickItem"
+        }
+      ],
+      "prototype": "QWindow",
+      "signals": [
+        {
+          "name": "frameSwapped",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "openglContextCreated",
+          "parameters": [
+            {
+              "isPointer": true,
+              "name": "context",
+              "type": "QOpenGLContext"
+            }
+          ],
+          "revision": 2
+        },
+        {
+          "name": "sceneGraphInitialized",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "sceneGraphInvalidated",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "beforeSynchronizing",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "afterSynchronizing",
+          "parameters": [],
+          "revision": 2
+        },
+        {
+          "name": "beforeRendering",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "afterRendering",
+          "parameters": [],
+          "revision": 0
+        },
+        {
+          "name": "afterAnimating",
+          "parameters": [],
+          "revision": 2
+        },
+        {
+          "name": "sceneGraphAboutToStop",
+          "parameters": [],
+          "revision": 2
+        },
+        {
+          "name": "closing",
+          "parameters": [
+            {
+              "isPointer": true,
+              "name": "close",
+              "type": "QQuickCloseEvent"
+            }
+          ],
+          "revision": 1
+        },
+        {
+          "name": "colorChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "",
+              "type": "QColor"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "activeFocusItemChanged",
+          "parameters": [],
+          "revision": 1
+        },
+        {
+          "name": "sceneGraphError",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "error",
+              "type": "QQuickWindow::SceneGraphError"
+            },
+            {
+              "isPointer": false,
+              "name": "message",
+              "type": "string"
+            }
+          ],
+          "revision": 2
+        }
+      ]
+    },
+    {
+      "attachedType": "",
+      "defaultProperty": "",
+      "enums": [],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QQuickWindowAttached",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "visibility",
+          "revision": 0,
+          "type": "QWindow::Visibility"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "active",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": true,
+          "isReadonly": true,
+          "name": "activeFocusItem",
+          "revision": 0,
+          "type": "QQuickItem"
+        },
+        {
+          "isList": false,
+          "isPointer": true,
+          "isReadonly": true,
+          "name": "contentItem",
+          "revision": 0,
+          "type": "QQuickItem"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "width",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "height",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": true,
+          "isReadonly": true,
+          "name": "window",
+          "revision": 0,
+          "type": "QQuickWindow"
+        }
+      ],
+      "prototype": "QObject",
+      "signals": []
+    },
+    {
+      "attachedType": "QQuickWindowAttached",
+      "defaultProperty": "data",
+      "enums": [],
+      "exportMetaObjectRevisions": [
+        0,
+        1,
+        2
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "exports": [
+        "QtQuick.Window/Window 2.1",
+        "QtQuick.Window/Window 2.2",
+        "QtQuick.Window/Window 2.3"
+      ],
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [],
+      "name": "QQuickWindowQmlImpl",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "visible",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "visibility",
+          "revision": 0,
+          "type": "Visibility"
+        },
+        {
+          "isList": false,
+          "isPointer": true,
+          "isReadonly": false,
+          "name": "screen",
+          "revision": 2,
+          "type": "QObject"
+        }
+      ],
+      "prototype": "QQuickWindow",
+      "signals": [
+        {
+          "name": "visibleChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "bool"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "visibilityChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "visibility",
+              "type": "QWindow::Visibility"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "screenChanged",
+          "parameters": [],
+          "revision": 2
+        }
+      ]
+    },
+    {
+      "attachedType": "",
+      "defaultProperty": "",
+      "enums": [
+        {
+          "name": "Visibility",
+          "values": {
+            "AutomaticVisibility": 1,
+            "FullScreen": 5,
+            "Hidden": 0,
+            "Maximized": 4,
+            "Minimized": 3,
+            "Windowed": 2
+          }
+        },
+        {
+          "name": "AncestorMode",
+          "values": {
+            "ExcludeTransients": 0,
+            "IncludeTransients": 1
+          }
+        }
+      ],
+      "exportModule": "",
+      "exportName": "",
+      "exportVersion": "",
+      "exportVersionMajor": 0,
+      "exportVersionMinor": 0,
+      "isCompsite": false,
+      "isCreatable": true,
+      "isSingleton": false,
+      "methods": [
+        {
+          "name": "requestActivate",
+          "parameters": [],
+          "revision": 1,
+          "type": ""
+        },
+        {
+          "name": "setVisible",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "visible",
+              "type": "bool"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "show",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "hide",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "showMinimized",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "showMaximized",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "showFullScreen",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "showNormal",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "close",
+          "parameters": [],
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "name": "raise",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "lower",
+          "parameters": [],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setTitle",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setX",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setY",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setWidth",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setHeight",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setGeometry",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "posx",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "posy",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "w",
+              "type": "int"
+            },
+            {
+              "isPointer": false,
+              "name": "h",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setGeometry",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "rect",
+              "type": "QRect"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setMinimumWidth",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "w",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setMinimumHeight",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "h",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setMaximumWidth",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "w",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "setMaximumHeight",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "h",
+              "type": "int"
+            }
+          ],
+          "revision": 0,
+          "type": ""
+        },
+        {
+          "name": "alert",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "msec",
+              "type": "int"
+            }
+          ],
+          "revision": 1,
+          "type": ""
+        },
+        {
+          "name": "requestUpdate",
+          "parameters": [],
+          "revision": 3,
+          "type": ""
+        }
+      ],
+      "name": "QWindow",
+      "properties": [
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "title",
+          "revision": 0,
+          "type": "string"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "modality",
+          "revision": 0,
+          "type": "Qt::WindowModality"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "flags",
+          "revision": 0,
+          "type": "Qt::WindowFlags"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "x",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "y",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "width",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "height",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "minimumWidth",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "minimumHeight",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "maximumWidth",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "maximumHeight",
+          "revision": 0,
+          "type": "int"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "visible",
+          "revision": 0,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": true,
+          "name": "active",
+          "revision": 1,
+          "type": "bool"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "visibility",
+          "revision": 1,
+          "type": "Visibility"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "contentOrientation",
+          "revision": 0,
+          "type": "Qt::ScreenOrientation"
+        },
+        {
+          "isList": false,
+          "isPointer": false,
+          "isReadonly": false,
+          "name": "opacity",
+          "revision": 1,
+          "type": "double"
+        }
+      ],
+      "prototype": "QObject",
+      "signals": [
+        {
+          "name": "screenChanged",
+          "parameters": [
+            {
+              "isPointer": true,
+              "name": "screen",
+              "type": "QScreen"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "modalityChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "modality",
+              "type": "Qt::WindowModality"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "windowStateChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "windowState",
+              "type": "Qt::WindowState"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "windowTitleChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "title",
+              "type": "string"
+            }
+          ],
+          "revision": 2
+        },
+        {
+          "name": "xChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "yChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "widthChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "heightChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "minimumWidthChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "minimumHeightChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "maximumWidthChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "maximumHeightChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "int"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "visibleChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "arg",
+              "type": "bool"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "visibilityChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "visibility",
+              "type": "QWindow::Visibility"
+            }
+          ],
+          "revision": 1
+        },
+        {
+          "name": "activeChanged",
+          "parameters": [],
+          "revision": 1
+        },
+        {
+          "name": "contentOrientationChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "orientation",
+              "type": "Qt::ScreenOrientation"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "focusObjectChanged",
+          "parameters": [
+            {
+              "isPointer": true,
+              "name": "object",
+              "type": "QObject"
+            }
+          ],
+          "revision": 0
+        },
+        {
+          "name": "opacityChanged",
+          "parameters": [
+            {
+              "isPointer": false,
+              "name": "opacity",
+              "type": "double"
+            }
+          ],
+          "revision": 1
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    "QtQuick 2.8"
+  ]
+}
