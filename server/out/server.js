@@ -13,8 +13,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_1 = require("vscode-languageserver");
+const docHelper_1 = require("./docHelper");
 const fs = require("fs");
 const path = require("path");
+let importedModules = [];
+let importedComponents = [];
+let qmlModules = [];
+let completionItem = [];
+readQmltypeJson('AppFrameworkPlugin.json');
+readQmltypeJson('AppFrameworkPositioningPlugin.json');
+readQmltypeJson('AppFrameworkAuthentication.json');
+readQmltypeJson('QtQml.json');
+readQmltypeJson('QtLocation.json');
+readQmltypeJson('QtPositioning.json');
+readQmltypeJson('QtQuick.2.json');
+readQmltypeJson('QtQuick.Controls.2.json');
+readQmltypeJson('QtQuick.Controls.json');
+readQmltypeJson('QtQuick.Layouts.json');
+readQmltypeJson('QtQuick.Window.2.json');
+readQmltypeJson('ArcGISRuntimePlugin.json');
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 let connection = vscode_languageserver_1.createConnection(vscode_languageserver_1.ProposedFeatures.all);
@@ -37,7 +54,6 @@ connection.onInitialize((_params) => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
-    //validateTextDocument(change.document);
     lookforImport(change.document);
 });
 function lookforImport(doc) {
@@ -55,7 +71,7 @@ function lookforImport(doc) {
             for (let module of qmlModules) {
                 if (module.name === m[1] && importedModules.every(module => { return module.name !== m[1]; })) {
                     importedModules.push(module);
-                    // !!!!!  concat does not add to the original array calling the methods !!!
+                    // !!!!!  concat does not add to the original array calling the methods !
                     importedComponents = importedComponents.concat(module.components);
                     for (let c of module.components) {
                         if (c.info) {
@@ -69,9 +85,6 @@ function lookforImport(doc) {
                 }
             }
         }
-        //importedModules = newimportedModules;
-        //importedComponents = newimportedComponents;
-        //completionItem = newcompletionItem;
     });
 }
 connection.onDidChangeWatchedFiles(_change => {
@@ -81,15 +94,8 @@ connection.onDidChangeWatchedFiles(_change => {
 function firstCharToUpperCase(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
-let importedModules = [];
-let importedComponents = [];
-let qmlModules = [];
-let completionItem = [];
-//let data = fs.readFileSync(path.join(__dirname, 'AppFrameworkPlugin.json'));
-//let json = JSON.parse(data.toString());
-//let importedComponents: QmlComponent []; //= json.components;
-function readQmltypeJson(filePath) {
-    let data = fs.readFileSync(path.join(__dirname, filePath));
+function readQmltypeJson(fileName) {
+    let data = fs.readFileSync(path.join(__dirname, '../qml_types', fileName));
     let comps = JSON.parse(data.toString()).components;
     //let completeModuleNames: string[] = [];
     for (let component of comps) {
@@ -139,174 +145,28 @@ function readQmltypeJson(filePath) {
                 });
             }
         }
-        /*
-        let m = component.exports[0].match(/(.*)\/(\w*) (.*)/);
-        // the module name after removing 'ArcGIS.AppFramework'
-        if (!m) continue;
-        
-        if(!completeModuleNames) completeModuleNames = m[1];
-
-        let appFrameworkModuleName = m[1].replace(/ArcGIS.AppFramework/,'');
-        if(appFrameworkModuleName.charAt(0) === '.') {
-            appFrameworkModuleName = '-' + appFrameworkModuleName.slice(1);
-        }
-    
-        component.info = {
-            moduleName: appFrameworkModuleName,
-            componentName: m[2],
-            moduleVersion: m[3]
-        };
-        */
     }
-    /*
-    qmlModules.push({
-        names: completeModuleNames,
-        components: comps
-    });
-    */
 }
-readQmltypeJson('AppFrameworkPlugin.json');
-readQmltypeJson('AppFrameworkPositioningPlugin.json');
-readQmltypeJson('AppFrameworkAuthentication.json');
-readQmltypeJson('QtQml.json');
-readQmltypeJson('QtLocation.json');
-readQmltypeJson('QtPositioning.json');
-readQmltypeJson('QtQuick.2.json');
-readQmltypeJson('QtQuick.Controls.2.json');
-readQmltypeJson('QtQuick.Controls.json');
-readQmltypeJson('QtQuick.Layouts.json');
-readQmltypeJson('QtQuick.Window.2.json');
-readQmltypeJson('ArcGISRuntimePlugin.json');
 /*
-for (let component of importedComponents) {
-    //completionItem.push(CompletionItem.create(component.name));
+function isInPropertyOrSignal (doc: TextDocument, startPos: Position, endPos: Position) {
 
-    if (!component.exports || component.exports.length !== 1) continue;
-    let m = component.exports[0].match(/(.*)\/(\w*) (.*)/);
-    // the module name after removing 'ArcGIS.AppFramework'
-    let appFrameworkModuleName = m[1].replace(/ArcGIS.AppFramework/,'');
-    if(appFrameworkModuleName.charAt(0) === '.') {
-        appFrameworkModuleName = '-' + appFrameworkModuleName.slice(1);
-    }
-
-    if (!m) continue;
-
-    component.info = {
-        moduleName: appFrameworkModuleName,
-        componentName: m[2],
-        moduleVersion: m[3]
-    };
-
-    completionItem.push(CompletionItem.create(component.info.componentName));
-}
-*/
-function getWordAtPosition(doc, pos) {
-    let range = vscode_languageserver_1.Range.create(pos, vscode_languageserver_1.Position.create(pos.line, pos.character + 1));
-    let i = 0, j = 0;
-    if (/\w/.test(doc.getText(range))) {
-        while (/\w/.test(getTextInRange(doc, pos.line, pos.character - i - 1, pos.line, pos.character - i))) {
-            i++;
-        }
-        while (/\w/.test(getTextInRange(doc, pos.line, pos.character + j, pos.line, pos.character + j + 1))) {
-            j++;
-        }
-    }
-    return vscode_languageserver_1.Range.create(vscode_languageserver_1.Position.create(pos.line, pos.character - i), vscode_languageserver_1.Position.create(pos.line, pos.character + j));
-    //return getTextInRange(doc, pos.line, pos.character - i, pos.line, pos.character + j);
-}
-function getFirstPrecedingWordString(doc, pos) {
-    let i = 0;
-    let char = doc.getText(vscode_languageserver_1.Range.create(vscode_languageserver_1.Position.create(pos.line, pos.character - 1), pos));
-    // {start: {line: pos.line, character: pos.character - 1}, end: pos}
-    while (/^\w/.test(char) && pos.character - i !== 0) {
-        i++;
-        char = getTextInRange(doc, pos.line, pos.character - i - 1, pos.line, pos.character - i);
-        // { start: {line: pos.line, character: pos.character - i - 1}, end: {line: pos.line, character: pos.character - i}}
-    }
-    return doc.getText({ start: { line: pos.line, character: pos.character - i }, end: pos });
-}
-function getFirstPrecedingRegex(doc, pos, regex) {
-    for (let lineOffset = pos.line; lineOffset >= 0; --lineOffset) {
-        for (let charOffset = (lineOffset === pos.line) ? pos.character : getLineLength(doc, lineOffset); charOffset > 0; --charOffset) {
-            let char = getTextInRange(doc, lineOffset, charOffset - 1, lineOffset, charOffset);
-            if (regex.test(char)) {
-                return vscode_languageserver_1.Position.create(lineOffset, charOffset);
-            }
-        }
-    }
-    return vscode_languageserver_1.Position.create(0, 0);
-}
-// return true if position A is greater than B, false if A is equal or less than B
-function comparePosition(posA, posB) {
-    if (posA.line > posB.line) {
-        return true;
-    }
-    else if (posA.line < posB.line) {
-        return false;
-    }
-    else {
-        if (posA.character > posB.character) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-}
-function getTextInRange(doc, startLine, startChac, endLine, endChar) {
-    return doc.getText(vscode_languageserver_1.Range.create(vscode_languageserver_1.Position.create(startLine, startChac), vscode_languageserver_1.Position.create(endLine, endChar)));
-}
-function getLineLength(doc, line) {
-    let i = 0;
-    let char = getTextInRange(doc, line, i, line, i + 1);
-    while (char !== '' && char !== '\n' && char !== '\r' && char !== '\r\n') {
-        i++;
-        char = getTextInRange(doc, line, i, line, i + 1);
-    }
-    return i;
-}
-function getFirstCharOutsideBracketPairs(doc, pos, regex) {
-    let closingCount = 0;
-    for (let lineOffset = pos.line; lineOffset >= 0; --lineOffset) {
-        for (let charOffset = (lineOffset === pos.line) ? pos.character : getLineLength(doc, lineOffset); charOffset > 0; --charOffset) {
-            let char = getTextInRange(doc, lineOffset, charOffset - 1, lineOffset, charOffset);
-            if (regex.test(char)) {
-                if (closingCount === 0) {
-                    return vscode_languageserver_1.Position.create(lineOffset, charOffset);
-                }
-            }
-            if (char === '}') {
-                closingCount++;
-            }
-            if (char === '{') {
-                if (closingCount > 0) {
-                    closingCount--;
-                }
-                /*else {
-                    return Position.create(lineOffset, charOffset);
-                }*/
-            }
-        }
-    }
-    return vscode_languageserver_1.Position.create(0, 0);
-}
-function isInPropertyOrSignal(doc, startPos, endPos) {
     let regex = /\:\s*\{/;
     let openingBracket = getFirstCharOutsideBracketPairs(doc, startPos, /\{/);
     let firstPrecedingColonPos = getFirstCharOutsideBracketPairs(doc, openingBracket, /\:/);
     let firstPrecedingWordPos = getFirstCharOutsideBracketPairs(doc, openingBracket, /\w/);
+
     connection.console.log('COLON pos: ' + firstPrecedingColonPos.line + ':' + firstPrecedingColonPos.character);
     connection.console.log('word pos: ' + firstPrecedingWordPos.line + ':' + firstPrecedingWordPos.character);
     if (comparePosition(firstPrecedingColonPos, firstPrecedingWordPos)) {
         connection.console.log(': GREATER');
-    }
-    else {
+    } else {
         connection.console.log('\\w GREATER');
     }
 }
-function getQmlType(doc, pos) {
-    let firstPrecedingWordPos = getFirstPrecedingRegex(doc, getFirstCharOutsideBracketPairs(doc, pos, /\{/), /\w/);
-    let result = getFirstPrecedingWordString(doc, firstPrecedingWordPos);
+*/
+function getQmlType(docHelper, pos) {
+    let firstPrecedingWordPos = docHelper.getFirstPrecedingRegex(docHelper.getFirstCharOutsideBracketPairs(pos, /\{/), /\w/);
+    let result = docHelper.getFirstPrecedingWordString(firstPrecedingWordPos);
     if (!result) {
         return null;
     }
@@ -314,7 +174,7 @@ function getQmlType(doc, pos) {
         return result;
     }
     else {
-        return getQmlType(doc, firstPrecedingWordPos);
+        return getQmlType(docHelper, firstPrecedingWordPos);
     }
 }
 function isValidComponent(str, importedComponents) {
@@ -325,6 +185,24 @@ function isValidComponent(str, importedComponents) {
         }
     }
     return false;
+}
+function addBuiltinKeyword(completionItem) {
+    let keywords = [
+        'import', 'property', 'signal', 'id: ', 'states: '
+    ];
+    let qmlTypes = [
+        'bool', 'double', 'enumeration', 'int', 'list', 'real', 'string', 'url', 'var'
+    ];
+    for (let keyword of keywords) {
+        let item = vscode_languageserver_1.CompletionItem.create(keyword);
+        item.kind = 14;
+        completionItem.push(item);
+    }
+    for (let type of qmlTypes) {
+        let item = vscode_languageserver_1.CompletionItem.create(type);
+        item.kind = 21;
+        completionItem.push(item);
+    }
 }
 function addComponenetAttributes(component, items, importedComponents) {
     if (component.properties !== undefined) {
@@ -367,67 +245,89 @@ function addComponenetAttributes(component, items, importedComponents) {
         }
     }
 }
+function constructApiRefUrl(qmlInfo) {
+    let moduleNames = qmlInfo.dividedModuleName;
+    let url;
+    let html = '';
+    if (moduleNames[0] === 'ArcGIS.') {
+        url = 'https://doc.arcgis.com/en/appstudio/api/reference/framework/qml-';
+    }
+    else if (moduleNames[0] === 'Esri.') {
+        url = 'https://developers.arcgis.com/qt/latest/qml/api-reference/qml-';
+        html = '.html';
+    }
+    else {
+        url = 'https://doc.qt.io/qt-5/qml-';
+        html = '.html';
+    }
+    url = url + qmlInfo.completeModuleName.replace(/\./g, '-').toLowerCase() + '-' + qmlInfo.componentName.toLowerCase() + html;
+    return url;
+}
 connection.onHover((params) => {
     let doc = documents.get(params.textDocument.uri);
     let pos = params.position;
-    let range = getWordAtPosition(doc, pos);
+    let docHelper = new docHelper_1.DocHelper(doc);
+    let range = docHelper.getWordAtPosition(pos);
     let word = doc.getText(range);
+    let urls = [];
     for (let component of importedComponents) {
         // WARNING
         if (component.info && word === component.info[0].componentName) {
-            let moduleNames = component.info[0].dividedModuleName;
-            //connection.console.log(component.m);
-            let url;
-            let html = '';
-            if (moduleNames[0] === 'ArcGIS.') {
-                url = 'https://doc.arcgis.com/en/appstudio/api/reference/framework/qml-';
-                /*
-                for (let i=0; i<moduleNames.length; i++) {
-                    if (moduleNames[i].charAt(moduleNames.length - 1) === '.') {
-                        moduleNames[i] = moduleNames[i].replace('.','-');
-                    } else {
-                        moduleNames[i] = moduleNames[i] + '-';
+            /*
+            if (component.info.length > 1 && !component.info.every( (val, i, arr) => val.completeModuleName === arr[0].completeModuleName )) {
+                url = '';
+                for (let info of component.info){
+                    url = url + info.completeModuleName.replace(/\./g,'-').toLowerCase() + '-' + info.componentName.toLowerCase() + html + 'n';
+                }
+            }*/
+            let urlz = constructApiRefUrl(component.info[0]);
+            if (urls.every(val => val !== urlz)) {
+                urls.push(urlz);
+            }
+            if (component.info.length > 1) {
+                for (let i = 1; i < component.info.length; i++) {
+                    if (component.info[i].completeModuleName !== component.info[0].completeModuleName) {
+                        urls.push(constructApiRefUrl(component.info[i]));
                     }
-                    url = url + moduleNames[i];
-                } */
+                }
             }
-            else if (moduleNames[0] === 'Esri.') {
-                url = 'https://developers.arcgis.com/qt/latest/qml/api-reference/qml-';
-                html = '.html';
-            }
-            else {
-                url = 'https://doc.qt.io/qt-5/qml-';
-                html = '.html';
-            }
-            url = url + component.info[0].completeModuleName.replace(/\./g, '-').toLowerCase() + '-' + component.info[0].componentName.toLowerCase() + html;
-            let markup = {
+            /*
+            let markup: MarkupContent = {
                 kind: "markdown",
                 // WARNING
                 value: url
                 //value: `[${component.info[0].componentName}](https://doc.arcgis.com/en/appstudio/api/reference/framework/qml-arcgis-appframework${component.info[0].dividedModuleName[0]}-${component.info[0].componentName} "Component found!")`
             };
-            let result = {
+            let result: Hover = {
                 contents: markup,
                 range: range
             };
             return result;
-            /*
-                let simpleModuleName = m[1].replace(/ArcGIS.AppFramework/,'');
-                if (simpleModuleName.charAt(0) === '.') {
-                    simpleModuleName = '-' + simpleModuleName.slice(1);
-                }
-                */
+            */
         }
     }
+    let value = '';
+    for (let url of urls) {
+        value = value + '\n' + url + '\n';
+    }
+    let markup = {
+        kind: "markdown",
+        value: value
+    };
+    let result = {
+        contents: markup,
+        range: range
+    };
+    return result;
 });
 // This handler provides the initial list of the completion items.
 connection.onCompletion((params) => {
-    //connection.console.log('trigger: ' + params.context.triggerKind);
     let doc = documents.get(params.textDocument.uri);
     let pos = params.position;
+    let docHelper = new docHelper_1.DocHelper(doc);
     if (params.context.triggerCharacter === '.') {
         let items = [];
-        let componentName = getFirstPrecedingWordString(doc, { line: pos.line, character: pos.character - 1 });
+        let componentName = docHelper.getFirstPrecedingWordString({ line: pos.line, character: pos.character - 1 });
         for (let c of importedComponents) {
             // WARNING
             if (c.info && componentName === c.info[0].componentName) {
@@ -436,9 +336,8 @@ connection.onCompletion((params) => {
         }
         return items;
     }
-    let firstPrecedingWordPos = getFirstPrecedingRegex(doc, vscode_languageserver_1.Position.create(pos.line, pos.character - 1), /\w/);
-    let word = getFirstPrecedingWordString(doc, firstPrecedingWordPos);
-    connection.console.log('###  Preceding: ' + word);
+    let firstPrecedingWordPos = docHelper.getFirstPrecedingRegex(vscode_languageserver_1.Position.create(pos.line, pos.character - 1), /\w/);
+    let word = docHelper.getFirstPrecedingWordString(firstPrecedingWordPos);
     if (word === 'import') {
         let items = [];
         for (let module of qmlModules) {
@@ -446,9 +345,10 @@ connection.onCompletion((params) => {
         }
         return items;
     }
-    let componentName = getQmlType(doc, pos);
+    let componentName = getQmlType(docHelper, pos);
     connection.console.log('####### Object Found: ' + componentName);
     //isInPropertyOrSignal(doc, Position.create(pos.line, pos.character-1), pos);
+    addBuiltinKeyword(completionItem);
     if (componentName !== null) {
         let items = [];
         for (let c of importedComponents) {
@@ -459,9 +359,6 @@ connection.onCompletion((params) => {
         }
         return items.concat(completionItem);
     }
-    // The pass parameter contains the position of the text document in
-    // which code complete got requested. For the example we ignore this
-    // info and always provide the same completion items.
     return completionItem;
 });
 // Make the text document manager listen on the connection
