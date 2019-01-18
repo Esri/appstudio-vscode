@@ -2,9 +2,10 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import * as ChildProcess from 'child_process';
-import {window, workspace, commands} from 'vscode';
+import { window, workspace, commands } from 'vscode';
 import * as path from 'path';
 import loadIniFile from 'read-ini-file';
+import * as fs from 'fs';
 
 import {
 	LanguageClient,
@@ -60,18 +61,11 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 	};
 
-	// Function to select the AppStudio folder manually
+	// Ask the user to select the AppStudio folder manually
 	let manualSelectAppStudioPath = () => {
-		window.showErrorMessage('System cannot find AppStudio on this machine');
-		window.showWarningMessage('Select Yes above if you wish to find the folder manually');
+		window.showErrorMessage('System cannot find AppStudio installation on this machine. Select Yes above if you wish to find the installation manually.');
 
-		window.showQuickPick(['Yes', 'No'], {
-			placeHolder: 'Would you like to select the AppStudio folder manually?',
-		}).then(choice => {
-			if (choice === 'Yes') {
-				commands.executeCommand('selectAppStudioPath');
-			}
-		});
+		commands.executeCommand('selectAppStudioPath');
 	};
 
 	// If the configuration value is a empty string, i.e. the extension is run for the first time on the machine, 
@@ -82,18 +76,26 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	// Array containing the paths of all qml projects in the workspace
-	let qmlProjectPaths: string [] = [];
+	let qmlProjectPaths: string[] = [];
 	// Console ouput for the AppStudio Apps
 	let consoleOutput = window.createOutputChannel('AppStudio');
 
-	// Function to find files with extension '.qmlproject' across all workspace folders,
+	// Function to find files 'appinfo.json' across all workspace folders,
 	// and add the folder path to the qmlProjectPaths array
 	let addQmlProject = () => {
-		workspace.findFiles('**/*.qmlproject').then(result => {
+		workspace.findFiles('**/appinfo.json').then(result => {
 			result.forEach(uri => {
 				//let folderPath = workspace.getWorkspaceFolder(uri).uri.fsPath;
 
-				// use the directory name containing the .qmlproject file found as the project path
+				fs.readFile(uri.fsPath, (err, data) => {
+					if (err) console.log(err);
+					let mainFile = JSON.parse(data.toString()).mainFile;
+					window.showTextDocument(vscode.Uri.file(path.join(path.dirname(uri.fsPath), mainFile)),
+						{
+							preview: false
+						});
+				});
+				// use the directory name containing the appinfo.json file found as the project path
 				qmlProjectPaths.push(path.dirname(uri.fsPath));
 			});
 		});
@@ -118,16 +120,23 @@ export function activate(context: vscode.ExtensionContext) {
 	// Command to select the AppStudio folder for executables
 	let selectPathCmd = commands.registerCommand('selectAppStudioPath', function () {
 
-		window.showOpenDialog({
-			canSelectFolders: true,
-			canSelectFiles: false,
-			canSelectMany: false
-		}).then(folder => {
-			if (folder !== undefined && folder.length === 1) {
-				workspace.getConfiguration().update('AppStudio Path', folder[0].fsPath.toString(), true);
-				window.showInformationMessage('AppStudio folder updated: ' + folder[0].fsPath);
+		window.showQuickPick(['Yes', 'No'], {
+			placeHolder: 'Would you like to select the AppStudio folder manually? NOTE: This will override the current path.',
+		}).then(choice => {
+			if (choice === 'Yes') {
+				window.showOpenDialog({
+					canSelectFolders: true,
+					canSelectFiles: false,
+					canSelectMany: false
+				}).then(folder => {
+					if (folder !== undefined && folder.length === 1) {
+						workspace.getConfiguration().update('AppStudio Path', folder[0].fsPath.toString(), true);
+						window.showInformationMessage('AppStudio folder updated: ' + folder[0].fsPath);
+					}
+				});
 			}
 		});
+
 	});
 	context.subscriptions.push(selectPathCmd);
 
@@ -177,7 +186,7 @@ export function activate(context: vscode.ExtensionContext) {
 	//createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
 
 	// Register all the executable commands with the corresponding command names and executable paths
-	function registerExecutableCommands(cmdPaths: string []) {
+	function registerExecutableCommands(cmdPaths: string[]) {
 		commandNames.forEach((value, index) => {
 			let cmd = commands.registerCommand(value, () => {
 				createCommand(cmdPaths[index], qmlProjectPaths, consoleOutput);

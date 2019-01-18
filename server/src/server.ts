@@ -17,12 +17,12 @@ import {
 	MarkupContent
 } from 'vscode-languageserver';
 import { DocHelper } from './docHelper';
-import  * as fs from 'fs';
+import * as fs from 'fs';
 import * as path from 'path';
 
 interface QmlComponent {
 	name: string;
-	exports: string [];
+	exports: string[];
 	prototype: string;
 	properties: [{
 		name: string
@@ -49,13 +49,13 @@ interface QmlInfo {
 
 interface QmlModule {
 	name: string;
-	components: QmlComponent [];
+	components: QmlComponent[];
 }
 
-let importedModules: QmlModule [] = [];
-let importedComponents: QmlComponent [] = [];
-let qmlModules: QmlModule [] = [];
-let completionItem: CompletionItem [] = [];
+let importedModules: QmlModule[] = [];
+let importedComponents: QmlComponent[] = [];
+let qmlModules: QmlModule[] = [];
+let completionItem: CompletionItem[] = [];
 
 readQmltypeJson('AppFrameworkPlugin.json');
 readQmltypeJson('AppFrameworkPositioningPlugin.json');
@@ -87,7 +87,7 @@ connection.onInitialize((_params: InitializeParams) => {
 			// Tell the client that the server supports code completion
 			completionProvider: {
 				resolveProvider: false,
-				triggerCharacters: ['.',',']
+				triggerCharacters: ['.', ',']
 			},
 			hoverProvider: true
 		}
@@ -98,11 +98,14 @@ connection.onInitialize((_params: InitializeParams) => {
 // when the text document first opened or when its content has changed.
 
 documents.onDidChangeContent(change => {
-	
-	lookforImport( change.document);
+
+	lookforImport(change.document);
+	//documents.all().forEach(doc => connection.console.log(doc.uri));
 });
 
-async function lookforImport( doc: TextDocument): Promise<void> {
+
+
+async function lookforImport(doc: TextDocument): Promise<void> {
 
 	importedModules = [];
 	importedComponents = [];
@@ -110,27 +113,24 @@ async function lookforImport( doc: TextDocument): Promise<void> {
 
 	let text = doc.getText();
 	let pattern = /import\s+((\w+\.?)+)/g;
-	//let pattern = /import\s+(.*) .*/g;
 	let m: RegExpExecArray | null;
 
 	while ((m = pattern.exec(text))) {
-		//connection.console.log('Regex match: ' + m[0] + '|  ' + m[1] + '  |' + m[2]);
-		//importedModules.push(m[1]);
 
 		for (let module of qmlModules) {
 
-			if (module.name === m[1] && importedModules.every( module => { return module.name !== m[1];})) {
+			if (module.name === m[1] && importedModules.every(module => { return module.name !== m[1]; })) {
 				importedModules.push(module);
 
-				// !!!!!  concat does not add to the original array calling the methods !
+				// NOTE: concat does not add to the original array calling the method !
 				importedComponents = importedComponents.concat(module.components);
-				
+
 				for (let c of module.components) {
 					if (c.info) {
 						// DEFAULT to add the component name in the first export array
 						let item = CompletionItem.create(c.info[0].componentName);
 						item.kind = 7;
-						item.detail = c.info[0].completeModuleName + '/' + c.info[0].componentName + ' ' + c.info[0].moduleVersion + '\n' + c.name;
+						item.detail = 'Imported from ' + c.info[0].completeModuleName + '/' + c.info[0].componentName + ' ' + c.info[0].moduleVersion;
 						completionItem.push(item);
 					}
 				}
@@ -145,7 +145,7 @@ connection.onDidChangeWatchedFiles(_change => {
 	connection.console.log('We received an file change event');
 });
 
-function firstCharToUpperCase( str: string): string {
+function firstCharToUpperCase(str: string): string {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
@@ -153,27 +153,19 @@ function readQmltypeJson(fileName: string) {
 
 	let data = fs.readFileSync(path.join(__dirname, '../qml_types', fileName));
 	let comps: QmlComponent[] = JSON.parse(data.toString()).components;
-	//let completeModuleNames: string[] = [];
 
 	for (let component of comps) {
-		//completionItem.push(CompletionItem.create(component.name));
-	
 		if (!component.exports) continue;
+
 		component.info = [];
 
 		for (let e of component.exports) {
-			//connection.console.log('###: ' + e);
+
 			let m = e.match(/(.*)\/(\w*) (.*)/);
+
 			if (!m) continue;
 
 			let p = m[1].match(/\w+\.?/g);
-
-			if(p[0] === 'ArcGIS.') {
-				let simpleModuleName = m[1].replace(/ArcGIS.AppFramework/,'');
-				if (simpleModuleName.charAt(0) === '.') {
-					simpleModuleName = '-' + simpleModuleName.slice(1);
-				}
-			}
 
 			component.info.push({
 				completeModuleName: m[1],
@@ -187,13 +179,13 @@ function readQmltypeJson(fileName: string) {
 				let hasComponent = false;
 				if (module.name === m[1]) {
 
-					for ( let c of module.components) {
+					for (let c of module.components) {
 						if (c.name === component.name) {
 							hasComponent = true;
 							break;
 						}
 					}
-					if (!hasComponent){
+					if (!hasComponent) {
 						module.components.push(component);
 					}
 
@@ -202,7 +194,7 @@ function readQmltypeJson(fileName: string) {
 				}
 			}
 
-			if(!hasModule) {
+			if (!hasModule) {
 				qmlModules.push(
 					{
 						name: m[1],
@@ -210,7 +202,6 @@ function readQmltypeJson(fileName: string) {
 					}
 				);
 			}
-
 		}
 	}
 }
@@ -233,12 +224,12 @@ function isInPropertyOrSignal (doc: TextDocument, startPos: Position, endPos: Po
 }
 */
 
-function getQmlType (docHelper: DocHelper, pos: Position): string {
+function getQmlType(docHelper: DocHelper, pos: Position): string {
 
 	let firstPrecedingWordPos = docHelper.getFirstPrecedingRegex(docHelper.getFirstCharOutsideBracketPairs(pos, /\{/), /\w/);
 	let result = docHelper.getFirstPrecedingWordString(firstPrecedingWordPos);
 
-	if (!result) { return null;}
+	if (!result) { return null; }
 
 	if (isValidComponent(result, importedComponents)) {
 		return result;
@@ -248,19 +239,19 @@ function getQmlType (docHelper: DocHelper, pos: Position): string {
 
 }
 
-function isValidComponent (str: string, importedComponents: QmlComponent[]): boolean {
+function isValidComponent(str: string, importedComponents: QmlComponent[]): boolean {
 
 	for (let c of importedComponents) {
 		// DEFAULT to compare with component name in first exports array
-		if (c.info && str === c.info[0].componentName ) {
+		if (c.info && str === c.info[0].componentName) {
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
-function addBuiltinKeyword (completionItem: CompletionItem[]) {
+function addBuiltinKeyword(completionItem: CompletionItem[]) {
 	let keywords = [
 		'import', 'property', 'signal', 'id: ', 'states: '
 	];
@@ -282,7 +273,7 @@ function addBuiltinKeyword (completionItem: CompletionItem[]) {
 
 }
 
-function addComponenetAttributes (component: QmlComponent, items: CompletionItem[], importedComponents: QmlComponent[]) {
+function addComponenetAttributes(component: QmlComponent, items: CompletionItem[], importedComponents: QmlComponent[]) {
 	if (component.properties !== undefined) {
 		for (let p of component.properties) {
 			let item = CompletionItem.create(p.name);
@@ -338,7 +329,7 @@ function constructApiRefUrl(qmlInfo: QmlInfo): string {
 		url = 'https://doc.qt.io/qt-5/qml-';
 		html = '.html';
 	}
-	url = url + qmlInfo.completeModuleName.replace(/\./g,'-').toLowerCase() + '-' + qmlInfo.componentName.toLowerCase() + html;
+	url = url + qmlInfo.completeModuleName.replace(/\./g, '-').toLowerCase() + '-' + qmlInfo.componentName.toLowerCase() + html;
 	return url;
 }
 
@@ -356,19 +347,12 @@ connection.onHover(
 		let urls: string[] = [];
 
 		for (let component of importedComponents) {
-			// WARNING
+			// Assume that the componentName part of different exports statements of the same component are the same, 
+			// therefore only checks the first element in the info array.
 			if (component.info && word === component.info[0].componentName) {
-				/*
-				if (component.info.length > 1 && !component.info.every( (val, i, arr) => val.completeModuleName === arr[0].completeModuleName )) {
-					url = '';
-					for (let info of component.info){
-						url = url + info.completeModuleName.replace(/\./g,'-').toLowerCase() + '-' + info.componentName.toLowerCase() + html + 'n';
-					}
-				}*/
-
-				let urlz = constructApiRefUrl(component.info[0]);
-				if ( urls.every( val => val !== urlz )) {
-					urls.push(urlz);
+				let url = constructApiRefUrl(component.info[0]);
+				if (urls.every(val => val !== url)) {
+					urls.push(url);
 				}
 
 				if (component.info.length > 1) {
@@ -378,24 +362,12 @@ connection.onHover(
 						}
 					}
 				}
-				/*
-				let markup: MarkupContent = {
-					kind: "markdown",
-					// WARNING
-					value: url
-					//value: `[${component.info[0].componentName}](https://doc.arcgis.com/en/appstudio/api/reference/framework/qml-arcgis-appframework${component.info[0].dividedModuleName[0]}-${component.info[0].componentName} "Component found!")`
-				};
-				let result: Hover = {
-					contents: markup,
-					range: range
-				}; 
-				return result;
-				*/
-			
 			}
 		}
 
 		let value = '';
+		if (urls.length > 1) value = 'Multiple Api reference links found for this component.\n\nYou may have imported multiple modules containing the component with the same name, or some of the links may be deprecated.\n';
+
 		for (let url of urls) {
 			value = value + '\n' + url + '\n';
 		}
@@ -407,7 +379,7 @@ connection.onHover(
 		let result: Hover = {
 			contents: markup,
 			range: range
-		}; 
+		};
 		return result;
 	}
 );
@@ -423,13 +395,14 @@ connection.onCompletion(
 
 		if (params.context.triggerCharacter === '.') {
 
-			let items: CompletionItem [] = [];
+			let items: CompletionItem[] = [];
 
-			let componentName = docHelper.getFirstPrecedingWordString({ line: pos.line, character: pos.character-1 });
-			
+			let componentName = docHelper.getFirstPrecedingWordString({ line: pos.line, character: pos.character - 1 });
+
 			for (let c of importedComponents) {
-				// WARNING
-				if (c.info && componentName === c.info[0].componentName ) {
+				// Assume that the componentName part of different exports statements of the same component are the same, 
+				// therefore only checks the first element in the info array.
+				if (c.info && componentName === c.info[0].componentName) {
 					addComponenetAttributes(c, items, importedComponents);
 				}
 			}
@@ -441,7 +414,7 @@ connection.onCompletion(
 		let word = docHelper.getFirstPrecedingWordString(firstPrecedingWordPos);
 
 		if (word === 'import') {
-			let items: CompletionItem [] = [];
+			let items: CompletionItem[] = [];
 
 			for (let module of qmlModules) {
 				items.push(CompletionItem.create(module.name));
@@ -451,21 +424,22 @@ connection.onCompletion(
 		}
 
 		let componentName = getQmlType(docHelper, pos);
-		
+
 		connection.console.log('####### Object Found: ' + componentName);
 
 		//isInPropertyOrSignal(doc, Position.create(pos.line, pos.character-1), pos);
 
 		addBuiltinKeyword(completionItem);
-		
-		if( componentName !== null) {
 
-			let items: CompletionItem [] = [];
-			
+		if (componentName !== null) {
+
+			let items: CompletionItem[] = [];
+
 			for (let c of importedComponents) {
-				// WARNING
-				if (c.info && componentName === c.info[0].componentName ) {
-					addComponenetAttributes (c, items, importedComponents);
+				// Assume that the componentName part of different exports statements of the same component are the same, 
+				// therefore only checks the first element in the info array.
+				if (c.info && componentName === c.info[0].componentName) {
+					addComponenetAttributes(c, items, importedComponents);
 				}
 			}
 

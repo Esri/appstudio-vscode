@@ -1,7 +1,7 @@
 {
 	"name": "appstudio-qml-server",
 	"description": "Qml language server for the appstudio extension.",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"license": "MIT",
 	"engines": {
 		"node": "*"

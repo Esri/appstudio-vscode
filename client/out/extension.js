@@ -7,6 +7,7 @@ const ChildProcess = require("child_process");
 const vscode_1 = require("vscode");
 const path = require("path");
 const read_ini_file_1 = require("read-ini-file");
+const fs = require("fs");
 const vscode_languageclient_1 = require("vscode-languageclient");
 let client;
 // this method is called when your extension is activated
@@ -47,17 +48,10 @@ function activate(context) {
             console.log(reason);
         });
     };
-    // Function to select the AppStudio folder manually
+    // Ask the user to select the AppStudio folder manually
     let manualSelectAppStudioPath = () => {
-        vscode_1.window.showErrorMessage('System cannot find AppStudio on this machine');
-        vscode_1.window.showWarningMessage('Select Yes above if you wish to find the folder manually');
-        vscode_1.window.showQuickPick(['Yes', 'No'], {
-            placeHolder: 'Would you like to select the AppStudio folder manually?',
-        }).then(choice => {
-            if (choice === 'Yes') {
-                vscode_1.commands.executeCommand('selectAppStudioPath');
-            }
-        });
+        vscode_1.window.showErrorMessage('System cannot find AppStudio installation on this machine. Select Yes above if you wish to find the installation manually.');
+        vscode_1.commands.executeCommand('selectAppStudioPath');
     };
     // If the configuration value is a empty string, i.e. the extension is run for the first time on the machine, 
     // select the AppStudio automatically
@@ -69,13 +63,21 @@ function activate(context) {
     let qmlProjectPaths = [];
     // Console ouput for the AppStudio Apps
     let consoleOutput = vscode_1.window.createOutputChannel('AppStudio');
-    // Function to find files with extension '.qmlproject' across all workspace folders,
+    // Function to find files 'appinfo.json' across all workspace folders,
     // and add the folder path to the qmlProjectPaths array
     let addQmlProject = () => {
-        vscode_1.workspace.findFiles('**/*.qmlproject').then(result => {
+        vscode_1.workspace.findFiles('**/appinfo.json').then(result => {
             result.forEach(uri => {
                 //let folderPath = workspace.getWorkspaceFolder(uri).uri.fsPath;
-                // use the directory name containing the .qmlproject file found as the project path
+                fs.readFile(uri.fsPath, (err, data) => {
+                    if (err)
+                        console.log(err);
+                    let mainFile = JSON.parse(data.toString()).mainFile;
+                    vscode_1.window.showTextDocument(vscode.Uri.file(path.join(path.dirname(uri.fsPath), mainFile)), {
+                        preview: false
+                    });
+                });
+                // use the directory name containing the appinfo.json file found as the project path
                 qmlProjectPaths.push(path.dirname(uri.fsPath));
             });
         });
@@ -93,14 +95,20 @@ function activate(context) {
     context.subscriptions.push(openApiRefCmd);
     // Command to select the AppStudio folder for executables
     let selectPathCmd = vscode_1.commands.registerCommand('selectAppStudioPath', function () {
-        vscode_1.window.showOpenDialog({
-            canSelectFolders: true,
-            canSelectFiles: false,
-            canSelectMany: false
-        }).then(folder => {
-            if (folder !== undefined && folder.length === 1) {
-                vscode_1.workspace.getConfiguration().update('AppStudio Path', folder[0].fsPath.toString(), true);
-                vscode_1.window.showInformationMessage('AppStudio folder updated: ' + folder[0].fsPath);
+        vscode_1.window.showQuickPick(['Yes', 'No'], {
+            placeHolder: 'Would you like to select the AppStudio folder manually? NOTE: This will override the current path.',
+        }).then(choice => {
+            if (choice === 'Yes') {
+                vscode_1.window.showOpenDialog({
+                    canSelectFolders: true,
+                    canSelectFiles: false,
+                    canSelectMany: false
+                }).then(folder => {
+                    if (folder !== undefined && folder.length === 1) {
+                        vscode_1.workspace.getConfiguration().update('AppStudio Path', folder[0].fsPath.toString(), true);
+                        vscode_1.window.showInformationMessage('AppStudio folder updated: ' + folder[0].fsPath);
+                    }
+                });
             }
         });
     });

@@ -55,6 +55,7 @@ connection.onInitialize((_params) => {
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
     lookforImport(change.document);
+    //documents.all().forEach(doc => connection.console.log(doc.uri));
 });
 function lookforImport(doc) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -63,22 +64,19 @@ function lookforImport(doc) {
         completionItem = [];
         let text = doc.getText();
         let pattern = /import\s+((\w+\.?)+)/g;
-        //let pattern = /import\s+(.*) .*/g;
         let m;
         while ((m = pattern.exec(text))) {
-            //connection.console.log('Regex match: ' + m[0] + '|  ' + m[1] + '  |' + m[2]);
-            //importedModules.push(m[1]);
             for (let module of qmlModules) {
                 if (module.name === m[1] && importedModules.every(module => { return module.name !== m[1]; })) {
                     importedModules.push(module);
-                    // !!!!!  concat does not add to the original array calling the methods !
+                    // NOTE: concat does not add to the original array calling the method !
                     importedComponents = importedComponents.concat(module.components);
                     for (let c of module.components) {
                         if (c.info) {
                             // DEFAULT to add the component name in the first export array
                             let item = vscode_languageserver_1.CompletionItem.create(c.info[0].componentName);
                             item.kind = 7;
-                            item.detail = c.info[0].completeModuleName + '/' + c.info[0].componentName + ' ' + c.info[0].moduleVersion + '\n' + c.name;
+                            item.detail = 'Imported from ' + c.info[0].completeModuleName + '/' + c.info[0].componentName + ' ' + c.info[0].moduleVersion;
                             completionItem.push(item);
                         }
                     }
@@ -97,24 +95,15 @@ function firstCharToUpperCase(str) {
 function readQmltypeJson(fileName) {
     let data = fs.readFileSync(path.join(__dirname, '../qml_types', fileName));
     let comps = JSON.parse(data.toString()).components;
-    //let completeModuleNames: string[] = [];
     for (let component of comps) {
-        //completionItem.push(CompletionItem.create(component.name));
         if (!component.exports)
             continue;
         component.info = [];
         for (let e of component.exports) {
-            //connection.console.log('###: ' + e);
             let m = e.match(/(.*)\/(\w*) (.*)/);
             if (!m)
                 continue;
             let p = m[1].match(/\w+\.?/g);
-            if (p[0] === 'ArcGIS.') {
-                let simpleModuleName = m[1].replace(/ArcGIS.AppFramework/, '');
-                if (simpleModuleName.charAt(0) === '.') {
-                    simpleModuleName = '-' + simpleModuleName.slice(1);
-                }
-            }
             component.info.push({
                 completeModuleName: m[1],
                 componentName: m[2],
@@ -271,18 +260,12 @@ connection.onHover((params) => {
     let word = doc.getText(range);
     let urls = [];
     for (let component of importedComponents) {
-        // WARNING
+        // Assume that the componentName part of different exports statements of the same component are the same, 
+        // therefore only checks the first element in the info array.
         if (component.info && word === component.info[0].componentName) {
-            /*
-            if (component.info.length > 1 && !component.info.every( (val, i, arr) => val.completeModuleName === arr[0].completeModuleName )) {
-                url = '';
-                for (let info of component.info){
-                    url = url + info.completeModuleName.replace(/\./g,'-').toLowerCase() + '-' + info.componentName.toLowerCase() + html + 'n';
-                }
-            }*/
-            let urlz = constructApiRefUrl(component.info[0]);
-            if (urls.every(val => val !== urlz)) {
-                urls.push(urlz);
+            let url = constructApiRefUrl(component.info[0]);
+            if (urls.every(val => val !== url)) {
+                urls.push(url);
             }
             if (component.info.length > 1) {
                 for (let i = 1; i < component.info.length; i++) {
@@ -291,22 +274,11 @@ connection.onHover((params) => {
                     }
                 }
             }
-            /*
-            let markup: MarkupContent = {
-                kind: "markdown",
-                // WARNING
-                value: url
-                //value: `[${component.info[0].componentName}](https://doc.arcgis.com/en/appstudio/api/reference/framework/qml-arcgis-appframework${component.info[0].dividedModuleName[0]}-${component.info[0].componentName} "Component found!")`
-            };
-            let result: Hover = {
-                contents: markup,
-                range: range
-            };
-            return result;
-            */
         }
     }
     let value = '';
+    if (urls.length > 1)
+        value = 'Multiple Api reference links found for this component.\n\nYou may have imported multiple modules containing the component with the same name, or some of the links may be deprecated.\n';
     for (let url of urls) {
         value = value + '\n' + url + '\n';
     }
@@ -329,7 +301,8 @@ connection.onCompletion((params) => {
         let items = [];
         let componentName = docHelper.getFirstPrecedingWordString({ line: pos.line, character: pos.character - 1 });
         for (let c of importedComponents) {
-            // WARNING
+            // Assume that the componentName part of different exports statements of the same component are the same, 
+            // therefore only checks the first element in the info array.
             if (c.info && componentName === c.info[0].componentName) {
                 addComponenetAttributes(c, items, importedComponents);
             }
@@ -352,7 +325,8 @@ connection.onCompletion((params) => {
     if (componentName !== null) {
         let items = [];
         for (let c of importedComponents) {
-            // WARNING
+            // Assume that the componentName part of different exports statements of the same component are the same, 
+            // therefore only checks the first element in the info array.
             if (c.info && componentName === c.info[0].componentName) {
                 addComponenetAttributes(c, items, importedComponents);
             }

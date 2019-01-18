@@ -3,7 +3,12 @@
     "displayName": "AppStudio",
     "description": "AppStudio Extension for Visual Studio Code",
 	"license": "MIT",
-	"version": "1.0.0",
+    "version": "0.0.1",
+    "publisher": "Esri",
+    "repository": {
+		"type": "git",
+		"url": "https://github.com/ArcGIS/appstudio-vscode"
+	},
 	"categories": [],
 	"engines": {
 		"vscode": "^1.30.0"
