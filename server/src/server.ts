@@ -16,11 +16,11 @@ import {
 	Hover,
 	MarkupContent
 } from 'vscode-languageserver';
-import { DocHelper } from './docHelper';
+import { DocController } from './docHelper';
 import * as fs from 'fs';
 import * as path from 'path';
 
-interface QmlComponent {
+export interface QmlComponent {
 	name: string;
 	exports: string[];
 	prototype: string;
@@ -40,22 +40,20 @@ interface QmlComponent {
 	info: QmlInfo[];
 }
 
-interface QmlInfo {
+export interface QmlInfo {
 	completeModuleName: string;
 	componentName: string;
 	moduleVersion: string;
 	dividedModuleName: string[];
 }
 
-interface QmlModule {
+export interface QmlModule {
 	name: string;
 	components: QmlComponent[];
 }
 
-let importedModules: QmlModule[] = [];
-let importedComponents: QmlComponent[] = [];
 let qmlModules: QmlModule[] = [];
-let completionItem: CompletionItem[] = [];
+let docControllers: DocController[] = [];
 
 readQmltypeJson('AppFrameworkPlugin.json');
 readQmltypeJson('AppFrameworkPositioningPlugin.json');
@@ -99,46 +97,26 @@ connection.onInitialize((_params: InitializeParams) => {
 
 documents.onDidChangeContent(change => {
 
-	lookforImport(change.document);
+	connection.console.log('onDidchangeContent executed');
+
+	let controller = docControllers.find( controller => {
+		return controller.getDoc().uri === change.document.uri;
+	});
+
+	if (controller === undefined) {
+		connection.console.log('Undefined!');
+		let controller = new DocController(change.document);
+		controller.lookforImport(qmlModules);
+		docControllers.push(controller);
+	} else {
+		connection.console.log('DocController Found');
+		controller.lookforImport(qmlModules);
+	}
+	//controller.lookforImport(qmlModules);
+	//lookforImport(change.document);
 	//documents.all().forEach(doc => connection.console.log(doc.uri));
 });
 
-
-
-async function lookforImport(doc: TextDocument): Promise<void> {
-
-	importedModules = [];
-	importedComponents = [];
-	completionItem = [];
-
-	let text = doc.getText();
-	let pattern = /import\s+((\w+\.?)+)/g;
-	let m: RegExpExecArray | null;
-
-	while ((m = pattern.exec(text))) {
-
-		for (let module of qmlModules) {
-
-			if (module.name === m[1] && importedModules.every(module => { return module.name !== m[1]; })) {
-				importedModules.push(module);
-
-				// NOTE: concat does not add to the original array calling the method !
-				importedComponents = importedComponents.concat(module.components);
-
-				for (let c of module.components) {
-					if (c.info) {
-						// DEFAULT to add the component name in the first export array
-						let item = CompletionItem.create(c.info[0].componentName);
-						item.kind = 7;
-						item.detail = 'Imported from ' + c.info[0].completeModuleName + '/' + c.info[0].componentName + ' ' + c.info[0].moduleVersion;
-						completionItem.push(item);
-					}
-				}
-			}
-		}
-	}
-
-}
 
 connection.onDidChangeWatchedFiles(_change => {
 	// Monitored files have change in VSCode
@@ -224,55 +202,6 @@ function isInPropertyOrSignal (doc: TextDocument, startPos: Position, endPos: Po
 }
 */
 
-function getQmlType(docHelper: DocHelper, pos: Position): string {
-
-	let firstPrecedingWordPos = docHelper.getFirstPrecedingRegex(docHelper.getFirstCharOutsideBracketPairs(pos, /\{/), /\w/);
-	let result = docHelper.getFirstPrecedingWordString(firstPrecedingWordPos);
-
-	if (!result) { return null; }
-
-	if (isValidComponent(result, importedComponents)) {
-		return result;
-	} else {
-		return getQmlType(docHelper, firstPrecedingWordPos);
-	}
-
-}
-
-function isValidComponent(str: string, importedComponents: QmlComponent[]): boolean {
-
-	for (let c of importedComponents) {
-		// DEFAULT to compare with component name in first exports array
-		if (c.info && str === c.info[0].componentName) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-function addBuiltinKeyword(completionItem: CompletionItem[]) {
-	let keywords = [
-		'import', 'property', 'signal', 'id: ', 'states: '
-	];
-	let qmlTypes = [
-		'bool', 'double', 'enumeration', 'int', 'list', 'real', 'string', 'url', 'var'
-	];
-
-	for (let keyword of keywords) {
-		let item = CompletionItem.create(keyword);
-		item.kind = 14;
-		completionItem.push(item);
-	}
-
-	for (let type of qmlTypes) {
-		let item = CompletionItem.create(type);
-		item.kind = 21;
-		completionItem.push(item);
-	}
-
-}
-
 function addComponenetAttributes(component: QmlComponent, items: CompletionItem[], importedComponents: QmlComponent[]) {
 	if (component.properties !== undefined) {
 		for (let p of component.properties) {
@@ -339,13 +268,16 @@ connection.onHover(
 
 		let doc = documents.get(params.textDocument.uri);
 		let pos = params.position;
-		let docHelper = new DocHelper(doc);
+		let controller = docControllers.find( controller => {
+			return controller.getDoc().uri === doc.uri;
+		});
 
-		let range = docHelper.getWordAtPosition(pos);
+		let range = controller.getWordAtPosition(pos);
 		let word = doc.getText(range);
 
 		let urls: string[] = [];
 
+		let importedComponents = controller.getImportedComponents();
 		for (let component of importedComponents) {
 			// Assume that the componentName part of different exports statements of the same component are the same, 
 			// therefore only checks the first element in the info array.
@@ -391,13 +323,19 @@ connection.onCompletion(
 		let doc = documents.get(params.textDocument.uri);
 		let pos = params.position;
 
-		let docHelper = new DocHelper(doc);
+		let controller = docControllers.find( controller => {
+			return controller.getDoc().uri === doc.uri;
+		});
+
+		connection.console.log(controller.getDoc().uri);
+
+		let importedComponents = controller.getImportedComponents();
 
 		if (params.context.triggerCharacter === '.') {
 
 			let items: CompletionItem[] = [];
 
-			let componentName = docHelper.getFirstPrecedingWordString({ line: pos.line, character: pos.character - 1 });
+			let componentName = controller.getFirstPrecedingWordString({ line: pos.line, character: pos.character - 1 });
 
 			for (let c of importedComponents) {
 				// Assume that the componentName part of different exports statements of the same component are the same, 
@@ -410,10 +348,11 @@ connection.onCompletion(
 			return items;
 		}
 
-		let firstPrecedingWordPos = docHelper.getFirstPrecedingRegex(Position.create(pos.line, pos.character - 1), /\w/);
-		let word = docHelper.getFirstPrecedingWordString(firstPrecedingWordPos);
+		let firstPrecedingWordPos = controller.getFirstPrecedingRegex(Position.create(pos.line, pos.character - 1), /\w/);
+		let word = controller.getFirstPrecedingWordString(firstPrecedingWordPos);
 
 		if (word === 'import') {
+			connection.console.log('IMPORTING');
 			let items: CompletionItem[] = [];
 
 			for (let module of qmlModules) {
@@ -423,13 +362,13 @@ connection.onCompletion(
 			return items;
 		}
 
-		let componentName = getQmlType(docHelper, pos);
+		let componentName = controller.getQmlType(pos);
 
 		connection.console.log('####### Object Found: ' + componentName);
 
 		//isInPropertyOrSignal(doc, Position.create(pos.line, pos.character-1), pos);
 
-		addBuiltinKeyword(completionItem);
+		//addBuiltinKeyword(completionItem);
 
 		if (componentName !== null) {
 
@@ -443,10 +382,10 @@ connection.onCompletion(
 				}
 			}
 
-			return items.concat(completionItem);
+			return items.concat(controller.getCompletionItem());
 		}
 
-		return completionItem;
+		return controller.getCompletionItem();
 	}
 );
 

@@ -2,15 +2,120 @@
 import {
 	TextDocument,
 	Position,
-	Range
-} from "vscode-languageserver";
+	Range,
+	CompletionItem
+} from 'vscode-languageserver';
+import { QmlComponent, QmlInfo, QmlModule } from './server';
 
-export class DocHelper {
+export class DocController {
 
 	private doc: TextDocument;
+	private importedModules: QmlModule[];
+	private importedComponents: QmlComponent[];
+	private completionItem: CompletionItem[];
 
 	constructor(doc: TextDocument) {
 		this.doc = doc;
+	}
+
+	public getDoc() {
+		return this.doc;
+	}
+
+	public getImportedComponents(): QmlComponent[] {
+		return this.importedComponents;
+	}
+
+	public getCompletionItem(): CompletionItem[] {
+		return this.completionItem;
+	}
+
+	public addCompletionItems(items: CompletionItem[]) {
+		this.completionItem = this.completionItem.concat(items);
+	}
+
+	public async lookforImport(allModules: QmlModule[]): Promise<void> {
+
+		this.importedModules = [];
+		this.importedComponents = [];
+		this.completionItem = [];
+	
+		let text = this.doc.getText();
+		let pattern = /import\s+((\w+\.?)+)/g;
+		let m: RegExpExecArray | null;
+	
+		while ((m = pattern.exec(text))) {
+	
+			for (let module of allModules) {
+	
+				if (module.name === m[1] && this.importedModules.every(module => { return module.name !== m[1]; })) {
+					this.importedModules.push(module);
+	
+					// NOTE: concat does not add to the original array calling the method !
+					this.importedComponents = this.importedComponents.concat(module.components);
+	
+					for (let c of module.components) {
+						if (c.info) {
+							// DEFAULT to add the component name in the first export array
+							let item = CompletionItem.create(c.info[0].componentName);
+							item.kind = 7;
+							item.detail = 'Imported from ' + c.info[0].completeModuleName + '/' + c.info[0].componentName + ' ' + c.info[0].moduleVersion;
+							this.completionItem.push(item);
+						}
+					}
+				}
+			}
+		}
+		this.addBuiltinKeyword(this.completionItem);
+	}
+
+	public getQmlType(pos: Position): string {
+
+		let firstPrecedingWordPos = this.getFirstPrecedingRegex(this.getFirstCharOutsideBracketPairs(pos, /\{/), /\w/);
+		let result = this.getFirstPrecedingWordString(firstPrecedingWordPos);
+	
+		if (!result) { return null; }
+	
+		if (this.isValidComponent(result)) {
+			return result;
+		} else {
+			return this.getQmlType(firstPrecedingWordPos);
+		}
+	
+	}
+	
+	public isValidComponent(str: string): boolean {
+	
+		for (let c of this.importedComponents) {
+			// DEFAULT to compare with component name in first exports array
+			if (c.info && str === c.info[0].componentName) {
+				return true;
+			}
+		}
+	
+		return false;
+	}
+
+	public addBuiltinKeyword(completionItem: CompletionItem[]) {
+		let keywords = [
+			'import', 'property', 'signal', 'id: ', 'states: '
+		];
+		let qmlTypes = [
+			'bool', 'double', 'enumeration', 'int', 'list', 'real', 'string', 'url', 'var'
+		];
+	
+		for (let keyword of keywords) {
+			let item = CompletionItem.create(keyword);
+			item.kind = 14;
+			completionItem.push(item);
+		}
+	
+		for (let type of qmlTypes) {
+			let item = CompletionItem.create(type);
+			item.kind = 21;
+			completionItem.push(item);
+		}
+	
 	}
 
 	public getWordAtPosition(pos: Position): Range {

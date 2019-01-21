@@ -1,9 +1,98 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_1 = require("vscode-languageserver");
-class DocHelper {
+class DocController {
     constructor(doc) {
         this.doc = doc;
+    }
+    getDoc() {
+        return this.doc;
+    }
+    getImportedComponents() {
+        return this.importedComponents;
+    }
+    getCompletionItem() {
+        return this.completionItem;
+    }
+    addCompletionItems(items) {
+        this.completionItem = this.completionItem.concat(items);
+    }
+    lookforImport(allModules) {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.importedModules = [];
+            this.importedComponents = [];
+            this.completionItem = [];
+            let text = this.doc.getText();
+            let pattern = /import\s+((\w+\.?)+)/g;
+            let m;
+            while ((m = pattern.exec(text))) {
+                for (let module of allModules) {
+                    if (module.name === m[1] && this.importedModules.every(module => { return module.name !== m[1]; })) {
+                        this.importedModules.push(module);
+                        // NOTE: concat does not add to the original array calling the method !
+                        this.importedComponents = this.importedComponents.concat(module.components);
+                        for (let c of module.components) {
+                            if (c.info) {
+                                // DEFAULT to add the component name in the first export array
+                                let item = vscode_languageserver_1.CompletionItem.create(c.info[0].componentName);
+                                item.kind = 7;
+                                item.detail = 'Imported from ' + c.info[0].completeModuleName + '/' + c.info[0].componentName + ' ' + c.info[0].moduleVersion;
+                                this.completionItem.push(item);
+                            }
+                        }
+                    }
+                }
+            }
+            this.addBuiltinKeyword(this.completionItem);
+        });
+    }
+    getQmlType(pos) {
+        let firstPrecedingWordPos = this.getFirstPrecedingRegex(this.getFirstCharOutsideBracketPairs(pos, /\{/), /\w/);
+        let result = this.getFirstPrecedingWordString(firstPrecedingWordPos);
+        if (!result) {
+            return null;
+        }
+        if (this.isValidComponent(result)) {
+            return result;
+        }
+        else {
+            return this.getQmlType(firstPrecedingWordPos);
+        }
+    }
+    isValidComponent(str) {
+        for (let c of this.importedComponents) {
+            // DEFAULT to compare with component name in first exports array
+            if (c.info && str === c.info[0].componentName) {
+                return true;
+            }
+        }
+        return false;
+    }
+    addBuiltinKeyword(completionItem) {
+        let keywords = [
+            'import', 'property', 'signal', 'id: ', 'states: '
+        ];
+        let qmlTypes = [
+            'bool', 'double', 'enumeration', 'int', 'list', 'real', 'string', 'url', 'var'
+        ];
+        for (let keyword of keywords) {
+            let item = vscode_languageserver_1.CompletionItem.create(keyword);
+            item.kind = 14;
+            completionItem.push(item);
+        }
+        for (let type of qmlTypes) {
+            let item = vscode_languageserver_1.CompletionItem.create(type);
+            item.kind = 21;
+            completionItem.push(item);
+        }
     }
     getWordAtPosition(pos) {
         let range = vscode_languageserver_1.Range.create(pos, vscode_languageserver_1.Position.create(pos.line, pos.character + 1));
@@ -96,5 +185,5 @@ class DocHelper {
         return vscode_languageserver_1.Position.create(0, 0);
     }
 }
-exports.DocHelper = DocHelper;
+exports.DocController = DocController;
 //# sourceMappingURL=docHelper.js.map
