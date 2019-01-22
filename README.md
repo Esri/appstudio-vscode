@@ -27,13 +27,17 @@ At the moment you can run this extension by installing the extension locally, or
 
 #### Install the extension locally 
 
-Download the `appstudio-0.0.1.vsix` file in the repo onto your machine (you don't need to download the whole repo). Go to the path of the downloaded file and run `code --install-extension appstudio-0.0.1.vsix`.
+Download the `appstudio-%VERSION%.vsix` file in the repo (you don't need to download the whole repo). 
 
-After the extension is successfully installed, open VS code and enable the extension. You can find the extension in: extension panel on the left -> Disabled.
+Open VS Code, go to: Extensions panel (on the left) -> More Actions (top right corner of extension panel) -> Install from VSIX, and choose the .vsix file downloaded to install.  
 
-#### Running in VS Code debug mode
+(Alternatively, on Windows and Linux you can install by: Go to the path of the downloaded file on command line and run `code --install-extension appstudio-%VERSION%.vsix`. On macOS running the 'code' command requires more steps: https://code.visualstudio.com/docs/setup/mac )
 
-Clone this repository onto your local machine and open it in VS code. Hit F5 to enter debug mode.
+After the extension is successfully installed, you might need to enable the extension and reload VS code. You can find the extension in: Extensions panel -> Disabled.
+
+#### Running in VS Code debug mode (Node.js installation required)
+
+Make sure you have Node.js installed. Clone this repository onto your machine and open it in VS code. Hit F5 to enter debug mode.
 
 ## Extension Settings
 
