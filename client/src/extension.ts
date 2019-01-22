@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import * as ChildProcess from 'child_process';
 import { window, workspace, commands } from 'vscode';
 import * as path from 'path';
-import loadIniFile from 'read-ini-file';
+import * as loadIniFile from 'read-ini-file';
 import * as fs from 'fs';
 
 import {
@@ -178,7 +178,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Create status bar items for the commands
 	createStatusBarItem('$(file-directory)', 'selectAppStudioPath', "Select AppStudio Folder");
-	createStatusBarItem('$(globe)', 'openApiRefLink', 'Open Api Reference');
+	createStatusBarItem('$(question)', 'openApiRefLink', 'Open Api Reference');
 	createStatusBarItem('$(gear)', 'appSetting', 'appSetting(Alt+Shift+S)');
 	createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload(Alt+Shift+UpArrow)');
 	createStatusBarItem('$(tools)', 'appMake', 'appMake(Alt+Shift+M)');
@@ -218,7 +218,7 @@ export function activate(context: vscode.ExtensionContext) {
 		} else {
 
 			if (qmlProjectPaths.length === 0) {
-				window.showErrorMessage("No qmlproject found.");
+				window.showErrorMessage("No appinfo.json found.");
 			} else if (qmlProjectPaths.length > 1) {
 				// if there are more than one qml projects in the workspace, prompts the user to select one of them to run the command
 

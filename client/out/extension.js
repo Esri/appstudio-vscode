@@ -6,7 +6,7 @@ const vscode = require("vscode");
 const ChildProcess = require("child_process");
 const vscode_1 = require("vscode");
 const path = require("path");
-const read_ini_file_1 = require("read-ini-file");
+const loadIniFile = require("read-ini-file");
 const fs = require("fs");
 const vscode_languageclient_1 = require("vscode-languageclient");
 let client;
@@ -32,7 +32,7 @@ function activate(context) {
             let appData = process.env.APPDATA;
             filePath = path.join(appData, '\\Esri\\AppStudio.ini');
         }
-        read_ini_file_1.default(filePath).then(data => {
+        loadIniFile(filePath).then(data => {
             let appStudioPath = data.General.installDir;
             if (appStudioPath !== undefined) {
                 vscode_1.workspace.getConfiguration().update('AppStudio Path', appStudioPath, true);
@@ -146,7 +146,7 @@ function activate(context) {
     */
     // Create status bar items for the commands
     createStatusBarItem('$(file-directory)', 'selectAppStudioPath', "Select AppStudio Folder");
-    createStatusBarItem('$(globe)', 'openApiRefLink', 'Open Api Reference');
+    createStatusBarItem('$(question)', 'openApiRefLink', 'Open Api Reference');
     createStatusBarItem('$(gear)', 'appSetting', 'appSetting(Alt+Shift+S)');
     createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload(Alt+Shift+UpArrow)');
     createStatusBarItem('$(tools)', 'appMake', 'appMake(Alt+Shift+M)');
@@ -181,7 +181,7 @@ function activate(context) {
         }
         else {
             if (qmlProjectPaths.length === 0) {
-                vscode_1.window.showErrorMessage("No qmlproject found.");
+                vscode_1.window.showErrorMessage("No appinfo.json found.");
             }
             else if (qmlProjectPaths.length > 1) {
                 // if there are more than one qml projects in the workspace, prompts the user to select one of them to run the command

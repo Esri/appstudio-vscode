@@ -5,7 +5,7 @@
  * ------------------------------------------------------------------------------------------ */
 Object.defineProperty(exports, "__esModule", { value: true });
 const vscode_languageserver_1 = require("vscode-languageserver");
-const docHelper_1 = require("./docHelper");
+const docController_1 = require("./docController");
 const fs = require("fs");
 const path = require("path");
 let qmlModules = [];
@@ -44,23 +44,28 @@ connection.onInitialize((_params) => {
 // The content of a text document has changed. This event is emitted
 // when the text document first opened or when its content has changed.
 documents.onDidChangeContent(change => {
-    connection.console.log('onDidchangeContent executed');
     let controller = docControllers.find(controller => {
-        return controller.getDoc().uri === change.document.uri;
+        return controller.getDoc() === change.document;
     });
     if (controller === undefined) {
-        connection.console.log('Undefined!');
-        let controller = new docHelper_1.DocController(change.document);
+        let controller = new docController_1.DocController(change.document);
         controller.lookforImport(qmlModules);
         docControllers.push(controller);
     }
     else {
-        connection.console.log('DocController Found');
         controller.lookforImport(qmlModules);
     }
     //controller.lookforImport(qmlModules);
     //lookforImport(change.document);
     //documents.all().forEach(doc => connection.console.log(doc.uri));
+});
+documents.onDidClose(close => {
+    let index = docControllers.findIndex(controller => {
+        return controller.getDoc() === close.document;
+    });
+    if (index > -1) {
+        docControllers.splice(index, 1);
+    }
 });
 connection.onDidChangeWatchedFiles(_change => {
     // Monitored files have change in VSCode
@@ -193,7 +198,7 @@ connection.onHover((params) => {
     let doc = documents.get(params.textDocument.uri);
     let pos = params.position;
     let controller = docControllers.find(controller => {
-        return controller.getDoc().uri === doc.uri;
+        return controller.getDoc() === doc;
     });
     let range = controller.getWordAtPosition(pos);
     let word = doc.getText(range);
@@ -237,9 +242,8 @@ connection.onCompletion((params) => {
     let doc = documents.get(params.textDocument.uri);
     let pos = params.position;
     let controller = docControllers.find(controller => {
-        return controller.getDoc().uri === doc.uri;
+        return controller.getDoc() === doc;
     });
-    connection.console.log(controller.getDoc().uri);
     let importedComponents = controller.getImportedComponents();
     if (params.context.triggerCharacter === '.') {
         let items = [];
@@ -256,7 +260,6 @@ connection.onCompletion((params) => {
     let firstPrecedingWordPos = controller.getFirstPrecedingRegex(vscode_languageserver_1.Position.create(pos.line, pos.character - 1), /\w/);
     let word = controller.getFirstPrecedingWordString(firstPrecedingWordPos);
     if (word === 'import') {
-        connection.console.log('IMPORTING');
         let items = [];
         for (let module of qmlModules) {
             items.push(vscode_languageserver_1.CompletionItem.create(module.name));
