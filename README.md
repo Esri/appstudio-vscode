@@ -31,7 +31,7 @@ Download the `appstudio-%VERSION%.vsix` file in the repo (you don't need to down
 
 Open VS Code, go to: Extensions panel (on the left) -> More Actions (top right corner of extension panel) -> Install from VSIX, and choose the .vsix file downloaded to install.  
 
-(Alternatively, on Windows and Linux you can install by: Go to the path of the downloaded file on command line and run `code --install-extension appstudio-%VERSION%.vsix`. On macOS running the 'code' command requires more steps: https://code.visualstudio.com/docs/setup/mac )
+> Alternatively, on Windows and Linux you can install by: Go to the path of the downloaded file on command line and run `code --install-extension appstudio-%VERSION%.vsix`. On macOS running the 'code' command requires more steps: https://code.visualstudio.com/docs/setup/mac 
 
 After the extension is successfully installed, you might need to enable the extension and reload VS code. You can find the extension in: Extensions panel -> Disabled.
 
