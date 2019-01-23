@@ -6,7 +6,7 @@ import { window, workspace, commands } from 'vscode';
 import * as path from 'path';
 import * as loadIniFile from 'read-ini-file';
 import * as fs from 'fs';
-
+import * as glob from 'glob';
 import {
 	LanguageClient,
 	LanguageClientOptions,
@@ -170,11 +170,61 @@ export function activate(context: vscode.ExtensionContext) {
 		]);
 	}
 
-	/*
-    let testCmd = commands.registerCommand('testCmd', () => {
 
-    });
-    */
+	let testCmd = commands.registerCommand('testCmd', () => {
+		//let targetFiles = 
+
+		let appStudioPath: string = workspace.getConfiguration().get('AppStudio Path');
+
+		let qmlTypes = findFilesInDir(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio\\bin\\qml',/\.qmltypes/i);
+		//console.log('result: ', qmlTypes.length);
+		//console.log(qmlTypes);
+		
+
+		let j = 0;
+		for (let i = 0; i < qmlTypes.length; i++) {
+
+			j++;
+			let result = ChildProcess.spawn(appStudioPath + '\\bin\\appRun.exe ', [path.join(__dirname,'../../QMLTYPEStoJSON'), '--qmltypes', qmlTypes[i], '--json', path.join(__dirname,'../../qml_types', i+'.json'), '--show', 'minimized']);
+			result.on('close', data => {
+				console.log(i+ ' finished ' +data);
+				j--;
+				console.log('All finished');
+			});
+			
+		}
+
+		
+		//glob(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio\\bin\\qml' + '/**/*.qmltypes',{}, (err, files) => {
+			//console.log(files);
+			//console.log('Length: ', files.length);
+		//});
+		
+	});
+
+	function findFilesInDir(startPath: string, filter: RegExp){
+
+		var results: string[] = [];
+	
+		if (!fs.existsSync(startPath)){
+			console.log("no dir ",startPath);
+			return;
+		}
+	
+		var files=fs.readdirSync(startPath);
+		for(var i=0;i<files.length;i++){
+			var filename=path.join(startPath,files[i]);
+			var stat = fs.lstatSync(filename);
+			if (stat.isDirectory()){
+				results = results.concat(findFilesInDir(filename,filter)); //recurse
+			}
+			else if (filter.test(filename)) {
+				//console.log('-- found: ',filename);
+				results.push(filename);
+			}
+		}
+		return results;
+	}
 
 	// Create status bar items for the commands
 	createStatusBarItem('$(file-directory)', 'selectAppStudioPath', "Select AppStudio Folder");
@@ -183,7 +233,7 @@ export function activate(context: vscode.ExtensionContext) {
 	createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload(Alt+Shift+UpArrow)');
 	createStatusBarItem('$(tools)', 'appMake', 'appMake(Alt+Shift+M)');
 	createStatusBarItem('$(triangle-right)', 'appRun', 'appRun(Alt+Shift+R)');
-	//createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
+	createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
 
 	// Register all the executable commands with the corresponding command names and executable paths
 	function registerExecutableCommands(cmdPaths: string[]) {
