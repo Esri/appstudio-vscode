@@ -101,14 +101,10 @@ documents.onDidChangeContent(change => {
 	});
 
 	if (controller === undefined) {
-		let controller = new DocController(change.document);
-		controller.lookforImport(qmlModules);
+		controller = new DocController(change.document);
 		docControllers.push(controller);
-	} else {
-		controller.lookforImport(qmlModules);
 	}
-	//controller.lookforImport(qmlModules);
-	//lookforImport(change.document);
+	controller.lookforImport(qmlModules);
 	//documents.all().forEach(doc => connection.console.log(doc.uri));
 });
 
@@ -145,6 +141,12 @@ function readQmltypeJson(fileName: string) {
 			let m = e.match(/(.*)\/(\w*) (.*)/);
 
 			if (!m) continue;
+
+			if ((m[1]) === 'QtQuick.Controls') {
+				if (m[3].startsWith('2')) {
+					m[1] = 'QtQuick.Controls2';
+				}
+			}
 
 			let p = m[1].match(/\w+\.?/g);
 
@@ -282,14 +284,18 @@ connection.onHover(
 
 		let importedComponents = controller.getImportedComponents();
 		for (let component of importedComponents) {
-			// Assume that the componentName part of different exports statements of the same component are the same, 
+			// Assume that the componentName of different exports statements of the same component are the same, 
 			// therefore only checks the first element in the info array.
 			if (component.info && word === component.info[0].componentName) {
+				// compare the hovering word with the componentName, if they are the same and the url array do not already contain the url,
+				// add it to the array. (Different components may contain the same componentName)
 				let url = constructApiRefUrl(component.info[0]);
 				if (urls.every(val => val !== url)) {
 					urls.push(url);
 				}
 
+				// A component may have multiple info with different module names, or same module name with different version number,
+				// add the url constructed from a different module name
 				if (component.info.length > 1) {
 					for (let i = 1; i < component.info.length; i++) {
 						if (component.info[i].completeModuleName !== component.info[0].completeModuleName) {
@@ -301,7 +307,7 @@ connection.onHover(
 		}
 
 		let value = '';
-		if (urls.length > 1) value = 'Multiple Api reference links found for this component.\n\nYou may have imported multiple modules containing the component with the same name, or some of the links may be deprecated.\n';
+		if (urls.length > 1) value = 'Multiple Api reference links found for this type.\n\nYou may have imported multiple modules containing the same type.\n\nSome of the links may be deprecated.\n';
 
 		for (let url of urls) {
 			value = value + '\n' + url + '\n';
@@ -356,6 +362,11 @@ connection.onCompletion(
 			let items: CompletionItem[] = [];
 
 			for (let module of qmlModules) {
+
+				if (module.name === 'QtQuick.Controls2') {
+					items.push(CompletionItem.create('QtQuick.Controls 2'));
+					continue;
+				}
 				items.push(CompletionItem.create(module.name));
 			}
 

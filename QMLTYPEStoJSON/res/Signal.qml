@@ -8,6 +8,7 @@ Item {
 
     property string name
     property int revision
+    property string type
 
     QtObject {
         id: internal
@@ -18,6 +19,7 @@ Item {
         var obj = {
             name: name,
             revision: revision,
+            type: type,
             parameters: [ ]
         };
 
