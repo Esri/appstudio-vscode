@@ -25,6 +25,9 @@ class DocController {
     addCompletionItems(items) {
         this.completionItem = this.completionItem.concat(items);
     }
+    getIds() {
+        return this.objectIds;
+    }
     lookforImport(allModules) {
         return __awaiter(this, void 0, void 0, function* () {
             this.importedModules = [];
@@ -74,6 +77,25 @@ class DocController {
             }
             this.addBuiltinKeyword(this.completionItem);
         });
+    }
+    lookforId(doc) {
+        this.objectIds = [];
+        let text = doc.getText();
+        let pattern = /id\s*:\s*(\w+)/g;
+        let m;
+        while (m = pattern.exec(text)) {
+            //connection.console.log('ID match : ' + m[0] + ' at: ' + m.index + '\n' + 'Position: ' + doc.positionAt(m.index).line + ':' + doc.positionAt(m.index).character);
+            let type = this.getQmlType(doc.positionAt(m.index));
+            if (type === null)
+                continue;
+            let objectId = { id: m[1], type: type };
+            this.objectIds.push(objectId);
+            let item = vscode_languageserver_1.CompletionItem.create(m[1]);
+            item.kind = 6;
+            item.detail = 'Type of: ' + type;
+            this.completionItem.push(item);
+            //connection.console.log('ID match : ' + m[1] + ' type: ' + type);
+        }
     }
     getQmlType(pos) {
         let firstPrecedingWordPos = this.getFirstPrecedingRegex(this.getFirstCharOutsideBracketPairs(pos, /\{/), /\w/);

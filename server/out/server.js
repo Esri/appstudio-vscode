@@ -52,6 +52,7 @@ documents.onDidChangeContent(change => {
         docControllers.push(controller);
     }
     controller.lookforImport(qmlModules);
+    controller.lookforId(change.document);
     //documents.all().forEach(doc => connection.console.log(doc.uri));
 });
 documents.onDidClose(close => {
@@ -259,6 +260,15 @@ connection.onCompletion((params) => {
                 addComponenetAttributes(c, items, importedComponents);
             }
         }
+        for (let id of controller.getIds()) {
+            if (componentName === id.id) {
+                for (let c of importedComponents) {
+                    if (c.info && id.type === c.info[0].componentName) {
+                        addComponenetAttributes(c, items, importedComponents);
+                    }
+                }
+            }
+        }
         return items;
     }
     let firstPrecedingWordPos = controller.getFirstPrecedingRegex(vscode_languageserver_1.Position.create(pos.line, pos.character - 1), /\w/);
@@ -273,6 +283,9 @@ connection.onCompletion((params) => {
             items.push(vscode_languageserver_1.CompletionItem.create(module.name));
         }
         return items;
+    }
+    if (word === 'id') {
+        return [];
     }
     let componentName = controller.getQmlType(pos);
     connection.console.log('####### Object Found: ' + componentName);

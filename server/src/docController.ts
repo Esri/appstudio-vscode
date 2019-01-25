@@ -5,7 +5,7 @@ import {
 	Range,
 	CompletionItem
 } from 'vscode-languageserver';
-import { QmlComponent, QmlInfo, QmlModule } from './server';
+import { QmlComponent, ObjectId, QmlModule } from './server';
 
 export class DocController {
 
@@ -13,6 +13,7 @@ export class DocController {
 	private importedModules: QmlModule[];
 	private importedComponents: QmlComponent[];
 	private completionItem: CompletionItem[];
+	private objectIds: ObjectId[];
 
 	constructor(doc: TextDocument) {
 		this.doc = doc;
@@ -32,6 +33,10 @@ export class DocController {
 
 	public addCompletionItems(items: CompletionItem[]) {
 		this.completionItem = this.completionItem.concat(items);
+	}
+
+	public getIds(): ObjectId[] {
+		return this.objectIds;
 	}
 
 	public async lookforImport(allModules: QmlModule[]): Promise<void> {
@@ -90,6 +95,34 @@ export class DocController {
 			}
 		}
 		this.addBuiltinKeyword(this.completionItem);
+	}
+
+	public lookforId(doc: TextDocument) {
+		this.objectIds = [];
+	
+		let text = doc.getText();
+		
+		let pattern = /id\s*:\s*(\w+)/g;
+		let m: RegExpExecArray | null;
+	
+		while (m = pattern.exec(text)) {
+	
+			//connection.console.log('ID match : ' + m[0] + ' at: ' + m.index + '\n' + 'Position: ' + doc.positionAt(m.index).line + ':' + doc.positionAt(m.index).character);
+	
+			let type = this.getQmlType(doc.positionAt(m.index));
+			if (type === null) continue;
+
+			let objectId: ObjectId = {id: m[1], type: type};
+			this.objectIds.push(objectId);
+
+			let item = CompletionItem.create(m[1]);
+			item.kind = 6;
+			item.detail = 'Type of: ' + type;
+			this.completionItem.push(item);
+	
+			//connection.console.log('ID match : ' + m[1] + ' type: ' + type);
+		}
+	
 	}
 
 	public getQmlType(pos: Position): string {

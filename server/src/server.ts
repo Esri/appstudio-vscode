@@ -13,7 +13,8 @@ import {
 	Position,
 	TextDocumentPositionParams,
 	Hover,
-	MarkupContent
+	MarkupContent,
+	TextDocument
 } from 'vscode-languageserver';
 import { DocController } from './docController';
 import * as fs from 'fs';
@@ -49,6 +50,11 @@ export interface QmlInfo {
 export interface QmlModule {
 	name: string;
 	components: QmlComponent[];
+}
+
+export interface ObjectId {
+	id: string;
+	type: string;
 }
 
 let qmlModules: QmlModule[] = [];
@@ -105,6 +111,7 @@ documents.onDidChangeContent(change => {
 		docControllers.push(controller);
 	}
 	controller.lookforImport(qmlModules);
+	controller.lookforId(change.document);
 	//documents.all().forEach(doc => connection.console.log(doc.uri));
 });
 
@@ -352,6 +359,17 @@ connection.onCompletion(
 				}
 			}
 
+			for (let id of controller.getIds()) {
+				if (componentName === id.id) {
+
+					for (let c of importedComponents) {
+						if (c.info && id.type === c.info[0].componentName) {
+							addComponenetAttributes(c, items, importedComponents);
+						}
+					}
+				}
+			}
+
 			return items;
 		}
 
@@ -372,6 +390,8 @@ connection.onCompletion(
 
 			return items;
 		}
+
+		if (word === 'id') { return [];}
 
 		let componentName = controller.getQmlType(pos);
 
