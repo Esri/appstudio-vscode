@@ -140,18 +140,22 @@ function activate(context) {
         ]);
     }
     let testCmd = vscode_1.commands.registerCommand('testCmd', () => {
-        //let targetFiles = 
-        let appStudioPath = vscode_1.workspace.getConfiguration().get('AppStudio Path');
-        let qmlTypes = findFilesInDir(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio\\bin\\qml', /\.qmltypes/i);
-        //console.log('result: ', qmlTypes.length);
-        //console.log(qmlTypes);
+        /*
+        let appStudioPath: string = workspace.getConfiguration().get('AppStudio Path');
+
+        let qmlTypes = findFilesInDir(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio\\bin\\qml',/\.qmltypes/i);
+        
         for (let i = 0; i < qmlTypes.length; i++) {
-            let result = ChildProcess.spawn(appStudioPath + '\\bin\\appRun.exe ', [path.join(__dirname, '../../QMLTYPEStoJSON'), '--qmltypes', qmlTypes[i], '--json', path.join(__dirname, '../../qml_types', i + '.json'), '--show', 'minimized']);
+
+            let result = ChildProcess.spawn(appStudioPath + '\\bin\\appRun.exe ', [path.join(__dirname,'../../QMLTYPEStoJSON'), '--qmltypes', qmlTypes[i], '--json', path.join(__dirname,'../../qml_types', i+'.json'), '--show', 'minimized']);
             result.on('close', data => {
-                console.log(i + ' finished ' + data);
+                console.log(i+ ' finished ' +data);
+                
                 console.log('All finished');
             });
+            
         }
+        */
         //glob(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio\\bin\\qml' + '/**/*.qmltypes',{}, (err, files) => {
         //console.log(files);
         //console.log('Length: ', files.length);
@@ -218,13 +222,19 @@ function activate(context) {
             }
             else if (qmlProjectPaths.length > 1) {
                 // if there are more than one qml projects in the workspace, prompts the user to select one of them to run the command
-                vscode_1.window.showQuickPick(qmlProjectPaths, {
-                    placeHolder: 'Multiple qmlprojects detected in workspace, please choose one to proceed'
-                }).then(folder => {
-                    if (folder !== undefined) {
-                        runProcess(consoleOutputs, appStudioPath, executable, folder);
-                    }
-                });
+                let file = vscode_1.window.activeTextEditor.document.fileName;
+                if (vscode_1.window.activeTextEditor !== undefined && qmlProjectPaths.some(projectPath => path.dirname(file) === projectPath)) {
+                    runProcess(consoleOutputs, appStudioPath, executable, path.dirname(file));
+                }
+                else {
+                    vscode_1.window.showQuickPick(qmlProjectPaths, {
+                        placeHolder: 'Multiple qmlprojects detected in workspace, please choose one to proceed'
+                    }).then(folder => {
+                        if (folder !== undefined) {
+                            runProcess(consoleOutputs, appStudioPath, executable, folder);
+                        }
+                    });
+                }
             }
             else {
                 // there is one qml project in the workspace

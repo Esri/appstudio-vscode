@@ -13,8 +13,7 @@ import {
 	Position,
 	TextDocumentPositionParams,
 	Hover,
-	MarkupContent,
-	TextDocument
+	MarkupContent
 } from 'vscode-languageserver';
 import { DocController } from './docController';
 import * as fs from 'fs';

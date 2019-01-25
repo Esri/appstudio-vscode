@@ -172,15 +172,12 @@ export function activate(context: vscode.ExtensionContext) {
 
 
 	let testCmd = commands.registerCommand('testCmd', () => {
-		//let targetFiles = 
 
+		/*
 		let appStudioPath: string = workspace.getConfiguration().get('AppStudio Path');
 
 		let qmlTypes = findFilesInDir(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio\\bin\\qml',/\.qmltypes/i);
-		//console.log('result: ', qmlTypes.length);
-		//console.log(qmlTypes);
 		
-
 		for (let i = 0; i < qmlTypes.length; i++) {
 
 			let result = ChildProcess.spawn(appStudioPath + '\\bin\\appRun.exe ', [path.join(__dirname,'../../QMLTYPEStoJSON'), '--qmltypes', qmlTypes[i], '--json', path.join(__dirname,'../../qml_types', i+'.json'), '--show', 'minimized']);
@@ -191,6 +188,7 @@ export function activate(context: vscode.ExtensionContext) {
 			});
 			
 		}
+		*/
 
 		//glob(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio\\bin\\qml' + '/**/*.qmltypes',{}, (err, files) => {
 			//console.log(files);
@@ -269,13 +267,20 @@ export function activate(context: vscode.ExtensionContext) {
 			} else if (qmlProjectPaths.length > 1) {
 				// if there are more than one qml projects in the workspace, prompts the user to select one of them to run the command
 
-				window.showQuickPick(qmlProjectPaths, {
-					placeHolder: 'Multiple qmlprojects detected in workspace, please choose one to proceed'
-				}).then(folder => {
-					if (folder !== undefined) {
-						runProcess(consoleOutputs, appStudioPath, executable, folder);
-					}
-				});
+				let file = window.activeTextEditor.document.fileName;
+
+				if (window.activeTextEditor !== undefined && qmlProjectPaths.some(projectPath => path.dirname(file) === projectPath)) {
+					runProcess(consoleOutputs, appStudioPath, executable, path.dirname(file));
+				} else {
+					window.showQuickPick(qmlProjectPaths, {
+						placeHolder: 'Multiple qmlprojects detected in workspace, please choose one to proceed'
+					}).then(folder => {
+						if (folder !== undefined) {
+							runProcess(consoleOutputs, appStudioPath, executable, folder);
+						}
+					});
+				}
+
 			} else {
 				// there is one qml project in the workspace
 				runProcess(consoleOutputs, appStudioPath, executable, qmlProjectPaths[0]);
