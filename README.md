@@ -33,7 +33,9 @@ Open VS Code, go to: Extensions panel (on the left) -> More Actions (top right c
 
 After the extension is successfully installed, reload VS code.
 
-If the extension is disabled, you can find the extension in: Extensions panel -> Disabled.
+> When a new version is available, simply install it and reload VS code should override the old version.
+
+> If the extension is disabled, you can find the extension in: Extensions panel -> Disabled.
 
 #### Running in VS Code debug mode (Node.js installation required)
 
