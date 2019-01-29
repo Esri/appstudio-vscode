@@ -48,7 +48,7 @@ export function activate(context: vscode.ExtensionContext) {
 			let appStudioPath = data.General.installDir;
 			if (appStudioPath !== undefined) {
 				workspace.getConfiguration().update('AppStudio Path', appStudioPath, true);
-				window.showInformationMessage('AppStudio path updated: ' + appStudioPath);
+				window.showInformationMessage('AppStudio installation path updated: ' + appStudioPath);
 			} else {
 				manualSelectAppStudioPath();
 				console.log('No such property');
@@ -65,7 +65,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let manualSelectAppStudioPath = () => {
 		window.showErrorMessage('System cannot find AppStudio installation on this machine. Select Yes above if you wish to find the installation manually.');
 
-		commands.executeCommand('selectAppStudioPath');
+		commands.executeCommand('manualSelectAppStudioPath');
 	};
 
 	// If the configuration value is a empty string, i.e. the extension is run for the first time on the machine, 
@@ -117,11 +117,11 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(openApiRefCmd);
 
-	// Command to select the AppStudio folder for executables
-	let selectPathCmd = commands.registerCommand('selectAppStudioPath', function () {
+	// Command to manually select the AppStudio installation path
+	let manualSelectPathCmd = commands.registerCommand('manualSelectAppStudioPath', function () {
 
 		window.showQuickPick(['Yes', 'No'], {
-			placeHolder: 'Would you like to select the AppStudio folder manually? NOTE: This will override the current path.',
+			placeHolder: 'Would you like to select the installation path of AppStudio manually? NOTE: This will override the current path.',
 		}).then(choice => {
 			if (choice === 'Yes') {
 				window.showOpenDialog({
@@ -131,14 +131,26 @@ export function activate(context: vscode.ExtensionContext) {
 				}).then(folder => {
 					if (folder !== undefined && folder.length === 1) {
 						workspace.getConfiguration().update('AppStudio Path', folder[0].fsPath.toString(), true);
-						window.showInformationMessage('AppStudio folder updated: ' + folder[0].fsPath);
+						window.showInformationMessage('AppStudio installation path updated: ' + folder[0].fsPath);
 					}
 				});
 			}
 		});
 
 	});
-	context.subscriptions.push(selectPathCmd);
+	context.subscriptions.push(manualSelectPathCmd);
+
+	let autoSelectAppStudioPathCmd = commands.registerCommand('autoSelectAppStudioPath', () => {
+
+		window.showQuickPick(['Yes', 'No'], {
+			placeHolder: 'Would you like the extension to find the AppStudio installation path for you?',
+		}).then(choice => {
+			if (choice == 'Yes') {
+				autoSelectAppStudioPath();
+			}
+		});
+	});
+	context.subscriptions.push(autoSelectAppStudioPathCmd);
 
 	// Register all the executable related commands with the appropriate paths for the operating system
 	let commandNames = ['appRun', 'appMake', 'appSetting', 'appUpload'];
@@ -222,7 +234,7 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	// Create status bar items for the commands
-	createStatusBarItem('$(file-directory)', 'selectAppStudioPath', "Select AppStudio Folder");
+	//createStatusBarItem('$(file-directory)', 'manualSelectAppStudioPath', "Select AppStudio Folder");
 	createStatusBarItem('$(question)', 'openApiRefLink', 'Open Api Reference');
 	createStatusBarItem('$(gear)', 'appSetting', 'appSetting(Alt+Shift+S)');
 	createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload(Alt+Shift+UpArrow)');

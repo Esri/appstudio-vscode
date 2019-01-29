@@ -20,24 +20,28 @@
 	"contributes": {
 		"commands": [
             {
-                "command": "selectAppStudioPath",
-                "title": "Select AppStudio Folder"
+                "command": "manualSelectAppStudioPath",
+                "title": "AppStudio: Manual Select AppStudio Installation Path"
+            },
+            {
+                "command": "autoSelectAppStudioPath",
+                "title": "AppStudio: Auto Select AppStudio Installation Path"
             },
             {
                 "command": "appRun",
-                "title": "appRun"
+                "title": "AppStudio: AppRun"
             },
             {
                 "command": "appMake",
-                "title": "appMake"
+                "title": "AppStudio: AppMake"
             },
             {
                 "command": "appSetting",
-                "title": "appSettings"
+                "title": "AppStudio: AppSettings"
             },
             {
                 "command": "appUpload",
-                "title": "appUpload"
+                "title": "AppStudio: AppUpload"
             }
         ],
         "keybindings": [
@@ -67,7 +71,7 @@
                         "string"
                     ],
                     "default": "",
-                    "description": "Path for the AppStudio folder"
+                    "markdownDescription": "Installation Path of AppStudio. This is used for running the AppStudio applications. Only modify this when you need to change the installation path for AppStudio. It's recommended to modify this by running the `Manual Select AppStudio Installation Path` command in the command palette (Ctrl+Shift+P). If you wish to modify in settings.json directly, please make sure the path is conformed to the following examples of format: Windows: `C:\\\\Users\\\\username\\\\Applications\\\\ArcGIS\\\\AppStudio`, MacOS and Linux: `~/Application/ArcGIS/AppStudio`"
                 }
             }
 		},

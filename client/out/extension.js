@@ -36,7 +36,7 @@ function activate(context) {
             let appStudioPath = data.General.installDir;
             if (appStudioPath !== undefined) {
                 vscode_1.workspace.getConfiguration().update('AppStudio Path', appStudioPath, true);
-                vscode_1.window.showInformationMessage('AppStudio path updated: ' + appStudioPath);
+                vscode_1.window.showInformationMessage('AppStudio installation path updated: ' + appStudioPath);
             }
             else {
                 manualSelectAppStudioPath();
@@ -51,7 +51,7 @@ function activate(context) {
     // Ask the user to select the AppStudio folder manually
     let manualSelectAppStudioPath = () => {
         vscode_1.window.showErrorMessage('System cannot find AppStudio installation on this machine. Select Yes above if you wish to find the installation manually.');
-        vscode_1.commands.executeCommand('selectAppStudioPath');
+        vscode_1.commands.executeCommand('manualSelectAppStudioPath');
     };
     // If the configuration value is a empty string, i.e. the extension is run for the first time on the machine, 
     // select the AppStudio automatically
@@ -93,10 +93,10 @@ function activate(context) {
         vscode_1.commands.executeCommand('vscode.open', vscode.Uri.parse('https://doc.arcgis.com/en/appstudio/api/reference/'));
     });
     context.subscriptions.push(openApiRefCmd);
-    // Command to select the AppStudio folder for executables
-    let selectPathCmd = vscode_1.commands.registerCommand('selectAppStudioPath', function () {
+    // Command to manually select the AppStudio installation path
+    let manualSelectPathCmd = vscode_1.commands.registerCommand('manualSelectAppStudioPath', function () {
         vscode_1.window.showQuickPick(['Yes', 'No'], {
-            placeHolder: 'Would you like to select the AppStudio folder manually? NOTE: This will override the current path.',
+            placeHolder: 'Would you like to select the installation path of AppStudio manually? NOTE: This will override the current path.',
         }).then(choice => {
             if (choice === 'Yes') {
                 vscode_1.window.showOpenDialog({
@@ -106,13 +106,23 @@ function activate(context) {
                 }).then(folder => {
                     if (folder !== undefined && folder.length === 1) {
                         vscode_1.workspace.getConfiguration().update('AppStudio Path', folder[0].fsPath.toString(), true);
-                        vscode_1.window.showInformationMessage('AppStudio folder updated: ' + folder[0].fsPath);
+                        vscode_1.window.showInformationMessage('AppStudio installation path updated: ' + folder[0].fsPath);
                     }
                 });
             }
         });
     });
-    context.subscriptions.push(selectPathCmd);
+    context.subscriptions.push(manualSelectPathCmd);
+    let autoSelectAppStudioPathCmd = vscode_1.commands.registerCommand('autoSelectAppStudioPath', () => {
+        vscode_1.window.showQuickPick(['Yes', 'No'], {
+            placeHolder: 'Would you like the extension to find the AppStudio installation path for you?',
+        }).then(choice => {
+            if (choice == 'Yes') {
+                autoSelectAppStudioPath();
+            }
+        });
+    });
+    context.subscriptions.push(autoSelectAppStudioPathCmd);
     // Register all the executable related commands with the appropriate paths for the operating system
     let commandNames = ['appRun', 'appMake', 'appSetting', 'appUpload'];
     if (osVer === 'darwin') {
@@ -182,7 +192,7 @@ function activate(context) {
         return results;
     }
     // Create status bar items for the commands
-    createStatusBarItem('$(file-directory)', 'selectAppStudioPath', "Select AppStudio Folder");
+    //createStatusBarItem('$(file-directory)', 'manualSelectAppStudioPath', "Select AppStudio Folder");
     createStatusBarItem('$(question)', 'openApiRefLink', 'Open Api Reference');
     createStatusBarItem('$(gear)', 'appSetting', 'appSetting(Alt+Shift+S)');
     createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload(Alt+Shift+UpArrow)');
