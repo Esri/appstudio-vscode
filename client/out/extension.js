@@ -59,13 +59,14 @@ function activate(context) {
         vscode_1.window.showInformationMessage("Locating AppStudio folder...");
         autoSelectAppStudioPath();
     }
-    // Array containing the paths of all qml projects in the workspace
-    let qmlProjectPaths = [];
+    // Array containing the paths of all AppStudio projects in the workspace
+    let appStudioProjectPaths = [];
     // Console ouput for the AppStudio Apps
     let consoleOutput = vscode_1.window.createOutputChannel('AppStudio');
-    // Function to find files 'appinfo.json' across all workspace folders,
-    // and add the folder path to the qmlProjectPaths array
-    let addQmlProject = () => {
+    // Function to find 'appinfo.json' across all workspace folders,
+    // and add the project paths to the appStudioProjectPaths array
+    let addAppStudioProject = () => {
+        appStudioProjectPaths = [];
         vscode_1.workspace.findFiles('**/appinfo.json').then(result => {
             result.forEach(uri => {
                 //let folderPath = workspace.getWorkspaceFolder(uri).uri.fsPath;
@@ -78,16 +79,22 @@ function activate(context) {
                     });
                 });
                 // use the directory name containing the appinfo.json file found as the project path
-                qmlProjectPaths.push(path.dirname(uri.fsPath));
+                appStudioProjectPaths.push(path.dirname(uri.fsPath));
             });
         });
     };
-    addQmlProject();
+    addAppStudioProject();
+    let appinfoWatcher = vscode_1.workspace.createFileSystemWatcher('**/appinfo.json');
+    appinfoWatcher.onDidCreate(() => {
+        addAppStudioProject();
+    });
+    appinfoWatcher.onDidDelete(() => {
+        addAppStudioProject();
+    });
     // Event emitted when a workspace folder is added or removed
-    // Empty the qmlProjectPaths array and call the function to add qml projects again  
+    // Empty the appStudioProjectPaths array and call the function to add appstudio projects again  
     vscode_1.workspace.onDidChangeWorkspaceFolders(() => {
-        qmlProjectPaths = [];
-        addQmlProject();
+        addAppStudioProject();
     });
     let openApiRefCmd = vscode_1.commands.registerCommand('openApiRefLink', function () {
         vscode_1.commands.executeCommand('vscode.open', vscode.Uri.parse('https://doc.arcgis.com/en/appstudio/api/reference/'));
@@ -203,7 +210,7 @@ function activate(context) {
     function registerExecutableCommands(cmdPaths) {
         commandNames.forEach((value, index) => {
             let cmd = vscode_1.commands.registerCommand(value, () => {
-                createCommand(cmdPaths[index], qmlProjectPaths, consoleOutput);
+                createCommand(cmdPaths[index], appStudioProjectPaths, consoleOutput);
             });
             // Add to a list of disposables which are disposed when this extension is deactivated.
             context.subscriptions.push(cmd);
@@ -217,7 +224,7 @@ function activate(context) {
         statusBarItem.show();
     }
     // Create commands to run the executables
-    function createCommand(executable, qmlProjectPaths, consoleOutputs) {
+    function createCommand(executable, appStudioProjectPaths, consoleOutputs) {
         let appStudioPath = vscode_1.workspace.getConfiguration().get('AppStudio Path');
         if (appStudioPath === "") {
             vscode_1.window.showWarningMessage("Please select the AppStudio folder first.");
@@ -227,18 +234,18 @@ function activate(context) {
             vscode_1.window.showWarningMessage('No folder opened.');
         }
         else {
-            if (qmlProjectPaths.length === 0) {
+            if (appStudioProjectPaths.length === 0) {
                 vscode_1.window.showErrorMessage("No appinfo.json found.");
             }
-            else if (qmlProjectPaths.length > 1) {
+            else if (appStudioProjectPaths.length > 1) {
                 // if there are more than one qml projects in the workspace, prompts the user to select one of them to run the command
                 let file = vscode_1.window.activeTextEditor.document.fileName;
-                if (vscode_1.window.activeTextEditor !== undefined && qmlProjectPaths.some(projectPath => path.dirname(file) === projectPath)) {
+                if (vscode_1.window.activeTextEditor !== undefined && appStudioProjectPaths.some(projectPath => path.dirname(file) === projectPath)) {
                     runProcess(consoleOutputs, appStudioPath, executable, path.dirname(file));
                 }
                 else {
-                    vscode_1.window.showQuickPick(qmlProjectPaths, {
-                        placeHolder: 'Multiple qmlprojects detected in workspace, please choose one to proceed'
+                    vscode_1.window.showQuickPick(appStudioProjectPaths, {
+                        placeHolder: 'Multiple AppStudio projects detected in workspace, please choose one to proceed'
                     }).then(folder => {
                         if (folder !== undefined) {
                             runProcess(consoleOutputs, appStudioPath, executable, folder);
@@ -248,18 +255,18 @@ function activate(context) {
             }
             else {
                 // there is one qml project in the workspace
-                runProcess(consoleOutputs, appStudioPath, executable, qmlProjectPaths[0]);
+                runProcess(consoleOutputs, appStudioPath, executable, appStudioProjectPaths[0]);
             }
         }
     }
     // run the executable with the corresponding paths and parameters
-    function runProcess(consoleOutput, appStudioPath, executable, qmlProjectPath) {
+    function runProcess(consoleOutput, appStudioPath, executable, appStudioProjectPath) {
         consoleOutput.show();
-        consoleOutput.appendLine("Starting external tool " + "\"" + appStudioPath + executable + " " + qmlProjectPath + "\"");
+        consoleOutput.appendLine("Starting external tool " + "\"" + appStudioPath + executable + " " + appStudioProjectPath + "\"");
         // Add the necessary environment variables 
         process.env.QT_ASSUME_STDERR_HAS_CONSOLE = '1';
         process.env.QT_FORCE_STDERR_LOGGING = '1';
-        let childProcess = ChildProcess.spawn(appStudioPath + executable, [qmlProjectPath], { env: process.env });
+        let childProcess = ChildProcess.spawn(appStudioPath + executable, [appStudioProjectPath], { env: process.env });
         childProcess.stdout.on('data', data => {
             consoleOutput.show();
             consoleOutput.append(data.toString());
@@ -304,7 +311,7 @@ function activate(context) {
         }
     };
     // Create the language client and start the client.
-    client = new vscode_languageclient_1.LanguageClient('languageServerExample', 'Language Server Example', serverOptions, clientOptions);
+    client = new vscode_languageclient_1.LanguageClient('AppStudioLanguageServer', 'AppStudio Language Server', serverOptions, clientOptions);
     // Start the client. This will also launch the server
     client.start();
 }
