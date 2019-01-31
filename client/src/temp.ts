@@ -18,7 +18,6 @@ let client: LanguageClient;
 export function activate(context: ExtensionContext) {
 	// The server is implemented in node
 
-	console.log('Hello there I\'m the client');
 	let serverModule = context.asAbsolutePath(
 		path.join('server', 'out', 'server.js')
 	);
@@ -65,3 +64,26 @@ export function deactivate(): Thenable<void> | undefined {
 	}
 	return client.stop();
 }
+			/*
+			else if (appStudioProjectPaths.length > 1) {
+				// if there are more than one qml projects in the workspace, prompts the user to select one of them to run the command
+
+				let file = window.activeTextEditor.document.fileName;
+
+				if (window.activeTextEditor !== undefined && appStudioProjectPaths.some(projectPath => path.dirname(file) === projectPath)) {
+					runProcess(consoleOutputs, appStudioPath, executable, path.dirname(file));
+				} else {
+					window.showQuickPick(appStudioProjectPaths, {
+						placeHolder: 'Multiple AppStudio projects detected in workspace, please choose one to proceed'
+					}).then(folder => {
+						if (folder !== undefined) {
+							runProcess(consoleOutputs, appStudioPath, executable, folder);
+						}
+					});
+				}
+
+			} else {
+				// there is one qml project in the workspace
+				runProcess(consoleOutputs, appStudioPath, executable, appStudioProjectPaths[0]);
+			}
+			*/

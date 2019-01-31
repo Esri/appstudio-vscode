@@ -30,44 +30,6 @@ export function activate(context: vscode.ExtensionContext) {
 		return;
 	}
 
-	// Function to select the AppStudio folder automatically from the AppStudio.ini file
-	let autoSelectAppStudioPath = () => {
-
-		let filePath: string;
-
-		if (osVer === 'darwin' || osVer === 'linux') {
-			let HOME = process.env.HOME;
-			filePath = HOME + '/.config/Esri/AppStudio.ini';
-		} else if (osVer === 'win32') {
-			let appData = process.env.APPDATA;
-			filePath = path.join(appData, '\\Esri\\AppStudio.ini');
-		}
-
-		loadIniFile(filePath).then(data => {
-
-			let appStudioPath = data.General.installDir;
-			if (appStudioPath !== undefined) {
-				workspace.getConfiguration().update('AppStudio Path', appStudioPath, true);
-				window.showInformationMessage('AppStudio installation path updated: ' + appStudioPath);
-			} else {
-				manualSelectAppStudioPath();
-				console.log('No such property');
-			}
-
-		}, (reason) => {
-			manualSelectAppStudioPath();
-			console.log("Reading .ini file failed.");
-			console.log(reason);
-		});
-	};
-
-	// Ask the user to select the AppStudio folder manually
-	let manualSelectAppStudioPath = () => {
-		window.showErrorMessage('System cannot find AppStudio installation on this machine. Select Yes above if you wish to find the installation manually.');
-
-		commands.executeCommand('manualSelectAppStudioPath');
-	};
-
 	// If the configuration value is a empty string, i.e. the extension is run for the first time on the machine, 
 	// select the AppStudio automatically
 	if (workspace.getConfiguration().get('AppStudio Path') === "") {
@@ -76,35 +38,17 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	// Array containing the paths of all AppStudio projects in the workspace
-	let appStudioProjectPaths: string[] = [];
+	let appStudioProjectPaths: string[];
+
+	let activeProjectPath: string;
+
 	// Console ouput for the AppStudio Apps
 	let consoleOutput = window.createOutputChannel('AppStudio');
 
-	// Function to find 'appinfo.json' across all workspace folders,
-	// and add the project paths to the appStudioProjectPaths array
-	let addAppStudioProject = () => {
-		appStudioProjectPaths = [];
-
-		workspace.findFiles('**/appinfo.json').then(result => {
-			result.forEach(uri => {
-				//let folderPath = workspace.getWorkspaceFolder(uri).uri.fsPath;
-
-				fs.readFile(uri.fsPath, (err, data) => {
-					if (err) console.log(err);
-					let mainFile = JSON.parse(data.toString()).mainFile;
-					window.showTextDocument(vscode.Uri.file(path.join(path.dirname(uri.fsPath), mainFile)),
-						{
-							preview: false
-						});
-				});
-				// use the directory name containing the appinfo.json file found as the project path
-				appStudioProjectPaths.push(path.dirname(uri.fsPath));
-			});
-		});
-	};
-
+	// Add any AppStudio projects when the extension is activated
 	addAppStudioProject();
 
+	// Event emitted when any appinfo.json file is created or deleted in the workspace
 	let appinfoWatcher = workspace.createFileSystemWatcher('**/appinfo.json');
 	appinfoWatcher.onDidCreate(() => {
 		addAppStudioProject();
@@ -114,10 +58,22 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	// Event emitted when a workspace folder is added or removed
-	// Empty the appStudioProjectPaths array and call the function to add appstudio projects again  
 	workspace.onDidChangeWorkspaceFolders(() => {
 		addAppStudioProject();
 	});
+
+	// Create status bar items for all commands
+	createStatusBarItem('$(question)', 'openApiRefLink', 'Open Api Reference');
+	let appSettingStatusBar = createStatusBarItem('$(gear)', 'appSetting', 'appSetting(Alt+Shift+S)');
+	let appUploadStatusBar = createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload(Alt+Shift+UpArrow)');
+	let appMakeStatusBar = createStatusBarItem('$(tools)', 'appMake', 'appMake(Alt+Shift+M)');
+	let appRunStatusBar = createStatusBarItem('$(triangle-right)', 'appRun', 'appRun(Alt+Shift+R)');
+	let activeProjectStatusBar = createStatusBarItem('$(file-directory)', 'setActiveProject', 'Set Active Project');
+	let noProjectStatusBar = window.createStatusBarItem();
+	let activeStatusBarItems: vscode.StatusBarItem[] = [appSettingStatusBar, appUploadStatusBar, appMakeStatusBar, appRunStatusBar, activeProjectStatusBar];
+	//createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
+
+	// Code below is for registering all the commands
 
 	let openApiRefCmd = commands.registerCommand('openApiRefLink', function () {
 
@@ -160,6 +116,23 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 	});
 	context.subscriptions.push(autoSelectAppStudioPathCmd);
+
+	let setActiveProjectCmd = commands.registerCommand('setActiveProject', () => {
+		if (appStudioProjectPaths) {
+			window.showQuickPick(appStudioProjectPaths, {
+				placeHolder: 'Set an Active AppStudio project:'
+			}).then(folder => {
+				if (folder !== undefined) {
+					activeProjectPath = folder;
+					activeProjectStatusBar.text = "Active Project: " + path.basename(activeProjectPath);
+				}
+			});
+		} else {
+			window.showErrorMessage("No appinfo.json found.");
+		}
+
+	});
+	context.subscriptions.push(setActiveProjectCmd);
 
 	// Register all the executable related commands with the appropriate paths for the operating system
 	let commandNames = ['appRun', 'appMake', 'appSetting', 'appUpload'];
@@ -218,7 +191,9 @@ export function activate(context: vscode.ExtensionContext) {
 		
 	});
 
-	function findFilesInDir(startPath: string, filter: RegExp){
+	// code below is all the helper functions 
+
+	function findFilesInDir(startPath: string, filter: RegExp) {
 
 		var results: string[] = [];
 	
@@ -242,24 +217,87 @@ export function activate(context: vscode.ExtensionContext) {
 		return results;
 	}
 
-	// Create status bar items for the commands
-	//createStatusBarItem('$(file-directory)', 'manualSelectAppStudioPath', "Select AppStudio Folder");
-	createStatusBarItem('$(question)', 'openApiRefLink', 'Open Api Reference');
-	createStatusBarItem('$(gear)', 'appSetting', 'appSetting(Alt+Shift+S)');
-	createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload(Alt+Shift+UpArrow)');
-	createStatusBarItem('$(tools)', 'appMake', 'appMake(Alt+Shift+M)');
-	createStatusBarItem('$(triangle-right)', 'appRun', 'appRun(Alt+Shift+R)');
-	//createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
+	// Function to find 'appinfo.json' across all workspace folders,
+	// and add the project paths to the appStudioProjectPaths array
+	function addAppStudioProject () {
+		appStudioProjectPaths = [];
+		activeProjectPath = undefined;
 
-	// Register all the executable commands with the corresponding command names and executable paths
-	function registerExecutableCommands(cmdPaths: string[]) {
-		commandNames.forEach((value, index) => {
-			let cmd = commands.registerCommand(value, () => {
-				createCommand(cmdPaths[index], appStudioProjectPaths, consoleOutput);
-			});
-			// Add to a list of disposables which are disposed when this extension is deactivated.
-			context.subscriptions.push(cmd);
+		workspace.findFiles('**/appinfo.json').then(result => {
+
+			if (result.length > 0) {
+				result.forEach(uri => {
+					//let folderPath = workspace.getWorkspaceFolder(uri).uri.fsPath;
+	
+					let projectPath = path.dirname(uri.fsPath);
+
+					fs.readFile(uri.fsPath, (err, data) => {
+						if (err) console.log(err);
+						let mainFile = JSON.parse(data.toString()).mainFile;
+						window.showTextDocument(vscode.Uri.file(path.join(projectPath, mainFile)),
+							{
+								preview: false
+							});
+					});
+					// use the directory name containing the appinfo.json file found as the project path
+					appStudioProjectPaths.push(projectPath);
+					activeProjectPath = projectPath;
+					activeProjectStatusBar.text = "Active Project: " + path.basename(activeProjectPath);
+				});
+
+				noProjectStatusBar.hide();
+				for (let item of activeStatusBarItems) {
+					item.show();
+				}
+
+			} else {
+
+				for (let item of activeStatusBarItems) {
+					item.hide();
+				}
+				
+				noProjectStatusBar.text = 'No AppStudio Project found';
+				noProjectStatusBar.show();
+			}
 		});
+	}
+
+	// Function to select the AppStudio folder automatically from the AppStudio.ini file
+	function autoSelectAppStudioPath () {
+
+		let filePath: string;
+
+		if (osVer === 'darwin' || osVer === 'linux') {
+			let HOME = process.env.HOME;
+			filePath = HOME + '/.config/Esri/AppStudio.ini';
+		} else if (osVer === 'win32') {
+			let appData = process.env.APPDATA;
+			filePath = path.join(appData, '\\Esri\\AppStudio.ini');
+		}
+
+		loadIniFile(filePath).then(data => {
+
+			let appStudioPath = data.General.installDir;
+			if (appStudioPath !== undefined) {
+				workspace.getConfiguration().update('AppStudio Path', appStudioPath, true);
+				window.showInformationMessage('AppStudio installation path updated: ' + appStudioPath);
+			} else {
+				manualSelectAppStudioPath();
+				console.log('No such property');
+			}
+
+		}, (reason) => {
+			manualSelectAppStudioPath();
+			console.log("Reading .ini file failed.");
+			console.log(reason);
+		});
+	}
+
+	// Ask the user to select the AppStudio folder manually
+	function manualSelectAppStudioPath () {
+		window.showErrorMessage('System cannot find AppStudio installation on this machine. Select Yes above if you wish to find the installation manually.');
+
+		commands.executeCommand('manualSelectAppStudioPath');
 	}
 
 	function createStatusBarItem(itemText: string, itemCommand: string, itemTooltip: string) {
@@ -268,10 +306,22 @@ export function activate(context: vscode.ExtensionContext) {
 		statusBarItem.command = itemCommand;
 		statusBarItem.tooltip = itemTooltip;
 		statusBarItem.show();
+		return statusBarItem;
 	}
 
-	// Create commands to run the executables
-	function createCommand(executable: string, appStudioProjectPaths: string[], consoleOutputs: vscode.OutputChannel) {
+	// Register all the executable commands with the corresponding command names and executable paths
+	function registerExecutableCommands(cmdPaths: string[]) {
+		commandNames.forEach((value, index) => {
+			let cmd = commands.registerCommand(value, () => {
+				runAppStudioCommand(cmdPaths[index]);
+			});
+			// Add to a list of disposables which are disposed when this extension is deactivated.
+			context.subscriptions.push(cmd);
+		});
+	}
+
+	// Run commands to run the executables
+	function runAppStudioCommand(executable: string) {
 		let appStudioPath: string = workspace.getConfiguration().get('AppStudio Path');
 
 		if (appStudioPath === "") {
@@ -283,34 +333,16 @@ export function activate(context: vscode.ExtensionContext) {
 			window.showWarningMessage('No folder opened.');
 		} else {
 
-			if (appStudioProjectPaths.length === 0) {
+			if (appStudioProjectPaths.length === 0 || !activeProjectPath) {
 				window.showErrorMessage("No appinfo.json found.");
-			} else if (appStudioProjectPaths.length > 1) {
-				// if there are more than one qml projects in the workspace, prompts the user to select one of them to run the command
-
-				let file = window.activeTextEditor.document.fileName;
-
-				if (window.activeTextEditor !== undefined && appStudioProjectPaths.some(projectPath => path.dirname(file) === projectPath)) {
-					runProcess(consoleOutputs, appStudioPath, executable, path.dirname(file));
-				} else {
-					window.showQuickPick(appStudioProjectPaths, {
-						placeHolder: 'Multiple AppStudio projects detected in workspace, please choose one to proceed'
-					}).then(folder => {
-						if (folder !== undefined) {
-							runProcess(consoleOutputs, appStudioPath, executable, folder);
-						}
-					});
-				}
-
 			} else {
-				// there is one qml project in the workspace
-				runProcess(consoleOutputs, appStudioPath, executable, appStudioProjectPaths[0]);
+				runProcess(appStudioPath, executable, activeProjectPath);
 			}
 		}
 	}
 
 	// run the executable with the corresponding paths and parameters
-	function runProcess(consoleOutput: vscode.OutputChannel, appStudioPath: string, executable: string, appStudioProjectPath: string) {
+	function runProcess(appStudioPath: string, executable: string, appStudioProjectPath: string) {
 
 		consoleOutput.show();
 		consoleOutput.appendLine("Starting external tool " + "\"" + appStudioPath + executable + " " + appStudioProjectPath + "\"");
@@ -345,6 +377,7 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 	}
 
+	// Code below is for creating client for the QML language server
 
 	let serverModule = context.asAbsolutePath(
 		path.join('server', 'out', 'server.js')

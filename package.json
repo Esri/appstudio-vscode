@@ -3,7 +3,7 @@
     "displayName": "AppStudio",
     "description": "AppStudio Extension for Visual Studio Code",
 	"license": "MIT",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "publisher": "Esri",
     "repository": {
 		"type": "git",
