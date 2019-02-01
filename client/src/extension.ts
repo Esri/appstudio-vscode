@@ -165,47 +165,27 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 
+	/*
 	let testCmd = commands.registerCommand('testCmd', () => {
 
-		/*
-		let appStudioPath: string = workspace.getConfiguration().get('AppStudio Path');
-
-		let qmlTypes = findFilesInDir(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio\\bin\\qml',/\.qmltypes/i);
-		
-		for (let i = 0; i < qmlTypes.length; i++) {
-
-			let result = ChildProcess.spawn(appStudioPath + '\\bin\\appRun.exe ', [path.join(__dirname,'../../QMLTYPEStoJSON'), '--qmltypes', qmlTypes[i], '--json', path.join(__dirname,'../../qml_types', i+'.json'), '--show', 'minimized']);
-			result.on('close', data => {
-				console.log(i+ ' finished ' +data);
-				
-				console.log('All finished');
-			});
-			
-		}
-		*/
-
-		//glob(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio\\bin\\qml' + '/**/*.qmltypes',{}, (err, files) => {
-			//console.log(files);
-			//console.log('Length: ', files.length);
-		//});
-		
 	});
+	*/
 
 	// code below is all the helper functions 
 
 	function findFilesInDir(startPath: string, filter: RegExp) {
 
-		var results: string[] = [];
+		let results: string[] = [];
 	
 		if (!fs.existsSync(startPath)){
 			console.log("no dir ",startPath);
 			return;
 		}
 	
-		var files=fs.readdirSync(startPath);
-		for(var i=0;i<files.length;i++){
-			var filename=path.join(startPath,files[i]);
-			var stat = fs.lstatSync(filename);
+		let files=fs.readdirSync(startPath);
+		for(let i=0;i<files.length;i++){
+			let filename=path.join(startPath,files[i]);
+			let stat = fs.lstatSync(filename);
 			if (stat.isDirectory()){
 				results = results.concat(findFilesInDir(filename,filter)); //recurse
 			}

@@ -59,20 +59,6 @@ export interface ObjectId {
 let qmlModules: QmlModule[] = [];
 let docControllers: DocController[] = [];
 
-readQmltypeJson('AppFrameworkPlugin.json');
-readQmltypeJson('AppFrameworkPositioningPlugin.json');
-readQmltypeJson('AppFrameworkAuthentication.json');
-readQmltypeJson('QtQml.json');
-readQmltypeJson('QtLocation.json');
-readQmltypeJson('QtPositioning.json');
-readQmltypeJson('QtQuick.2.json');
-readQmltypeJson('QtQuick.Controls.2.json');
-readQmltypeJson('QtQuick.Controls.json');
-readQmltypeJson('QtQuick.Layouts.json');
-readQmltypeJson('QtQuick.Window.2.json');
-readQmltypeJson('ArcGISRuntimePlugin.json');
-
-
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 let connection = createConnection(ProposedFeatures.all);
@@ -80,6 +66,16 @@ let connection = createConnection(ProposedFeatures.all);
 // Create a simple text document manager. The text document manager
 // supports full document sync only
 let documents: TextDocuments = new TextDocuments();
+
+/*
+let qmltypesJsonFiles = fs.readdirSync(path.join(__dirname,'../../qml_types'));
+
+for(let file of qmltypesJsonFiles) {
+	readQmltypeJson(path.join(__dirname,'../../qml_types',file));
+}
+*/
+
+readQmltypeJson(path.join(__dirname,'../../ALLQMLTypes.json'));
 
 connection.onInitialize((_params: InitializeParams) => {
 
@@ -132,9 +128,9 @@ function firstCharToUpperCase(str: string): string {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function readQmltypeJson(fileName: string) {
+function readQmltypeJson(fullFilePath: string) {
 
-	let data = fs.readFileSync(path.join(__dirname, '../qml_types', fileName));
+	let data = fs.readFileSync(fullFilePath);
 	let comps: QmlComponent[] = JSON.parse(data.toString()).components;
 
 	for (let component of comps) {
@@ -230,7 +226,7 @@ function addComponenetAttributes(component: QmlComponent, items: CompletionItem[
 	}
 	if (component.signals !== undefined) {
 		for (let s of component.signals) {
-			let item = CompletionItem.create('on' + firstCharToUpperCase(s.name));
+			let item = CompletionItem.create('on' + firstCharToUpperCase(s.name) + ': ');
 			item.kind = 23;
 			items.push(item);
 		}
@@ -390,7 +386,7 @@ connection.onCompletion(
 			return items;
 		}
 
-		if (word === 'id') { return [];}
+		if (word === 'id') { return null;}
 
 		let componentName = controller.getQmlType(pos);
 

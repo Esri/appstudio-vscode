@@ -10,24 +10,20 @@ const fs = require("fs");
 const path = require("path");
 let qmlModules = [];
 let docControllers = [];
-readQmltypeJson('AppFrameworkPlugin.json');
-readQmltypeJson('AppFrameworkPositioningPlugin.json');
-readQmltypeJson('AppFrameworkAuthentication.json');
-readQmltypeJson('QtQml.json');
-readQmltypeJson('QtLocation.json');
-readQmltypeJson('QtPositioning.json');
-readQmltypeJson('QtQuick.2.json');
-readQmltypeJson('QtQuick.Controls.2.json');
-readQmltypeJson('QtQuick.Controls.json');
-readQmltypeJson('QtQuick.Layouts.json');
-readQmltypeJson('QtQuick.Window.2.json');
-readQmltypeJson('ArcGISRuntimePlugin.json');
 // Create a connection for the server. The connection uses Node's IPC as a transport.
 // Also include all preview / proposed LSP features.
 let connection = vscode_languageserver_1.createConnection(vscode_languageserver_1.ProposedFeatures.all);
 // Create a simple text document manager. The text document manager
 // supports full document sync only
 let documents = new vscode_languageserver_1.TextDocuments();
+/*
+let qmltypesJsonFiles = fs.readdirSync(path.join(__dirname,'../../qml_types'));
+
+for(let file of qmltypesJsonFiles) {
+    readQmltypeJson(path.join(__dirname,'../../qml_types',file));
+}
+*/
+readQmltypeJson(path.join(__dirname, '../../ALLQMLTypes.json'));
 connection.onInitialize((_params) => {
     return {
         capabilities: {
@@ -70,8 +66,8 @@ connection.onDidChangeWatchedFiles(_change => {
 function firstCharToUpperCase(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
-function readQmltypeJson(fileName) {
-    let data = fs.readFileSync(path.join(__dirname, '../qml_types', fileName));
+function readQmltypeJson(fullFilePath) {
+    let data = fs.readFileSync(fullFilePath);
     let comps = JSON.parse(data.toString()).components;
     for (let component of comps) {
         if (!component.exports)
@@ -153,7 +149,7 @@ function addComponenetAttributes(component, items, importedComponents) {
     }
     if (component.signals !== undefined) {
         for (let s of component.signals) {
-            let item = vscode_languageserver_1.CompletionItem.create('on' + firstCharToUpperCase(s.name));
+            let item = vscode_languageserver_1.CompletionItem.create('on' + firstCharToUpperCase(s.name) + ': ');
             item.kind = 23;
             items.push(item);
         }
@@ -285,7 +281,7 @@ connection.onCompletion((params) => {
         return items;
     }
     if (word === 'id') {
-        return [];
+        return null;
     }
     let componentName = controller.getQmlType(pos);
     connection.console.log('####### Object Found: ' + componentName);
