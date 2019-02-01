@@ -21,6 +21,10 @@
     },
     "commandLineOptions": [
         {
+            "description": "Path to source arguments file",
+            "name": "args"
+        },
+        {
             "description": "Path to source .qmltypes file",
             "name": "qmltypes"
         },

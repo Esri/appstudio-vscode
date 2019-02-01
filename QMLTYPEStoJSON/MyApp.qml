@@ -39,9 +39,11 @@ App {
     property string fileText: ""
     property var outputJson
     property string jsonText: ""
-    property url defaultUrl: AppFramework.resolvedPathUrl("~/Applications/ArcGIS/AppStudio/bin/qml/ArcGIS/AppFramework/AppFrameworkPlugin.qmltypes")
+    property url defaultUrl: AppFramework.resolvedPathUrl("~/Applications/ArcGIS/AppStudio/bin/qml/ArcGIS/AppFramework/Barcodes/AppFrameworkBarcodesPlugin.qmltypes")
     property string errorString: ""
     property string notifyString: ""
+    property var qmlTypesFileUrls: ([ ])
+    property url outputFileUrl
 
     ColumnLayout {
         anchors.fill: parent
@@ -138,7 +140,7 @@ App {
             "QML Types Files (*.qmltypes)", "All Files (*.*)"
         ]
 
-        onAccepted: openFileUrl(fileUrls[0]);
+        onAccepted: openFileUrls(fileUrls);
     }
 
     FileDialog {
@@ -171,13 +173,13 @@ App {
     }
 
     Timer {
-        id: quitTimer
+        id: runTimer
 
         interval: 100
         running: false
         repeat: false
 
-        onTriggered: Qt.quit()
+        onTriggered: run()
     }
 
     function openFileUrl(url) {
@@ -189,6 +191,10 @@ App {
         filePath = AppFramework.resolvedPath(fileUrl);
         fileText = AppFramework.userHomeFolder.readTextFile(filePath);
         jsonText = "";
+
+        var moduleJson = {
+            filePath: filePath
+        };
 
         var _fileText = fileText.replace(/import QtQuick.tooling/, "// import QtQuick.tooling");
         _fileText = _fileText.replace(/Component {/g, "QmlTypesComponent {");
@@ -225,8 +231,13 @@ App {
         }
 
         try {
-            outputJson = qmlModule.getJson();
-            jsonText = JSON.stringify(outputJson, undefined, 2);
+            moduleJson.json = qmlModule.getJson();
+            if (moduleJson.json.components) {
+                Array.prototype.push.apply(outputJson.components, moduleJson.json.components);
+            }
+            if (moduleJson.json.dependencies) {
+                Array.prototype.push.apply(outputJson.dependencies, moduleJson.json.dependencies);
+            }
         }
         catch (err) {
             errorString = qsTr("%1:%2 %3 %4")
@@ -235,7 +246,19 @@ App {
                 .arg(err.name)
                 .arg(err.message);
         }
+    }
 
+    function openFileUrls(fileUrls) {
+        outputJson = {
+            components: [ ],
+            dependencies: [ ]
+        };
+
+        for (var i = 0; i < fileUrls.length; i++) {
+            openFileUrl(fileUrls[i]);
+        }
+
+        jsonText = JSON.stringify(outputJson, undefined, 2);
     }
 
     function saveFileUrl(fileUrl) {
@@ -272,69 +295,103 @@ App {
         notifyString = qsTr("%1 bytes of JSON copied").arg(jsonText.length);
     }
 
-    property FileInfo _fileInfo: FileInfo { }
-    property FileFolder _fileFolder: FileFolder { }
+    function parseArgsText(argsText) {
+        console.log("argsText: ", argsText);
 
-    Component.onCompleted: {
-        var qmlTypesFilePath;
-        var qmlTypesFileUrl = defaultUrl;
-        var outputFilePath;
-        var outputFileUrl;
+        if (!argsText) {
+            return;
+        }
 
-        console.log(JSON.stringify(Qt.application.arguments, undefined, 2));
-        for (var i = 1; i < Qt.application.arguments.length; i++) {
-            var arg = Qt.application.arguments[i];
+        var args = (argsText.match(/([^"\s][\S]*)|("[^"]*")/g) || []).map(function (s) {
+            var m = s.match(/^"([^"]*)"$/);
+            return m ? m[1] : s;
+        } );
+
+        parseArgs(args);
+    }
+
+    function parseArgsPath(argsPath) {
+        console.log("argsPath: ", argsPath);
+        var argsText = AppFramework.userHomeFolder.readTextFile(argsPath);
+        parseArgsText(argsText);
+    }
+
+    function parseArgs(args) {
+        for (var i = 0; i < args.length; i++) {
+            var arg = args[i];
 
             if (arg.match(/^--/)) {
+                if (arg.match(/^--args/)) {
+                    var argsPath = args[++i];
+                    parseArgsPath(argsPath);
+                    continue;
+                }
+
                 if (arg.match(/^--qmltypes/)) {
-                    qmlTypesFilePath = Qt.application.arguments[++i];
-                    qmlTypesFileUrl = AppFramework.resolvedPathUrl(qmlTypesFilePath);
+                    var qmlTypesFilePath = args[++i].trim();
                     console.log("Parameter %1 set to %2".arg(arg).arg(qmlTypesFilePath));
+
+                    var qmlTypesFileUrl = AppFramework.resolvedPathUrl(qmlTypesFilePath);
+                    qmlTypesFileUrls.push(qmlTypesFileUrl);
                     continue;
                 }
 
                 if (arg.match(/^--json/)) {
-                    outputFilePath = Qt.application.arguments[++i];
-                    outputFileUrl = AppFramework.resolvedPathUrl(outputFilePath);
+                    var outputFilePath = args[++i].trim();
                     console.log("Parameter %1 set to %2".arg(arg).arg(outputFilePath));
+
+                    outputFileUrl = AppFramework.resolvedPathUrl(outputFilePath);
+                    console.log("outputFileUrl: ", outputFileUrl);
                     continue;
                 }
             }
-
-        }
-
-        console.log("qmlTypesFilePath: ", qmlTypesFilePath);
-        console.log("qmlTypesFileUrl: ", qmlTypesFileUrl);
-        console.log("outputFilePath: ", outputFilePath);
-        console.log("outputFileUrl: ", outputFileUrl);
-
-        openFileUrl(qmlTypesFileUrl);
-
-        if (outputFilePath) {
-            var outputFileInfo = AppFramework.fileInfo(outputFileUrl);
-            var outputFileName = outputFileInfo.fileName;
-            console.log("outputFileName: ", outputFileName);
-            //var outputFileUrl = AppFramework.resolvedUrl(outputFilePath);
-            var outputFileFolder = outputFileInfo.folder;
-            console.log("outputFileFolder.path: ", outputFileFolder.path);
-            outputFilePath = outputFileFolder.filePath(outputFileName);
-            if (outputFileFolder.fileExists(outputFileName)) {
-                outputFileFolder.removeFile(outputFileName);
-            }
-            console.log("outputFileUrl: ", outputFileUrl);
-            console.log("Saving %1 chars to %2"
-                        .arg(jsonText.length)
-                        .arg(outputFileFolder.filePath(outputFileName)));
-            //var ok = outputFileFolder.writeTextFile(outputFilePath, jsonText);
-            if (!outputFileFolder.exists) {
-                outputFileFolder.makeFolder();
-            }
-            var ok = outputFileFolder.writeTextFile(outputFileName, jsonText);
-            //var ok = outputFileFolder.writeJsonFile(outputFileName, outputJson);
-            console.log(ok);
-            quitTimer.start();
         }
     }
+
+    function run() {
+        parseArgs(Qt.application.arguments.slice(1));
+
+        console.log("qmlTypesFileUrls: ", JSON.stringify(qmlTypesFileUrls));
+        console.log("outputFileUrl: ", outputFileUrl);
+
+        if (!qmlTypesFileUrls.length) {
+            openFileUrls( [defaultUrl] );
+        }
+
+        if (outputFileUrl == "") {
+            return;
+        }
+
+        var modulesResult = [ ];
+
+        openFileUrls( qmlTypesFileUrls );
+
+        Qt.quit();
+
+        var outputFileInfo = AppFramework.fileInfo(outputFileUrl);
+        var outputFileName = outputFileInfo.fileName;
+        console.log("outputFileName: ", outputFileName);
+        //var outputFileUrl = AppFramework.resolvedUrl(outputFilePath);
+        var outputFileFolder = outputFileInfo.folder;
+        console.log("outputFileFolder.path: ", outputFileFolder.path);
+        if (outputFileFolder.fileExists(outputFileName)) {
+            outputFileFolder.removeFile(outputFileName);
+        }
+        console.log("outputFileUrl: ", outputFileUrl);
+        console.log("Saving %1 chars to %2"
+                    .arg(jsonText.length)
+                    .arg(outputFileFolder.filePath(outputFileName)));
+        //var ok = outputFileFolder.writeTextFile(outputFilePath, jsonText);
+        if (!outputFileFolder.exists) {
+            outputFileFolder.makeFolder();
+        }
+        var ok = outputFileFolder.writeTextFile(outputFileName, jsonText);
+        //var ok = outputFileFolder.writeJsonFile(outputFileName, outputJson);
+        console.log(ok);
+        Qt.quit();
+    }
+
+    Component.onCompleted: runTimer.start()
 
 }
 
