@@ -23,7 +23,7 @@ for(let file of qmltypesJsonFiles) {
     readQmltypeJson(path.join(__dirname,'../../qml_types',file));
 }
 */
-readQmltypeJson(path.join(__dirname, '../../ALLQMLTypes.json'));
+readQmltypeJson(path.join(__dirname, '../../QMLTypes.json'));
 connection.onInitialize((_params) => {
     return {
         capabilities: {
