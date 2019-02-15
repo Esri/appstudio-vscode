@@ -3,7 +3,9 @@ AppStudio Extension for Visual Studio Code
 
 ## Features implemented so far
 
-* Open AppStudio project: To open an AppStudio project, go to File -> Open Folder, and open the AppStudio project folder. If the workspace contains more than one folders containing appinfo.json files, the extension will prompt the user to select one of them before running the executables.  
+* Open AppStudio project: To open an AppStudio project, go to File -> Open Folder, and open the AppStudio project folder. 
+
+* Seperate tree view for AppStudio projects in the explorer
 
 * QML Syntax Highlighting
 
@@ -27,11 +29,11 @@ At the moment you can run this extension by installing the extension locally, or
 
 #### Install the extension locally 
 
-Download the `appstudio-%VERSION%.vsix` file in the repo (you don't need to download the whole repo). 
+* Download the `appstudio-%VERSION%.vsix` file in the repo (you don't need to download the whole repo). 
 
-Open VS Code, go to: Extensions panel (on the left) -> More Actions (top right corner of extension panel) -> Install from VSIX, and choose the .vsix file downloaded to install. 
+* Open VS Code, go to: Extensions panel (on the left) -> More Actions (top right corner of extension panel) -> Install from VSIX, and choose the .vsix file downloaded to install. 
 
-After the extension is successfully installed, reload VS code.
+* After the extension is successfully installed, reload VS code.
 
 > When a new version is available, simply install it and reload VS code should override the old version.
 
@@ -39,7 +41,9 @@ After the extension is successfully installed, reload VS code.
 
 #### Running in VS Code debug mode (Node.js installation required)
 
-Make sure you have Node.js installed. Clone this repository onto your machine and open it in VS code. Hit F5 to enter debug mode.
+* Clone this repository.
+* Run `npm install` in the repository folder.
+* Open the repo in VS code. Hit F5 to enter debug mode.
 
 ## Extension Settings
 

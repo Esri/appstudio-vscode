@@ -21,55 +21,64 @@
         "commands": [
             {
                 "command": "appstudio.refresh",
-                "title": "refresh"
+                "title": "refresh",
+                "category": "AppStudio"
             },
             {
                 "command": "openAppinfo",
-                "title": "open appinfo.json"
+                "title": "open appinfo.json",
+                "category": "AppStudio"
             },
             {
                 "command": "openMainfile",
-                "title": "open main qml file"
+                "title": "open main qml file",
+                "category": "AppStudio"
             },
             {
                 "command": "manualSelectAppStudioPath",
-                "title": "AppStudio: Manual Select AppStudio Installation Path"
+                "title": "Manual Select AppStudio Installation Path",
+                "category": "AppStudio"
             },
             {
                 "command": "autoSelectAppStudioPath",
-                "title": "AppStudio: Auto Select AppStudio Installation Path"
+                "title": "Auto Select AppStudio Installation Path",
+                "category": "AppStudio"
             },
             {
                 "command": "appRun",
-                "title": "AppStudio: AppRun",
+                "title": "AppRun",
                 "icon": {
                     "dark": "resources/dark/app-run-32-f.svg",
                     "light": "resources/dark/app-run-32-f.svg"
-                }
+                },
+                "category": "AppStudio"
             },
             {
                 "command": "appMake",
-                "title": "AppStudio: AppMake",
+                "title": "AppMake",
                 "icon": {
                     "dark": "resources/dark/hammer-32-f.svg",
                     "light": "resources/dark/hammer-32-f.svg"
-                }
+                },
+                "category": "AppStudio"
             },
             {
                 "command": "appSetting",
-                "title": "AppStudio: AppSettings",
+                "title": "AppSettings",
                 "icon": {
                     "dark": "resources/dark/gear-32-f.svg",
                     "light": "resources/dark/gear-32-f.svg"
-                }
+                },
+                "category": "AppStudio"
             },
             {
                 "command": "appUpload",
-                "title": "AppStudio: AppUpload",
+                "title": "AppUpload",
                 "icon": {
                     "dark": "resources/dark/upload-32-f.svg",
                     "light": "resources/dark/upload-32-f.svg"
-                }
+                },
+                "category": "AppStudio"
             }
         ],
         "keybindings": [
