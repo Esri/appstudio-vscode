@@ -5,7 +5,7 @@
 	"version": "0.0.1",
 	"publisher": "vscode",
 	"engines": {
-		"vscode": "^1.23.0"
+		"vscode": "^1.30.0"
 	},
 	"scripts": {
 		"update-vscode": "vscode-install",
@@ -15,6 +15,6 @@
 		"vscode-languageclient": "^4.1.4"
 	},
 	"devDependencies": {
-		"vscode": "^1.1.21"
+		"vscode": "^1.1.29"
 	}
 }

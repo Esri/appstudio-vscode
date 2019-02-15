@@ -1,77 +1,66 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs';
 import * as path from 'path';
+import { AppStudioProjInfo } from './extension';
 
-export class appStudioTreeDataProvider implements vscode.TreeDataProvider<AppStudioProject> {
+export class AppStudioTreeDataProvider implements vscode.TreeDataProvider<AppStudioTreeItem> {
 
-	private _onDidChangeTreeData: vscode.EventEmitter<AppStudioProject | undefined> = new vscode.EventEmitter<AppStudioProject | undefined>();
-	readonly onDidChangeTreeData: vscode.Event<AppStudioProject | undefined> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<AppStudioTreeItem | undefined> = new vscode.EventEmitter<AppStudioTreeItem | undefined>();
+	readonly onDidChangeTreeData: vscode.Event<AppStudioTreeItem | undefined> = this._onDidChangeTreeData.event;
 
+	constructor (private appStudioProjects: AppStudioProjInfo[]) {
+	}
 	
+	set projects(infos: AppStudioProjInfo[]) {
+		this.appStudioProjects = infos;
+	}
 
 	refresh(): void {
 		this._onDidChangeTreeData.fire();
 	}
 
-	getTreeItem(element: AppStudioProject): vscode.TreeItem {
+	getTreeItem(element: AppStudioTreeItem): vscode.TreeItem {
 		return element;
 	}
 
-	getChildren(element?: AppStudioProject): Thenable<AppStudioProject[]> {
+	getChildren(): AppStudioTreeItem[] {
 
-		
-		let r: AppStudioProject [] = [];
-		return Promise.resolve(
-		vscode.workspace.findFiles('**/appinfo.json').then(result => {
+		let appStudioTreeItem: AppStudioTreeItem [] = [];
 
-			if (result.length > 0) {
-				for (let uri of result) {
-					let projectPath = path.dirname(uri.fsPath);
-
-					let iteminfoPath = path.join(projectPath, 'iteminfo.json');
-
-					let data = fs.readFileSync(iteminfoPath);
-
-					let title = JSON.parse(data.toString()).title;
-
-					title += ' (' + path.basename(projectPath) + ')';
-
-					data = fs.readFileSync(uri.fsPath);
-
-					let mainFile = JSON.parse(data.toString()).mainFile;
-					let mainfilePath = vscode.Uri.file(path.join(projectPath, mainFile));
-
-					r.push( new AppStudioProject(title, vscode.TreeItemCollapsibleState.None, projectPath,
-						{ command: 'openMainfile', title: 'Open Mainfile', arguments: [mainfilePath]}));
-				}
-
-			}
-			return r;
-		}));
-	
-
-	}
-
-
-	private pathExists(p: string): boolean {
-		try {
-			fs.accessSync(p);
-		} catch (err) {
-			return false;
+		if (!this.appStudioProjects) {
+			return [];
 		}
+		
+		if (this.appStudioProjects.length > 0) {
+			for (let project of this.appStudioProjects) {
 
-		return true;
+				let titleAndPath = project.title + ' (' + path.basename(project.projectPath) + ')';
+				//
+				let mainfilePath = path.join(project.projectPath, project.mainFile);
+
+				appStudioTreeItem.push( new AppStudioTreeItem(titleAndPath, vscode.TreeItemCollapsibleState.None,
+					project.projectPath, mainfilePath, project.title
+					/*{ command: 'openMainfile', title: 'Open Mainfile', arguments: [mainfilePath]}*/));
+			}
+			return appStudioTreeItem;
+
+		} else {
+			let noProject = new AppStudioTreeItem('No AppStudio project found.', vscode.TreeItemCollapsibleState.None);
+			noProject.contextValue = 'Empty';
+			noProject.iconPath = null;
+			return [noProject];
+		}
 	}
-
 
 }
 
-export class AppStudioProject extends vscode.TreeItem {
+export class AppStudioTreeItem extends vscode.TreeItem {
 
 	constructor(
 		public readonly label: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState,
-		public readonly projectPath: string,
+		public readonly projectPath?: string,
+		public readonly mainfilePath?: string,
+		public readonly title?: string,
 		public readonly command?: vscode.Command
 	) {
 		super(label, collapsibleState);
@@ -91,15 +80,15 @@ export class AppStudioProject extends vscode.TreeItem {
 
 export class AppStudioTreeView {
 
-	private appStudioTreeView: vscode.TreeView<AppStudioProject>;
-	private treeDataProvider: appStudioTreeDataProvider;
+	private appStudioTreeView: vscode.TreeView<AppStudioTreeItem>;
+	private treeDataProvider: AppStudioTreeDataProvider;
 
-	constructor() {
-		this.treeDataProvider = new appStudioTreeDataProvider();
+	constructor(private appStudioProjects: AppStudioProjInfo[]) {
+		this.treeDataProvider = new AppStudioTreeDataProvider(appStudioProjects);
 		this.appStudioTreeView = vscode.window.createTreeView('appstudioProjects', { treeDataProvider: this.treeDataProvider});
 	
 
-		vscode.commands.registerCommand('appstudio.refresh', () => this.treeDataProvider.refresh());
+		//vscode.commands.registerCommand('appstudio.refresh', () => this.treeDataProvider.refresh());
 
 	}
 

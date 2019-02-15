@@ -167,4 +167,117 @@ export function aactivate(context: vscode.ExtensionContext) {
 		activeEditor.setDecorations(largeNumberDecorationType, largeNumbers);
 	}
 }
+
+function addAppStudioProject () {
+	appStudioProjectPaths = [];
+	activeProjectPath = undefined;
+
+	workspace.findFiles('**/appinfo.json').then(result => {
+
+		if (result.length > 0) {
+			result.forEach(uri => {
+				//let folderPath = workspace.getWorkspaceFolder(uri).uri.fsPath;
+
+				let projectPath = path.dirname(uri.fsPath);
+
+				fs.readFile(uri.fsPath, (err, data) => {
+					if (err) console.log(err);
+					let mainFile = JSON.parse(data.toString()).mainFile;
+					window.showTextDocument(vscode.Uri.file(path.join(projectPath, mainFile)),
+						{
+							preview: false
+						});
+				});
+				// use the directory name containing the appinfo.json file found as the project path
+				appStudioProjectPaths.push(projectPath);
+				activeProjectPath = projectPath;
+				activeProjectStatusBar.text = "Active Project: " + path.basename(activeProjectPath);
+			});
+
+			noProjectStatusBar.hide();
+			for (let item of activeStatusBarItems) {
+				item.show();
+			}
+
+		} else {
+
+			for (let item of activeStatusBarItems) {
+				item.hide();
+			}
+			
+			noProjectStatusBar.text = 'No AppStudio Project found';
+			noProjectStatusBar.show();
+		}
+	});
+}
+
+	getChildren(element?: AppStudioTreeItem): Thenable<AppStudioTreeItem[]> {
+
+		let appStudioTreeItem: AppStudioTreeItem [] = [];
+		return Promise.resolve(
+		vscode.workspace.findFiles('**/appinfo.json').then(result => {
+
+			if (result.length > 0) {
+				for (let uri of result) {
+					let projectPath = path.dirname(uri.fsPath);
+
+					let iteminfoPath = path.join(projectPath, 'iteminfo.json');
+
+					let data = fs.readFileSync(iteminfoPath);
+
+					let title = JSON.parse(data.toString()).title;
+
+					title += ' (' + path.basename(projectPath) + ')';
+
+					//
+					data = fs.readFileSync(uri.fsPath);
+
+					let mainFile = JSON.parse(data.toString()).mainFile;
+					let mainfilePath = path.join(projectPath, mainFile);
+
+					vscode.window.showTextDocument(vscode.Uri.file(mainfilePath), {preview: false});
+
+					appStudioTreeItem.push( new AppStudioTreeItem(title, vscode.TreeItemCollapsibleState.None, projectPath, mainfilePath
+						/*{ command: 'openMainfile', title: 'Open Mainfile', arguments: [mainfilePath]}*/));
+				}
+				return appStudioTreeItem;
+
+			} else {
+				let noProject = new AppStudioTreeItem('No AppStudio project found.', vscode.TreeItemCollapsibleState.None);
+				noProject.contextValue = 'Empty';
+				noProject.iconPath = null;
+				return [noProject];
+			}
+		}));
+	}
+
+
+	function getAppStudioProject (): Thenable<vscode.Uri[]> {
+
+		return Promise.resolve(workspace.findFiles('**/appinfo.json').then(result => {
+				return result;
+		}));
+	}
+
+	function addAppStudioProject1(result: vscode.Uri[]) {
+
+		if (result.length > 0) {
+			for (let uri of result) {
+				let projectPath = path.dirname(uri.fsPath);
+
+				let data = fs.readFileSync(uri.fsPath);
+
+				let mainFile = JSON.parse(data.toString()).mainFile;
+				let mainfilePath = path.join(projectPath, mainFile);
+
+				vscode.window.showTextDocument(vscode.Uri.file(mainfilePath), {preview: false});
+
+				activeProjectPath = projectPath;
+				projectStatusBar.text = "Active Project: " + path.basename(activeProjectPath);
+
+			}
+		} else {
+			projectStatusBar.text = 'No AppStudio Project found';
+		}
+	}
 			

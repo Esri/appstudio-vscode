@@ -2,23 +2,35 @@
     "name": "appstudio",
     "displayName": "AppStudio",
     "description": "AppStudio Extension for Visual Studio Code",
-	"license": "MIT",
-    "version": "0.0.5",
+    "license": "MIT",
+    "version": "0.0.6",
     "publisher": "Esri",
     "repository": {
-		"type": "git",
-		"url": "https://github.com/ArcGIS/appstudio-vscode"
-	},
-	"categories": [],
-	"engines": {
-		"vscode": "^1.30.0"
-	},
-	"activationEvents": [
-		"*"
-	],
-	"main": "./client/out/extension",
-	"contributes": {
-		"commands": [
+        "type": "git",
+        "url": "https://github.com/ArcGIS/appstudio-vscode"
+    },
+    "categories": [],
+    "engines": {
+        "vscode": "^1.30.0"
+    },
+    "activationEvents": [
+        "*"
+    ],
+    "main": "./client/out/extension",
+    "contributes": {
+        "commands": [
+            {
+                "command": "appstudio.refresh",
+                "title": "refresh"
+            },
+            {
+                "command": "openAppinfo",
+                "title": "open appinfo.json"
+            },
+            {
+                "command": "openMainfile",
+                "title": "open main qml file"
+            },
             {
                 "command": "manualSelectAppStudioPath",
                 "title": "AppStudio: Manual Select AppStudio Installation Path"
@@ -29,19 +41,35 @@
             },
             {
                 "command": "appRun",
-                "title": "AppStudio: AppRun"
+                "title": "AppStudio: AppRun",
+                "icon": {
+                    "dark": "resources/dark/app-run-32-f.svg",
+                    "light": "resources/dark/app-run-32-f.svg"
+                }
             },
             {
                 "command": "appMake",
-                "title": "AppStudio: AppMake"
+                "title": "AppStudio: AppMake",
+                "icon": {
+                    "dark": "resources/dark/hammer-32-f.svg",
+                    "light": "resources/dark/hammer-32-f.svg"
+                }
             },
             {
                 "command": "appSetting",
-                "title": "AppStudio: AppSettings"
+                "title": "AppStudio: AppSettings",
+                "icon": {
+                    "dark": "resources/dark/gear-32-f.svg",
+                    "light": "resources/dark/gear-32-f.svg"
+                }
             },
             {
                 "command": "appUpload",
-                "title": "AppStudio: AppUpload"
+                "title": "AppStudio: AppUpload",
+                "icon": {
+                    "dark": "resources/dark/upload-32-f.svg",
+                    "light": "resources/dark/upload-32-f.svg"
+                }
             }
         ],
         "keybindings": [
@@ -62,8 +90,8 @@
                 "key": "alt+shift+up"
             }
         ],
-		"configuration": {
-			"type": "object",
+        "configuration": {
+            "type": "object",
             "title": "AppStudio",
             "properties": {
                 "AppStudio Path": {
@@ -74,8 +102,8 @@
                     "markdownDescription": "Installation Path of AppStudio. This is used for running the AppStudio applications. Only modify this when you need to change the installation path for AppStudio. It's recommended to modify this by running the `Manual Select AppStudio Installation Path` command in the command palette (Ctrl+Shift+P). If you wish to modify in settings.json directly, please make sure the path is conformed to the following examples of format: Windows: `C:\\\\Users\\\\username\\\\Applications\\\\ArcGIS\\\\AppStudio`, MacOS and Linux: `~/Application/ArcGIS/AppStudio`"
                 }
             }
-		},
-		"languages": [
+        },
+        "languages": [
             {
                 "id": "qml",
                 "extensions": [
@@ -92,23 +120,69 @@
                 "scopeName": "source.qml",
                 "path": "./syntaxes/qml.tmLanguage.json"
             }
-        ]
-	},
-	"scripts": {
-		"vscode:prepublish": "cd client && npm run update-vscode && cd .. && npm run compile",
-		"compile": "tsc -b",
-		"watch": "tsc -b -w",
-		"postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
-		"test": "sh ./scripts/e2e.sh"
-	},
-	"devDependencies": {
-		"@types/mocha": "^5.2.0",
-		"@types/node": "^8.10.25",
-		"tslint": "^5.11.0",
-        "typescript": "^3.1.4",
-        "vscode": "^1.1.25"
-	},
-	"dependencies": {
-		"read-ini-file": "^2.0.0"
-	}
+        ],
+        "views": {
+            "explorer": [
+                {
+                    "id": "appstudioProjects",
+                    "name": "AppStudio Projects"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "appstudio.refresh",
+                    "when": "view == appstudioProjects",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "appRun",
+                    "when": "viewItem == appStudioProject",
+                    "group": "inline@4"
+                },
+                {
+                    "command": "appMake",
+                    "when": "viewItem == appStudioProject",
+                    "group": "inline@3"
+                },
+                {
+                    "command": "appSetting",
+                    "when": "viewItem == appStudioProject",
+                    "group": "inline@1"
+                },
+                {
+                    "command": "appUpload",
+                    "when": "viewItem == appStudioProject",
+                    "group": "inline@2"
+                },
+                {
+                    "command": "openAppinfo",
+                    "when": "viewItem == appStudioProject"
+                },
+                {
+                    "command": "openMainfile",
+                    "when": "viewItem == appStudioProject"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "cd client && npm run update-vscode && cd .. && npm run compile",
+        "compile": "tsc -b",
+        "watch": "tsc -b -w",
+        "postinstall": "cd client && npm install && cd ../server && npm install && cd ..",
+        "test": "sh ./scripts/e2e.sh"
+    },
+    "devDependencies": {
+        "@types/mocha": "^5.2.6",
+        "@types/node": "^11.9.3",
+        "tslint": "^5.12.1",
+        "typescript": "^3.3.3"
+    },
+    "dependencies": {
+        "read-ini-file": "^2.0.0"
+    }
 }

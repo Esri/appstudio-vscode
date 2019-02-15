@@ -6,13 +6,19 @@ import { window, workspace, commands } from 'vscode';
 import * as path from 'path';
 import * as loadIniFile from 'read-ini-file';
 import * as fs from 'fs';
-import * as glob from 'glob';
 import {
 	LanguageClient,
 	LanguageClientOptions,
 	ServerOptions,
 	TransportKind
 } from 'vscode-languageclient';
+import { AppStudioTreeItem, AppStudioTreeView } from './appStudioViewProvider';
+
+export interface AppStudioProjInfo {
+	projectPath: string;
+	title: string;
+	mainFile: string;
+}
 
 let client: LanguageClient;
 
@@ -23,6 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "appstudio" is now active!');
+	window.showInformationMessage('Congratulations, your extension "appstudio" is now active');
 	const osVer = process.platform;
 
 	if (osVer !== 'darwin' && osVer !== 'win32' && osVer !== 'linux') {
@@ -38,39 +45,44 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	// Array containing the paths of all AppStudio projects in the workspace
-	let appStudioProjectPaths: string[];
+	let appStudioProjects: AppStudioProjInfo[];
 
 	let activeProjectPath: string;
 
 	// Console ouput for the AppStudio Apps
 	let consoleOutput = window.createOutputChannel('AppStudio');
 
+	let appStudioTreeView = new AppStudioTreeView(appStudioProjects);
+
+	appStudioTreeView.treeview.onDidChangeSelection( e => {
+
+		if (e.selection.length === 1 && e.selection[0].projectPath) {
+			activeProjectPath = e.selection[0].projectPath;
+			projectStatusBar.text = "Active Project: " + e.selection[0].title;
+		}
+	});
+
 	// Add any AppStudio projects when the extension is activated
-	addAppStudioProject();
+	getAppStudioProject();
 
 	// Event emitted when any appinfo.json file is created or deleted in the workspace
 	let appinfoWatcher = workspace.createFileSystemWatcher('**/appinfo.json');
 	appinfoWatcher.onDidCreate(() => {
-		addAppStudioProject();
+		getAppStudioProject();
 	});
 	appinfoWatcher.onDidDelete(() => {
-		addAppStudioProject();
+		getAppStudioProject();
 	});
 
 	// Event emitted when a workspace folder is added or removed
 	workspace.onDidChangeWorkspaceFolders(() => {
-		addAppStudioProject();
+		getAppStudioProject();
 	});
 
 	// Create status bar items for all commands
 	createStatusBarItem('$(question)', 'openApiRefLink', 'Open Api Reference');
-	let appSettingStatusBar = createStatusBarItem('$(gear)', 'appSetting', 'appSetting(Alt+Shift+S)');
-	let appUploadStatusBar = createStatusBarItem('$(cloud-upload)', 'appUpload', 'appUpload(Alt+Shift+UpArrow)');
-	let appMakeStatusBar = createStatusBarItem('$(tools)', 'appMake', 'appMake(Alt+Shift+M)');
-	let appRunStatusBar = createStatusBarItem('$(triangle-right)', 'appRun', 'appRun(Alt+Shift+R)');
-	let activeProjectStatusBar = createStatusBarItem('$(file-directory)', 'setActiveProject', 'Set Active Project');
-	let noProjectStatusBar = window.createStatusBarItem();
-	let activeStatusBarItems: vscode.StatusBarItem[] = [appSettingStatusBar, appUploadStatusBar, appMakeStatusBar, appRunStatusBar, activeProjectStatusBar];
+	let projectStatusBar = window.createStatusBarItem();
+	projectStatusBar.show();
 	//createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
 
 	// Code below is for registering all the commands
@@ -117,25 +129,9 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(autoSelectAppStudioPathCmd);
 
-	let setActiveProjectCmd = commands.registerCommand('setActiveProject', () => {
-		if (appStudioProjectPaths) {
-			window.showQuickPick(appStudioProjectPaths, {
-				placeHolder: 'Set an Active AppStudio project:'
-			}).then(folder => {
-				if (folder !== undefined) {
-					activeProjectPath = folder;
-					activeProjectStatusBar.text = "Active Project: " + path.basename(activeProjectPath);
-				}
-			});
-		} else {
-			window.showErrorMessage("No appinfo.json found.");
-		}
-
-	});
-	context.subscriptions.push(setActiveProjectCmd);
-
 	// Register all the executable related commands with the appropriate paths for the operating system
 	let commandNames = ['appRun', 'appMake', 'appSetting', 'appUpload'];
+
 	if (osVer === 'darwin') {
 
 		registerExecutableCommands([
@@ -164,6 +160,22 @@ export function activate(context: vscode.ExtensionContext) {
 		]);
 	}
 
+	let openMainfileCmd =  commands.registerCommand('openMainfile', (proj: AppStudioTreeItem) => {
+		let mainfilePath = vscode.Uri.file(proj.mainfilePath);
+		window.showTextDocument(mainfilePath);
+	});
+	context.subscriptions.push(openMainfileCmd);
+
+	let openAppinfoCmd = commands.registerCommand('openAppinfo', (proj: AppStudioTreeItem) => {
+		let appinfoPath = vscode.Uri.file(path.join(proj.projectPath, 'appinfo.json'));
+		window.showTextDocument(appinfoPath);
+	});
+	context.subscriptions.push(openAppinfoCmd);
+
+	let refreshCmd = vscode.commands.registerCommand('appstudio.refresh', () => {
+		getAppStudioProject();
+	});
+	context.subscriptions.push(refreshCmd);
 
 	/*
 	let testCmd = commands.registerCommand('testCmd', () => {
@@ -199,46 +211,41 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Function to find 'appinfo.json' across all workspace folders,
 	// and add the project paths to the appStudioProjectPaths array
-	function addAppStudioProject () {
-		appStudioProjectPaths = [];
+	function getAppStudioProject () {
+		appStudioProjects = [];
 		activeProjectPath = undefined;
 
 		workspace.findFiles('**/appinfo.json').then(result => {
 
 			if (result.length > 0) {
-				result.forEach(uri => {
-					//let folderPath = workspace.getWorkspaceFolder(uri).uri.fsPath;
-	
+				for (let uri of result) {
 					let projectPath = path.dirname(uri.fsPath);
 
-					fs.readFile(uri.fsPath, (err, data) => {
-						if (err) console.log(err);
-						let mainFile = JSON.parse(data.toString()).mainFile;
-						window.showTextDocument(vscode.Uri.file(path.join(projectPath, mainFile)),
-							{
-								preview: false
-							});
-					});
-					// use the directory name containing the appinfo.json file found as the project path
-					appStudioProjectPaths.push(projectPath);
-					activeProjectPath = projectPath;
-					activeProjectStatusBar.text = "Active Project: " + path.basename(activeProjectPath);
-				});
+					let data = fs.readFileSync(path.join(projectPath, 'iteminfo.json'));
+					let title = JSON.parse(data.toString()).title;
 
-				noProjectStatusBar.hide();
-				for (let item of activeStatusBarItems) {
-					item.show();
+					data = fs.readFileSync(uri.fsPath);
+					let mainFile = JSON.parse(data.toString()).mainFile;
+
+					appStudioProjects.push({
+						projectPath: projectPath,
+						title: title,
+						mainFile: mainFile
+					});
+
+					window.showTextDocument(vscode.Uri.file(path.join(projectPath, mainFile)), {preview: false});
 				}
+
+				projectStatusBar.text = "Active Project: " + appStudioProjects[0].title;
+				activeProjectPath = appStudioProjects[0].projectPath;
+				//window.showTextDocument(vscode.Uri.file(path.join(activeProjectPath, appStudioProjects[0].mainFile)), {preview: false});
 
 			} else {
-
-				for (let item of activeStatusBarItems) {
-					item.hide();
-				}
-				
-				noProjectStatusBar.text = 'No AppStudio Project found';
-				noProjectStatusBar.show();
+				projectStatusBar.text = 'No AppStudio Project found';
 			}
+
+			appStudioTreeView.treeData.projects = appStudioProjects;
+			appStudioTreeView.treeData.refresh();
 		});
 	}
 
@@ -291,9 +298,17 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Register all the executable commands with the corresponding command names and executable paths
 	function registerExecutableCommands(cmdPaths: string[]) {
+
 		commandNames.forEach((value, index) => {
-			let cmd = commands.registerCommand(value, () => {
-				runAppStudioCommand(cmdPaths[index]);
+
+			let cmd = commands.registerCommand(value, (proj?: AppStudioTreeItem) => {
+
+				if (proj) {
+					runAppStudioCommand(cmdPaths[index], proj.projectPath);
+				} else {
+					runAppStudioCommand(cmdPaths[index]);
+				}
+
 			});
 			// Add to a list of disposables which are disposed when this extension is deactivated.
 			context.subscriptions.push(cmd);
@@ -301,7 +316,7 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	// Run commands to run the executables
-	function runAppStudioCommand(executable: string) {
+	function runAppStudioCommand(executable: string, projectPath?: string) {
 		let appStudioPath: string = workspace.getConfiguration().get('AppStudio Path');
 
 		if (appStudioPath === "") {
@@ -313,10 +328,15 @@ export function activate(context: vscode.ExtensionContext) {
 			window.showWarningMessage('No folder opened.');
 		} else {
 
-			if (appStudioProjectPaths.length === 0 || !activeProjectPath) {
+			if (!activeProjectPath) {
+				//appStudioProjectPaths.length === 0 ||
 				window.showErrorMessage("No appinfo.json found.");
 			} else {
-				runProcess(appStudioPath, executable, activeProjectPath);
+				if (projectPath) {
+					runProcess(appStudioPath, executable, projectPath);
+				} else {
+					runProcess(appStudioPath, executable, activeProjectPath);
+				}
 			}
 		}
 	}
