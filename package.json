@@ -23,8 +23,8 @@
                 "command": "appstudio.refresh",
                 "title": "refresh",
                 "icon": {
-                    "dark": "resources/dark/refresh.svg",
-                    "light": "resources/dark/refresh.svg"
+                    "dark": "resources/dark/refresh-dark.svg",
+                    "light": "resources/light/refresh-light.svg"
                 },
                 "category": "AppStudio"
             },
@@ -52,8 +52,8 @@
                 "command": "appRun",
                 "title": "AppRun",
                 "icon": {
-                    "dark": "resources/dark/app-run-32-f.svg",
-                    "light": "resources/dark/app-run-32-f.svg"
+                    "dark": "resources/dark/app-run-dark.svg",
+                    "light": "resources/light/app-run-light.svg"
                 },
                 "category": "AppStudio"
             },
@@ -61,8 +61,8 @@
                 "command": "appMake",
                 "title": "AppMake",
                 "icon": {
-                    "dark": "resources/dark/hammer-32-f.svg",
-                    "light": "resources/dark/hammer-32-f.svg"
+                    "dark": "resources/dark/hammer-dark.svg",
+                    "light": "resources/light/hammer-light.svg"
                 },
                 "category": "AppStudio"
             },
@@ -70,8 +70,8 @@
                 "command": "appSetting",
                 "title": "AppSettings",
                 "icon": {
-                    "dark": "resources/dark/gear-32-f.svg",
-                    "light": "resources/dark/gear-32-f.svg"
+                    "dark": "resources/dark/gear-dark.svg",
+                    "light": "resources/light/gear-light.svg"
                 },
                 "category": "AppStudio"
             },
@@ -79,8 +79,8 @@
                 "command": "appUpload",
                 "title": "AppUpload",
                 "icon": {
-                    "dark": "resources/dark/upload-32-f.svg",
-                    "light": "resources/dark/upload-32-f.svg"
+                    "dark": "resources/dark/upload-dark.svg",
+                    "light": "resources/light/upload-light.svg"
                 },
                 "category": "AppStudio"
             },
@@ -88,8 +88,8 @@
                 "command": "openApiRefLink",
                 "title": "Open Api Reference",
                 "icon": {
-                    "dark": "resources/dark/question.svg",
-                    "light": "resources/dark/question.svg"
+                    "dark": "resources/dark/question-dark.svg",
+                    "light": "resources/light/question-light.svg"
                 },
                 "category": "AppStudio"
             }

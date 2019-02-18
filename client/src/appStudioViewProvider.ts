@@ -82,8 +82,8 @@ export class AppStudioTreeItem extends vscode.TreeItem {
 	}
 
 	iconPath = {
-		light: path.join(__dirname, '..', '..', 'resources', 'dark', 'folder-16-f.svg'),
-		dark: path.join(__dirname, '..','..', 'resources', 'dark', 'folder-16-f.svg')
+		dark: path.join(__dirname, '..', '..', 'resources', 'dark', 'folder-dark.svg'),
+		light: path.join(__dirname, '..','..', 'resources', 'light', 'folder-light.svg')
 	};
 
 	contextValue = 'appStudioProject';

@@ -241,7 +241,7 @@ export function activate(context: vscode.ExtensionContext) {
 							window.showErrorMessage(path.join(projectPath,'iteminfo.json' + ' has no \'title\' property, cannot set title for the project'));
 						}
 					} catch (err) {
-						window.showErrorMessage('Error when reading file ' + path.join(projectPath,'iteminfo.json') + '. Cannot set title for the project');
+						window.showErrorMessage('Error trying to read file ' + path.join(projectPath,'iteminfo.json') + '. Cannot set title for the project');
 					}
 
 					data = fs.readFileSync(uri.fsPath).toString();
