@@ -33,12 +33,23 @@ export class AppStudioTreeDataProvider implements vscode.TreeDataProvider<AppStu
 		if (this.appStudioProjects.length > 0) {
 			for (let project of this.appStudioProjects) {
 
-				let titleAndPath = project.title + ' (' + path.basename(project.projectPath) + ')';
+				let label: string;
+				let title: string;
+				if (project.title) {
+					label = project.title + ' (' + path.basename(project.projectPath) + ')';
+					title = project.title;
+				} else {
+					label = path.basename(project.projectPath);
+					title = path.basename(project.projectPath);
+				}
 				//
-				let mainfilePath = path.join(project.projectPath, project.mainFile);
+				let mainfilePath: string;
+				if (project.mainFile) {
+					mainfilePath = path.join(project.projectPath, project.mainFile);
+				}
 
-				appStudioTreeItem.push( new AppStudioTreeItem(titleAndPath, vscode.TreeItemCollapsibleState.None,
-					project.projectPath, mainfilePath, project.title
+				appStudioTreeItem.push( new AppStudioTreeItem(label, vscode.TreeItemCollapsibleState.None,
+					project.projectPath, mainfilePath, title
 					/*{ command: 'openMainfile', title: 'Open Mainfile', arguments: [mainfilePath]}*/));
 			}
 			return appStudioTreeItem;

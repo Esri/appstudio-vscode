@@ -159,9 +159,20 @@ export function activate(context: vscode.ExtensionContext) {
 		]);
 	}
 
+	function openMainFile (mainfilePath: string, title: string) {
+		if (mainfilePath) {
+			window.showTextDocument(vscode.Uri.file(mainfilePath), {preview: false}).then(null, () => {
+				window.showErrorMessage('Cannot open main file for project ' + title + ', please check if the "mainFile" property is correct in appinfo.json');
+			});
+		} else {
+			window.showErrorMessage('Cannot open main file for project ' + title + ', no "mainFile" property in appinfo.json');
+		}
+	}
+
 	let openMainfileCmd =  commands.registerCommand('openMainfile', (proj: AppStudioTreeItem) => {
-		let mainfilePath = vscode.Uri.file(proj.mainfilePath);
-		window.showTextDocument(mainfilePath);
+
+		openMainFile(proj.mainfilePath, proj.label);
+
 	});
 	context.subscriptions.push(openMainfileCmd);
 
@@ -220,22 +231,36 @@ export function activate(context: vscode.ExtensionContext) {
 				for (let uri of result) {
 					let projectPath = path.dirname(uri.fsPath);
 
-					let data = fs.readFileSync(path.join(projectPath, 'iteminfo.json'));
-					let title = JSON.parse(data.toString()).title;
+					let data: string;
+					let title: string;
+					try {
+						data = fs.readFileSync(path.join(projectPath, 'iteminfo.json')).toString();
+						title = JSON.parse(data).title;
 
-					data = fs.readFileSync(uri.fsPath);
-					let mainFile = JSON.parse(data.toString()).mainFile;
+						if (!title) {
+							window.showErrorMessage(path.join(projectPath,'iteminfo.json' + ' has no \'title\' property, cannot set title for the project'));
+						}
+					} catch (err) {
+						window.showErrorMessage('Error when reading file ' + path.join(projectPath,'iteminfo.json') + '. Cannot set title for the project');
+					}
+
+					data = fs.readFileSync(uri.fsPath).toString();
+					let mainFile = JSON.parse(data).mainFile;
 
 					appStudioProjects.push({
 						projectPath: projectPath,
 						title: title,
 						mainFile: mainFile
 					});
-
-					window.showTextDocument(vscode.Uri.file(path.join(projectPath, mainFile)), {preview: false});
+					
+					openMainFile(mainFile?path.join(projectPath, mainFile):null, title? `${title} (${path.basename(projectPath)})`:path.basename(projectPath));
 				}
 
-				projectStatusBar.text = "Active Project: " + appStudioProjects[0].title;
+				if (appStudioProjects[0].title) {
+					projectStatusBar.text = 'Active Project: ' + appStudioProjects[0].title;
+				} else {
+					projectStatusBar.text = 'Active Project: ' + path.basename(appStudioProjects[0].projectPath);
+				}
 				activeProjectPath = appStudioProjects[0].projectPath;
 				//window.showTextDocument(vscode.Uri.file(path.join(activeProjectPath, appStudioProjects[0].mainFile)), {preview: false});
 
