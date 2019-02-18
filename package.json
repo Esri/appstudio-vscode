@@ -22,6 +22,10 @@
             {
                 "command": "appstudio.refresh",
                 "title": "refresh",
+                "icon": {
+                    "dark": "resources/dark/refresh.svg",
+                    "light": "resources/dark/refresh.svg"
+                },
                 "category": "AppStudio"
             },
             {
@@ -77,6 +81,15 @@
                 "icon": {
                     "dark": "resources/dark/upload-32-f.svg",
                     "light": "resources/dark/upload-32-f.svg"
+                },
+                "category": "AppStudio"
+            },
+            {
+                "command": "openApiRefLink",
+                "title": "Open Api Reference",
+                "icon": {
+                    "dark": "resources/dark/question.svg",
+                    "light": "resources/dark/question.svg"
                 },
                 "category": "AppStudio"
             }
@@ -142,6 +155,11 @@
             "view/title": [
                 {
                     "command": "appstudio.refresh",
+                    "when": "view == appstudioProjects",
+                    "group": "navigation"
+                },
+                {
+                    "command": "openApiRefLink",
                     "when": "view == appstudioProjects",
                     "group": "navigation"
                 }
