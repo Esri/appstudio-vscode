@@ -1,56 +1,41 @@
-# appstudio-vscode
-AppStudio Extension for Visual Studio Code
+# About AppStudio for ArcGIS extension for Visual Studio Code
 
-## Features implemented so far
+![App](./thumbnail.png)
 
-* Open AppStudio project: To open an AppStudio project, go to File -> Open Folder, and open the AppStudio project folder. 
+The AppStudio for ArcGIS extension for Visual Studio Code acts as a replacement for using Qt Creator. You will still use AppStudio Desktop to create new apps, but all the actions that you would have previously performed in Qt Creator, can now be completed in Visual Studio Code. You can edit, upload and run your AppStudio apps from within Visual Studio Code.
 
-* Seperate tree view for AppStudio projects in the explorer
+## How to use the app
 
-* QML Syntax Highlighting
+Download the appstudio-%VERSION%.vsix file from this repo, and open Visual Studio Code. On the Extensions panel select the More Actions tool and choose to Install from VSIX. Selct the .vsix file that you download to install. Press Reload in the notification panel.
 
-* Run current app project via AppRun (Alt+Shift+R)
+Choose Add Folder to Workspace to browse and add your AppStudio projects to the Explorer panel. In the AppStudio Projects Explorer section you will see that you can run the popular AppStudio tools - Settings, Upload, Make and Run - straight from with Visual Studio Code. Code completion and context senstive help is also available to you.   
 
-* Show console output from AppRun
+## Requirements
 
-* AppStudio settings tool for current project via AppSetting (Alt+Shift+S)
+<a href="http://www.esri.com/landing-pages/appstudio">AppStudio for ArcGIS</a> is required to use this extension.
 
-* Upload current project via AppUpload (Alt+Shift+UpArrow)
+## Issues
 
-* AppStudio make tool for current project via AppMake (Alt+Shift+M)
+Find a bug or want to request a new feature?  Please let us know by submitting an issue.
 
-* Context sensitive help: hover over a qml component to see the link to the online APi reference. Currently only supports QML types.
+## Contributing
 
-* Context sentitive code completion for QML: Currently supports QML types, properties, signals, methods and enumerations. Under any context, all QML types from the modules that have been imported will be provided. When inside the body block of a QML object, attributes which belong to the type of that object will also be provided. 
+Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing)
 
-## Installation
+## Copyright and License
 
-At the moment you can run this extension by installing the extension locally, or in Visual Studio Code debug mode.
+Copyright © 2019 Esri Inc.
 
-#### Install the extension locally 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-* Download the `appstudio-%VERSION%.vsix` file in the repo (you don't need to download the whole repo). 
+> http://www.apache.org/licenses/LICENSE-2.0
 
-* Open VS Code, go to: Extensions panel (on the left) -> More Actions (top right corner of extension panel) -> Install from VSIX, and choose the .vsix file downloaded to install. 
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 
-* After the extension is successfully installed, reload VS code.
-
-> When a new version is available, simply install it and reload VS code should override the old version.
-
-> If the extension is disabled, you can find the extension in: Extensions panel -> Disabled.
-
-#### Running in VS Code debug mode (Node.js installation required)
-
-* Clone this repository.
-* Run `npm install` in the repository folder.
-* Open the repo in VS code. Hit F5 to enter debug mode.
-
-## Extension Settings
-
-This extension contributes the following settings:
-
-* `AppStudio.AppStudio Path`: path for the AppStudio installation folder, default to empty string ""
-
-> **Note**: When the extension is activated for the first time, it will detect the AppStudio installation automatically on your machine. You can also change the AppStudio folder manually by opening the Command Palette (Ctrl+Shift+P), then type 'Manual Select AppStudio Installation Path' to run the command.
-
-> **Note**: The extension works on Windows, Mac OS and Linux.
+A copy of the license is available in the repository's [LICENSE](./LICENSE) file.
