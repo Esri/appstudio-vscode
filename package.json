@@ -1,14 +1,15 @@
 {
-    "name": "appstudio",
-    "displayName": "AppStudio",
-    "description": "AppStudio Extension for Visual Studio Code",
-    "license": "MIT",
+    "name": "appstudio.vscode",
+    "displayName": "AppStudio for ArcGIS",
+    "description": "Build AppStudio for ArcGIS apps in Visual Studio Code",
+    "license": "SEE LICENSE IN LICENSE",
     "version": "0.0.6",
     "publisher": "Esri",
     "repository": {
         "type": "git",
         "url": "https://github.com/ArcGIS/appstudio-vscode"
     },
+    "icon": "resources/appstudio-logo.png",
     "categories": [],
     "engines": {
         "vscode": "^1.30.0"
@@ -30,12 +31,12 @@
             },
             {
                 "command": "openAppinfo",
-                "title": "open appinfo.json",
+                "title": "Open appinfo.json",
                 "category": "AppStudio"
             },
             {
                 "command": "openMainfile",
-                "title": "open main qml file",
+                "title": "Open main .qml file",
                 "category": "AppStudio"
             },
             {
@@ -187,11 +188,13 @@
                 },
                 {
                     "command": "openAppinfo",
-                    "when": "viewItem == appStudioProject"
+                    "when": "viewItem == appStudioProject",
+                    "group": "groupA@2"
                 },
                 {
                     "command": "openMainfile",
-                    "when": "viewItem == appStudioProject"
+                    "when": "viewItem == appStudioProject",
+                    "group": "groupA@1"
                 }
             ]
         }
