@@ -22,6 +22,10 @@ export class AppStudioTreeDataProvider implements vscode.TreeDataProvider<AppStu
 		return element;
 	}
 
+	getParent(): AppStudioTreeItem {
+		return null;
+	}
+
 	getChildren(): AppStudioTreeItem[] {
 
 		let appStudioTreeItem: AppStudioTreeItem [] = [];
@@ -33,24 +37,24 @@ export class AppStudioTreeDataProvider implements vscode.TreeDataProvider<AppStu
 		if (this.appStudioProjects.length > 0) {
 			for (let project of this.appStudioProjects) {
 
-				let label: string;
-				let title: string;
-				if (project.title) {
-					label = project.title + ' (' + path.basename(project.projectPath) + ')';
-					title = project.title;
-				} else {
-					label = path.basename(project.projectPath);
-					title = path.basename(project.projectPath);
-				}
-				//
-				let mainfilePath: string;
-				if (project.mainFile) {
-					mainfilePath = path.join(project.projectPath, project.mainFile);
+				let treeItem = new AppStudioTreeItem(project.title, vscode.TreeItemCollapsibleState.None, project.projectPath, project.mainFilePath);
+
+				if (project.isActive) {
+					treeItem.iconPath = {
+						dark: path.join(__dirname, '..', '..', 'resources', 'appstudio-logo.svg'),
+						light: path.join(__dirname, '..','..', 'resources', 'appstudio-logo.svg')
+					};
+					treeItem.contextValue += 'Active';
 				}
 
-				appStudioTreeItem.push( new AppStudioTreeItem(label, vscode.TreeItemCollapsibleState.None,
-					project.projectPath, mainfilePath, title
-					/*{ command: 'openMainfile', title: 'Open Mainfile', arguments: [mainfilePath]}*/));
+				for (let folder of vscode.workspace.workspaceFolders) {
+					if (project.projectPath === folder.uri.fsPath) {
+						treeItem.contextValue += 'workspace';
+					}
+				}
+
+				appStudioTreeItem.push(treeItem);
+					//{ command: 'openMainfile', title: 'Open Mainfile', arguments: [mainfilePath]}
 			}
 			return appStudioTreeItem;
 
@@ -72,7 +76,8 @@ export class AppStudioTreeItem extends vscode.TreeItem {
 		public readonly projectPath?: string,
 		public readonly mainfilePath?: string,
 		public readonly title?: string,
-		public readonly command?: vscode.Command
+		public readonly command?: vscode.Command,
+		public readonly isActive?: boolean
 	) {
 		super(label, collapsibleState);
 	}
@@ -109,6 +114,19 @@ export class AppStudioTreeView {
 
 	get treeData() {
 		return this.treeDataProvider;
+	}
+
+	private getNode(project: AppStudioProjInfo): AppStudioTreeItem {
+
+		return new AppStudioTreeItem(project.title, vscode.TreeItemCollapsibleState.None);
+	}
+
+	public reveal(project: AppStudioProjInfo): Thenable<void> {
+		const node = this.getNode(project);
+		if (node) {
+			return this.appStudioTreeView.reveal(node, {focus: true});
+		}
+		return null;
 	}
 	
 }

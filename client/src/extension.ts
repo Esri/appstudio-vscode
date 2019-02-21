@@ -17,7 +17,8 @@ import { AppStudioTreeItem, AppStudioTreeView } from './appStudioViewProvider';
 export interface AppStudioProjInfo {
 	projectPath: string;
 	title: string;
-	mainFile: string;
+	mainFilePath: string;
+	isActive: boolean;
 }
 
 let client: LanguageClient;
@@ -57,7 +58,17 @@ export function activate(context: vscode.ExtensionContext) {
 
 		if (e.selection.length === 1 && e.selection[0].projectPath) {
 			activeProjectPath = e.selection[0].projectPath;
-			projectStatusBar.text = "Active Project: " + e.selection[0].title;
+
+			for (let proj of appStudioProjects) {
+				if (proj.projectPath === e.selection[0].projectPath) {
+					proj.isActive = true;
+				} else {
+					proj.isActive = false;
+				}
+			}
+			appStudioTreeView.treeData.refresh();
+
+			projectStatusBar.text = "Active AppStudio Project: " + e.selection[0].label;
 		}
 	});
 
@@ -78,8 +89,15 @@ export function activate(context: vscode.ExtensionContext) {
 		getAppStudioProject();
 	});
 
+	/*
+	window.onDidChangeActiveTextEditor( e => {
+		//window.showInformationMessage(e.document.fileName);
+		appStudioTreeView.reveal(appStudioProjects.find( proj => { return proj.projectPath === path.dirname(e.document.fileName);})).then( () => {},
+		reason => console.log(reason));
+	});
+	*/
+
 	// Create status bar items for all commands
-	createStatusBarItem('$(question)', 'openApiRefLink', 'Open Api Reference');
 	let projectStatusBar = window.createStatusBarItem();
 	projectStatusBar.show();
 	//createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
@@ -130,6 +148,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Register all the executable related commands with the appropriate paths for the operating system
 	let commandNames = ['appRun', 'appMake', 'appSetting', 'appUpload'];
+	let activeCommandNames = ['appRunActive', 'appMakeActive', 'appSettingActive', 'appUploadActive'];
 
 	if (osVer === 'darwin') {
 
@@ -161,8 +180,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	function openMainFile (mainfilePath: string, title: string) {
 		if (mainfilePath) {
-			window.showTextDocument(vscode.Uri.file(mainfilePath), {preview: false}).then(null, () => {
+			window.showTextDocument(vscode.Uri.file(mainfilePath), {preview: false}).then(null, (reason) => {
 				window.showErrorMessage('Cannot open main file for project ' + title + ', please check if the "mainFile" property is correct in appinfo.json');
+				window.showErrorMessage(reason.toString());
 			});
 		} else {
 			window.showErrorMessage('Cannot open main file for project ' + title + ', no "mainFile" property in appinfo.json');
@@ -182,10 +202,28 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(openAppinfoCmd);
 
-	let refreshCmd = vscode.commands.registerCommand('appstudio.refresh', () => {
+	let refreshCmd = commands.registerCommand('appstudio.refresh', () => {
 		getAppStudioProject();
 	});
 	context.subscriptions.push(refreshCmd);
+
+	let removeCmd = commands.registerCommand('removeProject', (proj: AppStudioTreeItem) => {
+		for (let folder of workspace.workspaceFolders) {
+			if (proj.projectPath === folder.uri.fsPath) {
+
+				window.showQuickPick(['Yes', 'No'], {
+					placeHolder: 'Do you want to remove the workspace folder?',
+				}).then(choice => {
+					if (choice === 'Yes') {
+						
+						//removeAppStudioProject(proj.projectPath);
+						workspace.updateWorkspaceFolders(folder.index, 1);
+					}
+				});
+			}
+		}
+	});
+	context.subscriptions.push(removeCmd);
 
 	/*
 	let testCmd = commands.registerCommand('testCmd', () => {
@@ -228,48 +266,49 @@ export function activate(context: vscode.ExtensionContext) {
 		workspace.findFiles('**/appinfo.json').then(result => {
 
 			if (result.length > 0) {
+
 				for (let uri of result) {
 					let projectPath = path.dirname(uri.fsPath);
 
-					let data: string;
-					let title: string;
+					let label: string;
 					try {
-						data = fs.readFileSync(path.join(projectPath, 'iteminfo.json')).toString();
-						title = JSON.parse(data).title;
-
-						if (!title) {
-							window.showErrorMessage(path.join(projectPath,'iteminfo.json' + ' has no \'title\' property, cannot set title for the project'));
+						let data = fs.readFileSync(path.join(projectPath, 'iteminfo.json')).toString();
+						let title = JSON.parse(data).title;
+						if (title) {
+							label = title + ' (' + path.basename(projectPath) + ')';
+						} else {
+							label = path.basename(projectPath);
 						}
-					} catch (err) {
-						window.showErrorMessage('Error trying to read file ' + path.join(projectPath,'iteminfo.json') + '. Cannot set title for the project');
+					} catch {
+						label = path.basename(projectPath);
+
 					}
 
-					data = fs.readFileSync(uri.fsPath).toString();
+					let data = fs.readFileSync(uri.fsPath).toString();
 					let mainFile = JSON.parse(data).mainFile;
+					let mainFilePath: string;
+					if (mainFile) {
+						mainFilePath = path.join(projectPath, mainFile);
+					}
 
 					appStudioProjects.push({
 						projectPath: projectPath,
-						title: title,
-						mainFile: mainFile
+						title: label,
+						mainFilePath: mainFilePath,
+						isActive: result.indexOf(uri) === 0
 					});
 					
-					openMainFile(mainFile?path.join(projectPath, mainFile):null, title? `${title} (${path.basename(projectPath)})`:path.basename(projectPath));
 				}
-
-				if (appStudioProjects[0].title) {
-					projectStatusBar.text = 'Active Project: ' + appStudioProjects[0].title;
-				} else {
-					projectStatusBar.text = 'Active Project: ' + path.basename(appStudioProjects[0].projectPath);
-				}
+				projectStatusBar.text = 'Active AppStudio Project: ' + appStudioProjects[0].title;
 				activeProjectPath = appStudioProjects[0].projectPath;
-				//window.showTextDocument(vscode.Uri.file(path.join(activeProjectPath, appStudioProjects[0].mainFile)), {preview: false});
-
 			} else {
 				projectStatusBar.text = 'No AppStudio Project found';
 			}
 
 			appStudioTreeView.treeData.projects = appStudioProjects;
 			appStudioTreeView.treeData.refresh();
+
+			openMainFile(appStudioProjects[0].mainFilePath, appStudioProjects[0].title);
 		});
 	}
 
@@ -311,30 +350,22 @@ export function activate(context: vscode.ExtensionContext) {
 		commands.executeCommand('manualSelectAppStudioPath');
 	}
 
-	function createStatusBarItem(itemText: string, itemCommand: string, itemTooltip: string) {
-		const statusBarItem = window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-		statusBarItem.text = itemText;
-		statusBarItem.command = itemCommand;
-		statusBarItem.tooltip = itemTooltip;
-		statusBarItem.show();
-		return statusBarItem;
-	}
-
 	// Register all the executable commands with the corresponding command names and executable paths
 	function registerExecutableCommands(cmdPaths: string[]) {
 
 		commandNames.forEach((value, index) => {
 
-			let cmd = commands.registerCommand(value, (proj?: AppStudioTreeItem) => {
-
-				if (proj) {
-					runAppStudioCommand(cmdPaths[index], proj.projectPath);
-				} else {
-					runAppStudioCommand(cmdPaths[index]);
-				}
-
+			let cmd = commands.registerCommand(value, (proj: AppStudioTreeItem) => {
+				runAppStudioCommand(cmdPaths[index], proj.projectPath);
 			});
-			// Add to a list of disposables which are disposed when this extension is deactivated.
+			context.subscriptions.push(cmd);
+		});
+
+		activeCommandNames.forEach((value, index) => {
+
+			let cmd = commands.registerCommand(value, () => {
+				runAppStudioCommand(cmdPaths[index]);
+			});
 			context.subscriptions.push(cmd);
 		});
 	}
