@@ -1,5 +1,5 @@
 {
-    "name": "appstudio.vscode",
+    "name": "appstudio-vscode",
     "displayName": "AppStudio for ArcGIS",
     "description": "Build AppStudio for ArcGIS apps in Visual Studio Code",
     "license": "SEE LICENSE IN LICENSE",
