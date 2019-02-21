@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.0.7] - 2019-02-22
+### Added
+- Additional options to right click menu of AppStudio Projects Explorer
+
+### Changed
+- Active project in AppStudio Projects Explorer now uses AppStudio logo as icon
+
 ## [0.0.6] - 2019-02-18
 ### Added
 - AppStudio Projects Explorer
@@ -15,9 +22,9 @@ All notable changes to this project will be documented in this file.
 ## [0.0.4] - 2019-02-01
 ### Changed
 - QMLTypes recoginstion improved
+- QML code colorization improved
 
 ### Added
-- QML code colorization
 - Context sensitive help (launches web help) 
 
 ## [0.0.3] - 2019-01-30
@@ -30,16 +37,16 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 - Improved context sensitive help
+- Improved QML code completion
 
 ## [0.0.1] - 2019-01-23
 ### Added
 - Concept of an active project
-
-### Changed
-- Improved context sensitive help
+- Rudimentary context sensitive help
+- Rudimentary QML code completion
 
 ## [0.0.0] - 2019-01-04
 ### Added
 - Recognise AppStudio projects
 - Settings, Upload, Make, Run tools added
-- Rudimentary context sensitive help
+- QML code colorization
