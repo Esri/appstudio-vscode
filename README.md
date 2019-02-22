@@ -1,7 +1,5 @@
 # About AppStudio for ArcGIS extension for Visual Studio Code
 
-![App](./resources/appstudio-logo.png)
-
 The AppStudio for ArcGIS extension for Visual Studio Code acts as a replacement for using Qt Creator. You will still use AppStudio Desktop to create new apps, but all the actions that you would have previously performed in Qt Creator, can now be completed in Visual Studio Code. You can edit, upload and run your AppStudio apps from within Visual Studio Code.
 
 ## How to use the app
