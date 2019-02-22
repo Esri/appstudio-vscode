@@ -4,7 +4,7 @@ The AppStudio for ArcGIS extension for Visual Studio Code acts as a replacement 
 
 ## How to use the app
 
-Download the appstudio-vscode-%VERSION%.vsix file from this repo, and open Visual Studio Code. On the Extensions panel select the More Actions tool and choose to Install from VSIX. Selct the .vsix file that you download to install. Press Reload in the notification panel.
+Download the `appstudio-vscode-%VERSION%.vsix` file from this repo, and open Visual Studio Code. On the Extensions panel select the More Actions tool and choose to Install from VSIX. Selct the .vsix file that you download to install. Press Reload in the notification panel.
 
 Choose Add Folder to Workspace to browse and add your AppStudio projects to the Explorer panel. In the AppStudio Projects Explorer section you will see that you can run the popular AppStudio tools - Settings, Upload, Make and Run - straight from with Visual Studio Code. Code completion and context senstive help is also available to you.   
 
