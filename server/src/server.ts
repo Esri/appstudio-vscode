@@ -48,6 +48,7 @@ export interface QmlInfo {
 
 export interface QmlModule {
 	name: string;
+	version: string;
 	components: QmlComponent[];
 }
 
@@ -56,7 +57,8 @@ export interface ObjectId {
 	type: string;
 }
 
-let qmlModules: QmlModule[] = [];
+let allQmlComponents: QmlComponent[] = [];
+let allQmlModules: QmlModule[] = [];
 let docControllers: DocController[] = [];
 
 // Create a connection for the server. The connection uses Node's IPC as a transport.
@@ -85,7 +87,7 @@ connection.onInitialize((_params: InitializeParams) => {
 			// Tell the client that the server supports code completion
 			completionProvider: {
 				resolveProvider: false,
-				triggerCharacters: ['.', ',']
+				triggerCharacters: ['.', '?']
 			},
 			hoverProvider: true
 		}
@@ -105,7 +107,7 @@ documents.onDidChangeContent(change => {
 		controller = new DocController(change.document);
 		docControllers.push(controller);
 	}
-	controller.lookforImport(qmlModules);
+	controller.lookforImport(allQmlModules);
 	controller.lookforId(change.document);
 	//documents.all().forEach(doc => connection.console.log(doc.uri));
 });
@@ -131,9 +133,9 @@ function firstCharToUpperCase(str: string): string {
 function readQmltypeJson(fullFilePath: string) {
 
 	let data = fs.readFileSync(fullFilePath);
-	let comps: QmlComponent[] = JSON.parse(data.toString()).components;
+	allQmlComponents = JSON.parse(data.toString()).components;
 
-	for (let component of comps) {
+	for (let component of allQmlComponents) {
 		if (!component.exports) continue;
 
 		component.info = [];
@@ -143,12 +145,6 @@ function readQmltypeJson(fullFilePath: string) {
 			let m = e.match(/(.*)\/(\w*) (.*)/);
 
 			if (!m) continue;
-
-			if ((m[1]) === 'QtQuick.Controls') {
-				if (m[3].startsWith('2')) {
-					m[1] = 'QtQuick.Controls2';
-				}
-			}
 
 			let p = m[1].match(/\w+\.?/g);
 
@@ -160,9 +156,9 @@ function readQmltypeJson(fullFilePath: string) {
 			});
 
 			let hasModule = false;
-			for (let module of qmlModules) {
+			for (let module of allQmlModules) {
 				let hasComponent = false;
-				if (module.name === m[1]) {
+				if (module.name === m[1] && module.version === m[3]) {
 
 					for (let c of module.components) {
 						if (c.name === component.name) {
@@ -180,9 +176,10 @@ function readQmltypeJson(fullFilePath: string) {
 			}
 
 			if (!hasModule) {
-				qmlModules.push(
+				allQmlModules.push(
 					{
 						name: m[1],
+						version: m[3],
 						components: [component]
 					}
 				);
@@ -208,45 +205,62 @@ function isInPropertyOrSignal (doc: TextDocument, startPos: Position, endPos: Po
 	}
 }
 */
+export function hasCompletionItem(label: string, kind: number, completionItems: CompletionItem[]): boolean {
+	for (let item of completionItems) {
+		if (item.label === label && item.kind === kind) {
+			return true;
+		}
+	}
+	return false;
+}
 
-function addComponenetAttributes(component: QmlComponent, items: CompletionItem[], importedComponents: QmlComponent[]) {
+function addComponenetAttributes(component: QmlComponent, items: CompletionItem[], withSignal:boolean, withEnum: boolean) {
 	if (component.properties !== undefined) {
 		for (let p of component.properties) {
-			let item = CompletionItem.create(p.name);
-			item.kind = 10;
-			items.push(item);
+			if (!hasCompletionItem(p.name, 10, items)) {
+				let item = CompletionItem.create(p.name);
+				item.kind = 10;
+				items.push(item);
+			}
 		}
 	}
 	if (component.methods !== undefined) {
 		for (let m of component.methods) {
-			let item = CompletionItem.create(m.name);
-			item.kind = 2;
-			items.push(item);
+			if (!hasCompletionItem(m.name, 2, items)) {
+				let item = CompletionItem.create(m.name);
+				item.kind = 2;
+				items.push(item);
+			}
 		}
 	}
-	if (component.signals !== undefined) {
+	if (withSignal && component.signals !== undefined) {
 		for (let s of component.signals) {
-			let item = CompletionItem.create('on' + firstCharToUpperCase(s.name) + ': ');
-			item.kind = 23;
-			items.push(item);
+			let label = 'on' + firstCharToUpperCase(s.name) + ': ';
+			if (!hasCompletionItem(label, 23, items)) {
+				let item = CompletionItem.create('on' + firstCharToUpperCase(s.name) + ': ');
+				item.kind = 23;
+				items.push(item);
+			}
 		}
 	}
-	if (component.enums !== undefined) {
+	if (withEnum && component.enums !== undefined) {
 		for (let e of component.enums) {
 			let values = e.values;
 			for (let key in values) {
-				let item = CompletionItem.create(key);
-				item.kind = 13;
-				items.push(item);
+				if (!hasCompletionItem(key, 13,items)) {
+					let item = CompletionItem.create(key);
+					item.kind = 13;
+					items.push(item);
+				}
 			}
 		}
 	}
 
 	if (component.prototype !== undefined) {
-		for (let prototypeComponent of importedComponents) {
+		for (let prototypeComponent of allQmlComponents) {
 			if (prototypeComponent.name === component.prototype) {
 				// recursively add attributes of prototype component
-				addComponenetAttributes(prototypeComponent, items, importedComponents);
+				addComponenetAttributes(prototypeComponent, items, withSignal, withEnum);
 			}
 		}
 	}
@@ -256,6 +270,13 @@ function constructApiRefUrl(qmlInfo: QmlInfo): string {
 	let moduleNames = qmlInfo.dividedModuleName;
 	let url: string;
 	let html = '';
+
+	if ((qmlInfo.completeModuleName) === 'QtQuick.Controls') {
+		if (qmlInfo.moduleVersion.startsWith('2')) {
+			qmlInfo.completeModuleName = 'QtQuick.Controls2';
+		}
+	}
+
 	if (moduleNames[0] === 'ArcGIS.') {
 		url = 'https://doc.arcgis.com/en/appstudio/api/reference/framework/qml-';
 	} else if (moduleNames[0] === 'Esri.') {
@@ -291,18 +312,10 @@ connection.onHover(
 			if (component.info && word === component.info[0].componentName) {
 				// compare the hovering word with the componentName, if they are the same and the url array do not already contain the url,
 				// add it to the array. (Different components may contain the same componentName)
-				let url = constructApiRefUrl(component.info[0]);
-				if (urls.every(val => val !== url)) {
-					urls.push(url);
-				}
-
-				// A component may have multiple info with different module names, or same module name with different version number,
-				// add the url constructed from a different module name
-				if (component.info.length > 1) {
-					for (let i = 1; i < component.info.length; i++) {
-						if (component.info[i].completeModuleName !== component.info[0].completeModuleName) {
-							urls.push(constructApiRefUrl(component.info[i]));
-						}
+				for (let info of component.info) {
+					let url = constructApiRefUrl(info);
+					if (!urls.includes(url)) {
+						urls.push(url);
 					}
 				}
 			}
@@ -350,7 +363,7 @@ connection.onCompletion(
 				// Assume that the componentName part of different exports statements of the same component are the same, 
 				// therefore only checks the first element in the info array.
 				if (c.info && componentName === c.info[0].componentName) {
-					addComponenetAttributes(c, items, importedComponents);
+					addComponenetAttributes(c, items, false, true);
 				}
 			}
 
@@ -359,7 +372,7 @@ connection.onCompletion(
 
 					for (let c of importedComponents) {
 						if (c.info && id.type === c.info[0].componentName) {
-							addComponenetAttributes(c, items, importedComponents);
+							addComponenetAttributes(c, items, false, true);
 						}
 					}
 				}
@@ -374,13 +387,13 @@ connection.onCompletion(
 		if (word === 'import') {
 			let items: CompletionItem[] = [];
 
-			for (let module of qmlModules) {
+			for (let module of allQmlModules) {
 
 				if (module.name === 'QtQuick.Controls2') {
 					items.push(CompletionItem.create('QtQuick.Controls 2'));
 					continue;
 				}
-				items.push(CompletionItem.create(module.name));
+				items.push(CompletionItem.create(module.name + ' ' + module.version));
 			}
 
 			return items;
@@ -404,7 +417,7 @@ connection.onCompletion(
 				// Assume that the componentName part of different exports statements of the same component are the same, 
 				// therefore only checks the first element in the info array.
 				if (c.info && componentName === c.info[0].componentName) {
-					addComponenetAttributes(c, items, importedComponents);
+					addComponenetAttributes(c, items, true, false);
 				}
 			}
 

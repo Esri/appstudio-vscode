@@ -5,7 +5,7 @@ import {
 	Range,
 	CompletionItem
 } from 'vscode-languageserver';
-import { QmlComponent, ObjectId, QmlModule } from './server';
+import { QmlComponent, ObjectId, QmlModule, hasCompletionItem } from './server';
 
 export class DocController {
 
@@ -39,57 +39,33 @@ export class DocController {
 		return this.objectIds;
 	}
 
-	public async lookforImport(allModules: QmlModule[]): Promise<void> {
+	public lookforImport(allModules: QmlModule[]) {
 
 		this.importedModules = [];
 		this.importedComponents = [];
 		this.completionItem = [];
 	
 		let text = this.doc.getText();
-		let pattern = /import\s+((\w+\.?)+)\s+(\d*)/g;
+		let pattern = /import\s+((\w+\.?)+)\s+(.*)/g;
 		let m: RegExpExecArray | null;
 	
 		while ((m = pattern.exec(text))) {
 			
-			if(m[1] === 'QtQuick.Controls') {
-				//con.console.log('VERSION: ' + version.toString());
-				if (m[3] === '2') {
-					m[1] = 'QtQuick.Controls2';
-				}
-			}
-			
-			//con.console.log(m.toString());
 			for (let module of allModules) {
-				if (module.name === m[1] && this.importedModules.every(module => { return module.name !== m[1]; })) {
+				if (module.name === m[1] && parseFloat(module.version) <= parseFloat(m[3]) ) {
 					this.importedModules.push(module);
-	
-					// NOTE: concat does not add to the original array calling the method !
-					//this.importedComponents = this.importedComponents.concat(module.components);
-	
+		
 					for (let c of module.components) {
-						if (c.info && this.importedComponents.every(component => c.name !== component.name)) {
-							// DEFAULT to add the component name in the first export array
-
+						if (c.info /*&& this.importedComponents.every(component => {this.count++; return c.name !== component.name;})*/) {
 							this.importedComponents.push(c);
 
-							let item = CompletionItem.create(c.info[0].componentName);
-							item.kind = 7;
-							item.detail = 'Imported from ' + module.name;
-							this.completionItem.push(item);
+							if (!hasCompletionItem(c.info[0].componentName, 7, this.completionItem)) {
+								// Add the component name in the first export array
+								let item = CompletionItem.create(c.info[0].componentName);
+								item.kind = 7;
+								this.completionItem.push(item);
+							} 
 						} 
-						/*
-						else if (c.info) {
-							for (let item of this.completionItem) {
-								if (item.label === c.info[0].componentName) {
-									for (let info of c.info) {
-										if (info.completeModuleName === module.name) {
-											item.detail += ', ' + module.name;
-										}
-									}
-								}
-							}
-						}
-						*/
 					}
 				}
 			}
