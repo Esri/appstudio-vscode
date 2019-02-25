@@ -124,7 +124,7 @@ export class AppStudioTreeView {
 	public reveal(project: AppStudioProjInfo): Thenable<void> {
 		const node = this.getNode(project);
 		if (node) {
-			return this.appStudioTreeView.reveal(node, {focus: true});
+			return this.appStudioTreeView.reveal(node);
 		}
 		return null;
 	}

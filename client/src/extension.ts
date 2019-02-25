@@ -69,7 +69,10 @@ export function activate(context: vscode.ExtensionContext) {
 			appStudioTreeView.treeData.refresh();
 
 			projectStatusBar.text = "Active AppStudio Project: " + e.selection[0].label;
-		}
+		} /*else {
+			appStudioTreeView.reveal(appStudioProjects.find( proj => { return proj.projectPath === activeProjectPath;})).then( () => {},
+			reason => console.log(reason));
+		} */
 	});
 
 	// Add any AppStudio projects when the extension is activated
@@ -89,6 +92,41 @@ export function activate(context: vscode.ExtensionContext) {
 		getAppStudioProject();
 	});
 
+	workspace.onDidSaveTextDocument((e) => {
+		//window.showInformationMessage(path.extname(e.fileName));
+		if (path.extname(e.fileName) === '.qml' && path.dirname(e.fileName) !== activeProjectPath) {
+			if (workspace.getConfiguration().get('Remember option for changing active project')) {
+				if (workspace.getConfiguration().get('Change active project when saved')) {
+					changeActiveProject(path.dirname(e.fileName));
+				}
+			} else {
+				window.showQuickPick(['Yes', 'No'], {
+					placeHolder: 'Do you want to change the active project when a QML file is saved?'}).then(choice => {
+					if (choice === 'Yes') {
+						changeActiveProject(path.dirname(e.fileName));
+					}
+					window.showQuickPick(['Yes', 'No'], {
+						placeHolder: 'Do you want to remember this choice for next time?'}).then(choice2 => {
+							if (choice2 === 'Yes') {
+								workspace.getConfiguration().update('Remember option for changing active project', true, true);
+
+								if (choice === 'Yes') {
+									workspace.getConfiguration().update('Change active project when saved', true, true);
+								} else {
+									workspace.getConfiguration().update('Change active project when saved', false, true);
+								}
+							}
+						})
+				});
+
+			}
+		}
+	});
+
+	function changeActiveProject(projPath: string) {
+		appStudioTreeView.reveal(appStudioProjects.find( proj => { return proj.projectPath === projPath;})).then( () => {},
+		reason => console.log(reason));
+	}
 	/*
 	window.onDidChangeActiveTextEditor( e => {
 		//window.showInformationMessage(e.document.fileName);
