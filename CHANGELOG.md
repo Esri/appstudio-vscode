@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.0.8] - 2019-02-25
+### Added
+- Version number for QML modules import statements
+- Option to change active project when QML files from non active projects are saved 
+
+### Changed
+- Code completion includes components from current module version and all versions below it
+
 ## [0.0.7] - 2019-02-22
 ### Added
 - Additional options to right click menu of AppStudio Projects Explorer
