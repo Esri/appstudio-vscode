@@ -37,3 +37,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 A copy of the license is available in the repository's [LICENSE](./LICENSE) file.
+
+This AppStudio for ArcGIS extension for Visual Studio Code, uses code from this repo https://github.com/seanwu1105/vscode-qt-for-python. The licence for this code is here https://github.com/seanwu1105/vscode-qt-for-python/blob/master/LICENSE.
