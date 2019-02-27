@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// If the configuration value is a empty string, i.e. the extension is run for the first time on the machine, 
 	// select the AppStudio automatically
-	if (workspace.getConfiguration().get('AppStudio Path') === "") {
+	if (workspace.getConfiguration().get('AppStudio for ArcGIS path') === "") {
 		window.showInformationMessage("Locating AppStudio folder...");
 		autoSelectAppStudioPath();
 	}
@@ -116,7 +116,7 @@ export function activate(context: vscode.ExtensionContext) {
 									workspace.getConfiguration().update('Change active project when saved', false, true);
 								}
 							}
-						})
+						});
 				});
 
 			}
@@ -139,6 +139,13 @@ export function activate(context: vscode.ExtensionContext) {
 	let projectStatusBar = window.createStatusBarItem();
 	projectStatusBar.show();
 	//createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
+	function createStatusBarItem(itemText: string, itemCommand: string, itemTooltip: string) {
+		const statusBarItem = window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+		statusBarItem.text = itemText;
+		statusBarItem.command = itemCommand;
+		statusBarItem.tooltip = itemTooltip;
+		statusBarItem.show();
+	}
 
 	// Code below is for registering all the commands
 
@@ -162,7 +169,7 @@ export function activate(context: vscode.ExtensionContext) {
 					canSelectMany: false
 				}).then(folder => {
 					if (folder !== undefined && folder.length === 1) {
-						workspace.getConfiguration().update('AppStudio Path', folder[0].fsPath.toString(), true);
+						workspace.getConfiguration().update('AppStudio for ArcGIS path', folder[0].fsPath.toString(), true);
 						window.showInformationMessage('AppStudio installation path updated: ' + folder[0].fsPath);
 					}
 				});
@@ -265,8 +272,30 @@ export function activate(context: vscode.ExtensionContext) {
 
 	/*
 	let testCmd = commands.registerCommand('testCmd', () => {
-
 	});
+	function convertAllQmltoJson() {
+		let appStudioPath: string = workspace.getConfiguration().get('AppStudio for ArcGIS path');
+
+		let qmlTypes = findFilesInDir(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio2\\bin\\qml',/\.qmltypes/i);
+
+		console.log(qmlTypes);
+		let appNameArg: string [] = [path.join(__dirname,'../../QMLTYPEStoJSON')];
+
+		let qmlTypesArgs: string[] = [];
+
+		for (let type of qmlTypes) {
+			qmlTypesArgs.push("--qmltypes");
+			qmlTypesArgs.push(type);
+		}
+
+		let jsonArgs: string[] = [];
+		jsonArgs.push('--json');
+		jsonArgs.push(path.join(__dirname,'../..', 'QMLTypes2.json'));
+		
+		let args = appNameArg.concat(qmlTypesArgs).concat(jsonArgs);
+		console.log(args);
+		let cp = ChildProcess.spawnSync(appStudioPath + '\\bin\\appRun.exe ',args);
+	}
 	*/
 
 	// code below is all the helper functions 
@@ -367,7 +396,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			let appStudioPath = data.General.installDir;
 			if (appStudioPath !== undefined) {
-				workspace.getConfiguration().update('AppStudio Path', appStudioPath, true);
+				workspace.getConfiguration().update('AppStudio for ArcGIS path', appStudioPath, true);
 				window.showInformationMessage('AppStudio installation path updated: ' + appStudioPath);
 			} else {
 				manualSelectAppStudioPath();
@@ -410,7 +439,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Run commands to run the executables
 	function runAppStudioCommand(executable: string, projectPath?: string) {
-		let appStudioPath: string = workspace.getConfiguration().get('AppStudio Path');
+		let appStudioPath: string = workspace.getConfiguration().get('AppStudio for ArcGIS path');
 
 		if (appStudioPath === "") {
 			window.showWarningMessage("Please select the AppStudio folder first.");

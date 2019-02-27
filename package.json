@@ -158,14 +158,14 @@
         ],
         "configuration": {
             "type": "object",
-            "title": "AppStudio",
+            "title": "AppStudio for ArcGIS",
             "properties": {
-                "AppStudio Path": {
+                "AppStudio for ArcGIS path": {
                     "type": [
                         "string"
                     ],
                     "default": "",
-                    "markdownDescription": "Installation Path of AppStudio. This is used for running the AppStudio applications. Only modify this when you need to change the installation path for AppStudio. It's recommended to modify this by running the `Manual Select AppStudio Installation Path` command in the command palette (Ctrl+Shift+P). If you wish to modify in settings.json directly, please make sure the path is conformed to the following examples of format: Windows: `C:\\\\Users\\\\username\\\\Applications\\\\ArcGIS\\\\AppStudio`, MacOS and Linux: `~/Application/ArcGIS/AppStudio`"
+                    "markdownDescription": "Installation path of AppStudio for ArcGIS. This is used for running AppStudio for ArcGIS tools. Only modify this when you need to change the installation path for AppStudio for ArcGIS. It's recommended to modify this by running the `Manual Select AppStudio Installation Path` command in the command palette (Ctrl+Shift+P). If you wish to modify in settings.json directly, follow these examples of format: Windows: `C:\\\\Users\\\\username\\\\Applications\\\\ArcGIS\\\\AppStudio`, MacOS and Linux: `~/Application/ArcGIS/AppStudio`"
                 },
                 "Change active project when saved": {
                     "type": "boolean",
