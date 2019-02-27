@@ -165,17 +165,17 @@
                         "string"
                     ],
                     "default": "",
-                    "markdownDescription": "Installation path of AppStudio for ArcGIS. This is used for running AppStudio for ArcGIS tools. Only modify this when you need to change the installation path for AppStudio for ArcGIS. It's recommended to modify this by running the `Manual Select AppStudio Installation Path` command in the command palette (Ctrl+Shift+P). If you wish to modify in settings.json directly, follow these examples of format: Windows: `C:\\\\Users\\\\username\\\\Applications\\\\ArcGIS\\\\AppStudio`, MacOS and Linux: `~/Application/ArcGIS/AppStudio`"
+                    "markdownDescription": "Installation path of AppStudio for ArcGIS. This is used for running AppStudio for ArcGIS tools. Only modify this when you need to change the installation path for AppStudio for ArcGIS. It's recommended to modify this by running the `Manual Select AppStudio Installation Path` command in the command palette (Ctrl+Shift+P). If you wish to modify in settings.json directly, follow these examples of format: Windows: `C:\\\\Users\\\\username\\\\Applications\\\\ArcGIS\\\\AppStudio`, MacOS and Linux: `~/Application/ArcGIS/AppStudio`."
                 },
-                "Change active project": {
+                "Active project.Change": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Change the active project when a QML file is saved"
+                    "description": "Change the active project when a QML file is saved."
                 },
-                "Remember option for changing active project": {
+                "Active project.Remember": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Remember the option for changing active project when a QML file is saved"
+                    "description": "Remember the option for changing active project when a QML file is saved."
                 }
             }
         },

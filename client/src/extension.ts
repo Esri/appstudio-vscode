@@ -95,8 +95,8 @@ export function activate(context: vscode.ExtensionContext) {
 	workspace.onDidSaveTextDocument((e) => {
 		//window.showInformationMessage(path.extname(e.fileName));
 		if (path.extname(e.fileName) === '.qml' && path.dirname(e.fileName) !== activeProjectPath) {
-			if (workspace.getConfiguration().get('Remember option for changing active project')) {
-				if (workspace.getConfiguration().get('Change active project')) {
+			if (workspace.getConfiguration().get('Active project.Remember')) {
+				if (workspace.getConfiguration().get('Active project.Change')) {
 					changeActiveProject(path.dirname(e.fileName));
 				}
 			} else {
@@ -108,12 +108,12 @@ export function activate(context: vscode.ExtensionContext) {
 					window.showQuickPick(['Yes', 'No'], {
 						placeHolder: 'Do you want to remember this choice for next time?'}).then(choice2 => {
 							if (choice2 === 'Yes') {
-								workspace.getConfiguration().update('Remember option for changing active project', true, true);
+								workspace.getConfiguration().update('Active project.Remember', true, true);
 
 								if (choice === 'Yes') {
-									workspace.getConfiguration().update('Change active project', true, true);
+									workspace.getConfiguration().update('Active project.Change', true, true);
 								} else {
-									workspace.getConfiguration().update('Change active project', false, true);
+									workspace.getConfiguration().update('Active project.Change', false, true);
 								}
 							}
 						});
