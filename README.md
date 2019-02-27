@@ -4,9 +4,9 @@ The AppStudio for ArcGIS extension for Visual Studio Code acts as a replacement 
 
 ## How to use the app
 
-Download the `appstudio-vscode-%VERSION%.vsix` file from this repo, and open Visual Studio Code. On the Extensions panel select the More Actions tool and choose to Install from VSIX. Selct the .vsix file that you download to install. Press Reload in the notification panel.
+Download the `appstudio-vscode-%VERSION%.vsix` file from this repo, and open Visual Studio Code. On the **Extensions** panel select the **More Actions** tool and choose to **Install from VSIX**. Select the .vsix file that you download to install. Press **Reload** in the **Extensions** panel or notification message.
 
-Choose Add Folder to Workspace to browse and add your AppStudio projects to the Explorer panel. In the AppStudio Projects Explorer section you will see that you can run the popular AppStudio tools - Settings, Upload, Make and Run - straight from with Visual Studio Code. Code completion and context senstive help is also available to you.   
+Choose **Add Folder to Workspace** to browse and add your AppStudio projects to the **Explorer** panel. In the AppStudio Projects Explorer section you will see that you can run the popular AppStudio tools - **Settings**, **Upload**, **Make** and **Run** - straight from within Visual Studio Code. Code completion and context sensitive help is also available to you.   
 
 ## Requirements
 
@@ -37,3 +37,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 A copy of the license is available in the repository's [LICENSE](./LICENSE) file.
+
+This AppStudio for ArcGIS extension for Visual Studio Code, uses code from this repo https://github.com/seanwu1105/vscode-qt-for-python. The licence for this code is here https://github.com/seanwu1105/vscode-qt-for-python/blob/master/LICENSE.
