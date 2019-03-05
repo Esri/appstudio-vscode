@@ -1,8 +1,8 @@
 {
-	"name": "appstudio-client",
-	"description": "client of the appstudio extension",
+	"name": "appstudio-vscode-client",
+	"description": "client of the AppStudio for ArcGIS extension",
 	"license": "MIT",
-	"version": "0.0.1",
+	"version": "0.0.10",
 	"publisher": "vscode",
 	"engines": {
 		"vscode": "^1.30.0"

@@ -13,6 +13,7 @@ import {
 	TransportKind
 } from 'vscode-languageclient';
 import { AppStudioTreeItem, AppStudioTreeView } from './appStudioViewProvider';
+import * as beautify from 'js-beautify';
 
 export interface AppStudioProjInfo {
 	projectPath: string;
@@ -270,6 +271,29 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(removeCmd);
 
+	vscode.languages.registerDocumentRangeFormattingEditProvider({ scheme: 'file', language: 'qml' }, {
+		provideDocumentRangeFormattingEdits(doc, range): vscode.TextEdit[] {
+
+			let startLine = range.start.line;
+			let endLine = range.end.line;
+			while (doc.lineAt(startLine).text.match(/^\s*$/)) {
+				startLine++;
+			}
+			while (doc.lineAt(endLine).text.match(/^\s*$/)) {
+				endLine--;
+			}
+
+			let startPos = doc.lineAt(startLine).range.start;
+			let endPos = doc.lineAt(endLine).range.end;
+			range = doc.validateRange(new vscode.Range(startPos, endPos));
+			
+			let newText = doc.getText(range).replace(/property\s+var/g, 'propertyvar');
+			newText = beautify.js(newText).replace(/propertyvar/g, 'property var');
+
+			return [vscode.TextEdit.replace(range, newText)];
+		}
+	});
+	
 	/*
 	let testCmd = commands.registerCommand('testCmd', () => {
 	});

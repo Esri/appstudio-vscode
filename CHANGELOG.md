@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.0.10] - 2019-03-05
+### Added
+- Format document and format selection for qml files
+
 ## [0.0.9] - 2019-02-27
 ### Changed
 - QMLTypes file updated to match AppStudio for ArcGIS 3.3 beta release
