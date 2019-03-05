@@ -3,7 +3,7 @@
     "displayName": "AppStudio for ArcGIS",
     "description": "Build AppStudio for ArcGIS apps in Visual Studio Code",
     "license": "SEE LICENSE IN LICENSE",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "publisher": "Esri",
     "repository": {
         "type": "git",
@@ -484,6 +484,8 @@
         "typescript": "^3.3.3"
     },
     "dependencies": {
+        "@types/js-beautify": "^1.8.0",
+        "js-beautify": "^1.8.9",
         "read-ini-file": "^2.0.0"
     }
 }
