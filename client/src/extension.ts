@@ -116,6 +116,8 @@ export function activate(context: vscode.ExtensionContext) {
 								} else {
 									workspace.getConfiguration().update('Active project.Change', false, true);
 								}
+
+								window.showInformationMessage('The extension has remembered the choice you made and will not ask again. You can change this option at Settings -> Extensions -> AppStudio for ArcGIS');
 							}
 						});
 				});
