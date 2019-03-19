@@ -172,10 +172,20 @@
                     "default": false,
                     "description": "Change the active project when a QML file is saved."
                 },
-                "Active project.Remember": {
+                "Active project.Remember change option": {
                     "type": "boolean",
                     "default": false,
                     "description": "Remember the option for changing active project when a QML file is saved."
+                },
+                "Active project.Save": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Save all unsaved files in a project when it is run"
+                },
+                "Active project.Remember save option": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Remember the option for saving all unsaved files in a project when it is run"
                 }
             }
         },

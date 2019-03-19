@@ -96,32 +96,28 @@ export function activate(context: vscode.ExtensionContext) {
 	workspace.onDidSaveTextDocument((e) => {
 		//window.showInformationMessage(path.extname(e.fileName));
 		if (path.extname(e.fileName) === '.qml' && path.dirname(e.fileName) !== activeProjectPath) {
-			if (workspace.getConfiguration().get('Active project.Remember')) {
+			if (workspace.getConfiguration().get('Active project.Remember change option')) {
 				if (workspace.getConfiguration().get('Active project.Change')) {
 					changeActiveProject(path.dirname(e.fileName));
 				}
 			} else {
-				window.showQuickPick(['Yes', 'No'], {
-					placeHolder: 'Do you want to change the active project when a QML file is saved?'}).then(choice => {
+				window.showInformationMessage('Do you want to change the active project when a QML file is saved?', { modal: true }, 'Yes', 'No').then(choice => {
 					if (choice === 'Yes') {
 						changeActiveProject(path.dirname(e.fileName));
 					}
-					window.showQuickPick(['Yes', 'No'], {
-						placeHolder: 'Do you want to remember this choice for next time?'}).then(choice2 => {
-							if (choice2 === 'Yes') {
-								workspace.getConfiguration().update('Active project.Remember', true, true);
+					if (!choice) return;
 
-								if (choice === 'Yes') {
-									workspace.getConfiguration().update('Active project.Change', true, true);
-								} else {
-									workspace.getConfiguration().update('Active project.Change', false, true);
-								}
+					window.showInformationMessage('Do you want to remember this choice for next time?', { modal: true }, 'Yes', 'No').then(choice2 => {
 
-								window.showInformationMessage('The extension has remembered the choice you made and will not ask again. You can change this option at Settings -> Extensions -> AppStudio for ArcGIS');
-							}
-						});
+						if (choice2 === 'Yes') {
+							workspace.getConfiguration().update('Active project.Remember change option', true, true);
+
+							workspace.getConfiguration().update('Active project.Change', choice === 'Yes', true);
+
+							window.showInformationMessage('The extension has remembered the choice you made and will not ask again. You can change this option at Settings -> Extensions -> AppStudio for ArcGIS');
+						}
+					});
 				});
-
 			}
 		}
 	});
@@ -490,7 +486,11 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	// run the executable with the corresponding paths and parameters
-	function runProcess(appStudioPath: string, executable: string, appStudioProjectPath: string) {
+	async function runProcess(appStudioPath: string, executable: string, appStudioProjectPath: string) {
+
+		let willRun = await checkUnsavedDoc(appStudioProjectPath);
+
+		if (!willRun) return;
 
 		consoleOutput.show();
 		consoleOutput.appendLine("Starting external tool " + "\"" + appStudioPath + executable + " " + appStudioProjectPath + "\"");
@@ -523,6 +523,42 @@ export function activate(context: vscode.ExtensionContext) {
 			console.log(`child process exited with code ${code}`);
 			consoleOutput.appendLine("\"" + appStudioPath + executable + "\"" + " finished");
 		});
+	}
+
+	async function checkUnsavedDoc (activeProjectPath: string) {
+		let unsavedDocsInActiveProj = workspace.textDocuments.filter(doc => { return path.dirname(doc.fileName) === activeProjectPath && doc.isDirty;});
+		if (unsavedDocsInActiveProj.length > 0) {
+			
+			if (workspace.getConfiguration().get('Active project.Remember save option')) {
+				if (workspace.getConfiguration().get('Active project.Save')) {
+					for (let doc of unsavedDocsInActiveProj) {
+						doc.save();
+					}
+				}
+			} else {
+				let message = 'The following files in the AppStudio project that you want to run have unsaved changes :\n\n';
+				for (let doc of unsavedDocsInActiveProj) {
+					message += doc.fileName + '\n';
+				}
+				const choice = await window.showInformationMessage(message, { modal: true }, 'Save All', 'Do Not Save');
+				if (choice === 'Save All') {
+					for (let doc of unsavedDocsInActiveProj) {
+						doc.save();
+					}
+				}
+				if (!choice) return false;
+
+				const choice2 = await window.showInformationMessage('Do you want to remember this choice for next time?', { modal: true }, 'Yes', 'No'); //.then(choice2 => {
+				if (choice2 === 'Yes') {
+					workspace.getConfiguration().update('Active project.Remember save option', true, true);
+
+					workspace.getConfiguration().update('Active project.Save', choice === 'Save All', true);
+
+					window.showInformationMessage('The extension has remembered the choice you made and will not ask again. You can change this option at Settings -> Extensions -> AppStudio for ArcGIS');
+				}
+			}
+		}
+		return true;
 	}
 
 	// Code below is for creating client for the QML language server
