@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.0.11] - 2019-03-19
+### Added
+- Option to save all unsaved files in a project when the project is run
+
 ## [0.0.10] - 2019-03-05
 ### Added
 - Format document and format selection for qml files

@@ -3,7 +3,7 @@
     "displayName": "AppStudio for ArcGIS",
     "description": "Build AppStudio for ArcGIS apps in Visual Studio Code",
     "license": "SEE LICENSE IN LICENSE",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "publisher": "Esri",
     "repository": {
         "type": "git",
@@ -180,12 +180,12 @@
                 "Active project.Save": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Save all unsaved files in a project when it is run"
+                    "description": "Save all unsaved files in a project when it is run."
                 },
                 "Active project.Remember save option": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Remember the option for saving all unsaved files in a project when it is run"
+                    "description": "Remember the option for saving all unsaved files in a project when it is run."
                 }
             }
         },
