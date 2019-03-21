@@ -21,8 +21,8 @@
     "contributes": {
         "commands": [
             {
-                "command": "appstudio.refresh",
-                "title": "refresh",
+                "command": "refresh",
+                "title": "Refresh AppStudio Projects",
                 "icon": {
                     "dark": "resources/dark/refresh-dark.svg",
                     "light": "resources/light/refresh-light.svg"
@@ -46,12 +46,12 @@
             },
             {
                 "command": "manualSelectAppStudioPath",
-                "title": "Manual Select AppStudio Installation Path",
+                "title": "Select AppStudio Installation Path Manually",
                 "category": "AppStudio"
             },
             {
                 "command": "autoSelectAppStudioPath",
-                "title": "Auto Select AppStudio Installation Path",
+                "title": "Select AppStudio Installation Path Automatically",
                 "category": "AppStudio"
             },
             {
@@ -92,7 +92,7 @@
             },
             {
                 "command": "openApiRefLink",
-                "title": "Open Api Reference",
+                "title": "Open Api Reference Link for AppStudio",
                 "icon": {
                     "dark": "resources/dark/question-dark.svg",
                     "light": "resources/light/question-light.svg"
@@ -103,7 +103,7 @@
 
             {
                 "command": "appRunActive",
-                "title": "AppRun",
+                "title": "AppRun for Active Project",
                 "icon": {
                     "dark": "resources/dark/app-run-dark.svg",
                     "light": "resources/light/app-run-light.svg"
@@ -112,7 +112,7 @@
             },
             {
                 "command": "appMakeActive",
-                "title": "AppMake",
+                "title": "AppMake for Active Project",
                 "icon": {
                     "dark": "resources/dark/hammer-dark.svg",
                     "light": "resources/light/hammer-light.svg"
@@ -121,7 +121,7 @@
             },
             {
                 "command": "appSettingActive",
-                "title": "AppSettings",
+                "title": "AppSettings for Active Project",
                 "icon": {
                     "dark": "resources/dark/gear-dark.svg",
                     "light": "resources/light/gear-light.svg"
@@ -130,7 +130,7 @@
             },
             {
                 "command": "appUploadActive",
-                "title": "AppUpload",
+                "title": "AppUpload for Active Project",
                 "icon": {
                     "dark": "resources/dark/upload-dark.svg",
                     "light": "resources/light/upload-light.svg"
@@ -160,32 +160,32 @@
             "type": "object",
             "title": "AppStudio for ArcGIS",
             "properties": {
-                "Installation path": {
+                "installationPath": {
                     "type": [
                         "string"
                     ],
                     "default": "",
-                    "markdownDescription": "Installation path of AppStudio for ArcGIS. This is used for running AppStudio for ArcGIS tools. Only modify this when you need to change the installation path for AppStudio for ArcGIS. It's recommended to modify this by running the `Manual Select AppStudio Installation Path` command in the command palette (Ctrl+Shift+P). If you wish to modify in settings.json directly, follow these examples of format: Windows: `C:\\\\Users\\\\username\\\\Applications\\\\ArcGIS\\\\AppStudio`, MacOS and Linux: `~/Application/ArcGIS/AppStudio`."
+                    "description": "Installation path of AppStudio for ArcGIS. It's recommended to modify this by running the `Select AppStudio Installation Path Manually` command in the command palette (Ctrl+Shift+P). If you wish to modify in settings.json directly, follow these examples of format: Windows: `C:\\\\Users\\\\username\\\\Applications\\\\ArcGIS\\\\AppStudio`, MacOS and Linux: `~/Application/ArcGIS/AppStudio`."
                 },
-                "Active project.Change": {
+                "changeActiveProject": {
                     "type": "boolean",
                     "default": false,
                     "description": "Change the active project when a QML file is saved."
                 },
-                "Active project.Remember change option": {
+                "changeActiveProjectRemember": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Remember the option for changing active project when a QML file is saved."
+                    "description": "Remember your choice for changing the active project when a QML file is saved."
                 },
-                "Active project.Save": {
+                "saveFilesOnRun": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Save all unsaved files in a project when it is run."
+                    "description": "Save all files in a project when it is run."
                 },
-                "Active project.Remember save option": {
+                "saveFilesOnRunRemember": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Remember the option for saving all unsaved files in a project when it is run."
+                    "description": "Remember your choice for saving all files when a project is run."
                 }
             }
         },
@@ -248,7 +248,7 @@
             ],
             "view/title": [
                 {
-                    "command": "appstudio.refresh",
+                    "command": "refresh",
                     "when": "view == appstudioProjects",
                     "group": "navigation"
                 },

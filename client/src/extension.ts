@@ -40,7 +40,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// If the configuration value is a empty string, i.e. the extension is run for the first time on the machine, 
 	// select the AppStudio automatically
-	if (workspace.getConfiguration().get('Installation path') === "") {
+	if (workspace.getConfiguration().get('installationPath') === "") {
 		window.showInformationMessage("Locating AppStudio folder...");
 		autoSelectAppStudioPath();
 	}
@@ -96,8 +96,8 @@ export function activate(context: vscode.ExtensionContext) {
 	workspace.onDidSaveTextDocument((e) => {
 		//window.showInformationMessage(path.extname(e.fileName));
 		if (path.extname(e.fileName) === '.qml' && path.dirname(e.fileName) !== activeProjectPath) {
-			if (workspace.getConfiguration().get('Active project.Remember change option')) {
-				if (workspace.getConfiguration().get('Active project.Change')) {
+			if (workspace.getConfiguration().get('changeActiveProjectRemember')) {
+				if (workspace.getConfiguration().get('changeActiveProject')) {
 					changeActiveProject(path.dirname(e.fileName));
 				}
 			} else {
@@ -110,9 +110,9 @@ export function activate(context: vscode.ExtensionContext) {
 					window.showInformationMessage('Do you want to remember this choice for next time?', { modal: true }, 'Yes', 'No').then(choice2 => {
 
 						if (choice2 === 'Yes') {
-							workspace.getConfiguration().update('Active project.Remember change option', true, true);
+							workspace.getConfiguration().update('changeActiveProjectRemember', true, true);
 
-							workspace.getConfiguration().update('Active project.Change', choice === 'Yes', true);
+							workspace.getConfiguration().update('changeActiveProject', choice === 'Yes', true);
 
 							window.showInformationMessage('The extension has remembered the choice you made and will not ask again. You can change this option at Settings -> Extensions -> AppStudio for ArcGIS');
 						}
@@ -168,7 +168,7 @@ export function activate(context: vscode.ExtensionContext) {
 					canSelectMany: false
 				}).then(folder => {
 					if (folder !== undefined && folder.length === 1) {
-						workspace.getConfiguration().update('Installation path', folder[0].fsPath.toString(), true);
+						workspace.getConfiguration().update('installationPath', folder[0].fsPath.toString(), true);
 						window.showInformationMessage('AppStudio installation path updated: ' + folder[0].fsPath);
 					}
 				});
@@ -246,7 +246,7 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 	context.subscriptions.push(openAppinfoCmd);
 
-	let refreshCmd = commands.registerCommand('appstudio.refresh', () => {
+	let refreshCmd = commands.registerCommand('refresh', () => {
 		getAppStudioProject();
 	});
 	context.subscriptions.push(refreshCmd);
@@ -296,7 +296,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let testCmd = commands.registerCommand('testCmd', () => {
 	});
 	function convertAllQmltoJson() {
-		let appStudioPath: string = workspace.getConfiguration().get('Installation path');
+		let appStudioPath: string = workspace.getConfiguration().get('installationPath');
 
 		let qmlTypes = findFilesInDir(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio2\\bin\\qml',/\.qmltypes/i);
 
@@ -418,7 +418,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 			let appStudioPath = data.General.installDir;
 			if (appStudioPath !== undefined) {
-				workspace.getConfiguration().update('Installation path', appStudioPath, true);
+				workspace.getConfiguration().update('installationPath', appStudioPath, true);
 				window.showInformationMessage('AppStudio installation path updated: ' + appStudioPath);
 			} else {
 				manualSelectAppStudioPath();
@@ -461,7 +461,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Run commands to run the executables
 	function runAppStudioCommand(executable: string, projectPath?: string) {
-		let appStudioPath: string = workspace.getConfiguration().get('Installation path');
+		let appStudioPath: string = workspace.getConfiguration().get('installationPath');
 
 		if (appStudioPath === "") {
 			window.showWarningMessage("Please select the AppStudio folder first.");
@@ -529,8 +529,8 @@ export function activate(context: vscode.ExtensionContext) {
 		let unsavedDocsInActiveProj = workspace.textDocuments.filter(doc => { return path.dirname(doc.fileName) === activeProjectPath && doc.isDirty;});
 		if (unsavedDocsInActiveProj.length > 0) {
 			
-			if (workspace.getConfiguration().get('Active project.Remember save option')) {
-				if (workspace.getConfiguration().get('Active project.Save')) {
+			if (workspace.getConfiguration().get('saveFilesOnRunRemember')) {
+				if (workspace.getConfiguration().get('saveFilesOnRun')) {
 					for (let doc of unsavedDocsInActiveProj) {
 						doc.save();
 					}
@@ -550,9 +550,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 				const choice2 = await window.showInformationMessage('Do you want to remember this choice for next time?', { modal: true }, 'Yes', 'No'); //.then(choice2 => {
 				if (choice2 === 'Yes') {
-					workspace.getConfiguration().update('Active project.Remember save option', true, true);
+					workspace.getConfiguration().update('saveFilesOnRunRemember', true, true);
 
-					workspace.getConfiguration().update('Active project.Save', choice === 'Save All', true);
+					workspace.getConfiguration().update('saveFilesOnRun', choice === 'Save All', true);
 
 					window.showInformationMessage('The extension has remembered the choice you made and will not ask again. You can change this option at Settings -> Extensions -> AppStudio for ArcGIS');
 				}
