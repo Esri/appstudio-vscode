@@ -165,7 +165,7 @@
                         "string"
                     ],
                     "default": "",
-                    "description": "Installation path of AppStudio for ArcGIS. It's recommended to modify this by running the `Select AppStudio Installation Path Manually` command in the command palette (Ctrl+Shift+P). If you wish to modify in settings.json directly, follow these examples of format: Windows: `C:\\\\Users\\\\username\\\\Applications\\\\ArcGIS\\\\AppStudio`, MacOS and Linux: `~/Application/ArcGIS/AppStudio`."
+                    "description": "Installation path of AppStudio for ArcGIS. If you have installed AppStudio to a non default location, modify this path by running `Select AppStudio Installation Path Manually` command in the command palette (Ctrl+Shift+P)."
                 },
                 "changeActiveProject": {
                     "type": "boolean",
