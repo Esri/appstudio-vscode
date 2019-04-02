@@ -1,0 +1,77 @@
+{
+	"name": "syslog-output",
+	"scopeName": "syslog.output",
+  
+	"patterns": [
+  
+	  {
+		"begin": "\\[debug\\]",
+		"beginCaptures": {
+		  "0": {
+			"name": "constant.numeric"
+		  }
+		},
+		"patterns": [
+		  {
+			"begin": "<\\d*>",
+			"end": "(?=\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])",
+			"name": "token.debug-token"
+		  }
+		],
+		"end": "(?=\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])"
+	  },
+  
+	  {
+		"begin": "\\[info\\]",
+		"beginCaptures": {
+		  "0": {
+			"name": "constant.numeric"
+		  }
+		},
+		"patterns": [
+		  {
+			"begin": "<\\d*>",
+			"end": "(?=\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])",
+			"name": "token.info-token"
+		  }
+		],
+		"end": "(?=\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])"
+	  },
+  
+	  {
+		"begin": "\\[(warning|notice)\\]",
+		"beginCaptures": {
+		  "0": {
+			"name": "constant.numeric"
+		  }
+		},
+		"patterns": [
+		  {
+			"begin": "<\\d*>",
+			"end": "(?=\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])",
+			"name": "token.warn-token"
+		  }
+		],
+		"end": "(?=\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])"
+	  },
+  
+	  {
+		"begin": "\\[(emerg|alert|crit|err)\\]",
+		"beginCaptures": {
+		  "0": {
+			"name": "constant.numeric"
+		  }
+		},
+		"patterns": [
+		  {
+			"begin": "<\\d*>",
+			"end": "(?=\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])",
+			"name": "token.error-token"
+		  }
+		],
+		"end": "(?=\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])"
+	  }
+  
+	]
+  
+  }

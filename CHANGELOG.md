@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.0.12] - 2019-04-02
+### Added
+- Colourisation of AppRun output based on severity using Syslog protocol
+
 ## [0.0.11] - 2019-03-19
 ### Added
 - Option to save all unsaved files in a project when the project is run

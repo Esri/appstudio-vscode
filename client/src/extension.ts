@@ -14,6 +14,7 @@ import {
 } from 'vscode-languageclient';
 import { AppStudioTreeItem, AppStudioTreeView } from './appStudioViewProvider';
 import * as beautify from 'js-beautify';
+import { createSyslogServer } from './syslog';
 
 export interface AppStudioProjInfo {
 	projectPath: string;
@@ -51,9 +52,12 @@ export function activate(context: vscode.ExtensionContext) {
 	let activeProjectPath: string;
 
 	// Console ouput for the AppStudio Apps
-	let consoleOutput = window.createOutputChannel('AppStudio');
+	let consoleOutput = window.createOutputChannel('AppStudio tools stdout');
+	let syslogOutput = window.createOutputChannel('AppRun Syslog Message');
 
 	let appStudioTreeView = new AppStudioTreeView(appStudioProjects);
+
+	let syslogServer;
 
 	appStudioTreeView.treeview.onDidChangeSelection( e => {
 
@@ -390,14 +394,24 @@ export function activate(context: vscode.ExtensionContext) {
 				}
 				projectStatusBar.text = 'Active AppStudio Project: ' + appStudioProjects[0].title;
 				activeProjectPath = appStudioProjects[0].projectPath;
+				openMainFile(appStudioProjects[0].mainFilePath, appStudioProjects[0].title);
+
+				// Create a syslog server 
+				if (syslogServer === undefined || !syslogServer.isRunning()) {
+					syslogServer = createSyslogServer(syslogOutput);
+				}
 			} else {
 				projectStatusBar.text = 'No AppStudio Project found';
+
+				// Close the syslog server
+				if (syslogServer) {
+					syslogServer.stop();
+				}
 			}
 
 			appStudioTreeView.treeData.projects = appStudioProjects;
 			appStudioTreeView.treeData.refresh();
 
-			openMainFile(appStudioProjects[0].mainFilePath, appStudioProjects[0].title);
 		});
 	}
 
@@ -485,21 +499,34 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 	}
 
+	let hasWarnedSyslogError = false;
 	// run the executable with the corresponding paths and parameters
 	async function runProcess(appStudioPath: string, executable: string, appStudioProjectPath: string) {
 
-		let willRun = await checkUnsavedDoc(appStudioProjectPath);
+		let isSaved = await checkDocIsSaved(appStudioProjectPath);
+		if (!isSaved) return;
 
-		if (!willRun) return;
+		let syslogPath: string;
+		try {
+			let syslogPort = syslogServer.server().address().port;
+			syslogPath = 'syslog://127.0.0.1:' + syslogPort;
+		} catch {}
 
-		consoleOutput.show();
+		if (!syslogPath && path.basename(executable, path.extname(executable)).toUpperCase() === 'APPRUN') {
+			consoleOutput.show();
+			if (!hasWarnedSyslogError) {
+				window.showErrorMessage('Syslog server failed to start, AppRun will show stdout instead');
+				hasWarnedSyslogError = true;
+			}			
+		}
+
 		consoleOutput.appendLine("Starting external tool " + "\"" + appStudioPath + executable + " " + appStudioProjectPath + "\"");
 
 		// Add the necessary environment variables 
 		process.env.QT_ASSUME_STDERR_HAS_CONSOLE = '1';
 		process.env.QT_FORCE_STDERR_LOGGING = '1';
 
-		let childProcess = ChildProcess.spawn(appStudioPath + executable, [appStudioProjectPath], { env: process.env });
+		let childProcess = ChildProcess.spawn(appStudioPath + executable, [appStudioProjectPath, '-L', syslogPath], { env: process.env });
 
 		childProcess.stdout.on('data', data => {
 			consoleOutput.show();
@@ -507,7 +534,7 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 
 		childProcess.stderr.on('data', data => {
-			consoleOutput.show();
+			//consoleOutput.show();
 			consoleOutput.append(data.toString());
 		});
 
@@ -525,7 +552,7 @@ export function activate(context: vscode.ExtensionContext) {
 		});
 	}
 
-	async function checkUnsavedDoc (activeProjectPath: string) {
+	async function checkDocIsSaved (activeProjectPath: string) {
 		let unsavedDocsInActiveProj = workspace.textDocuments.filter(doc => { return path.dirname(doc.fileName) === activeProjectPath && doc.isDirty;});
 		if (unsavedDocsInActiveProj.length > 0) {
 			
@@ -561,6 +588,10 @@ export function activate(context: vscode.ExtensionContext) {
 		return true;
 	}
 
+	process.on('unhandledRejection', (reason, p) => {
+		console.log(reason.stack);
+		console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
+	});
 	// Code below is for creating client for the QML language server
 
 	let serverModule = context.asAbsolutePath(

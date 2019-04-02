@@ -3,7 +3,7 @@
     "displayName": "AppStudio for ArcGIS",
     "description": "Build AppStudio for ArcGIS apps in Visual Studio Code",
     "license": "SEE LICENSE IN LICENSE",
-    "version": "0.0.11",
+    "version": "0.0.12",
     "publisher": "Esri",
     "repository": {
         "type": "git",
@@ -99,8 +99,6 @@
                 },
                 "category": "AppStudio"
             },
-
-
             {
                 "command": "appRunActive",
                 "title": "AppRun for Active Project",
@@ -198,6 +196,12 @@
                     ".qmltypes"
                 ],
                 "configuration": "./syntaxes/qml.configuration.json"
+            },
+            {
+                "id": "syslog-output",
+                "mimetypes": [
+                    "text/x-code-output"
+                ]
             }
         ],
         "grammars": [
@@ -205,6 +209,11 @@
                 "language": "qml",
                 "scopeName": "source.qml",
                 "path": "./syntaxes/qml.tmLanguage.json"
+            },
+            {
+                "language": "syslog-output",
+                "scopeName": "syslog.output",
+                "path": "./syntaxes/syslog-output.tmLanguage.json"
             }
         ],
         "views": {
@@ -309,8 +318,6 @@
                     "when": "viewItem == appStudioProject",
                     "group": "groupB@4"
                 },
-
-
                 {
                     "command": "appRun",
                     "when": "viewItem == appStudioProjectworkspace",
@@ -366,9 +373,6 @@
                     "when": "viewItem == appStudioProjectworkspace",
                     "group": "groupB@4"
                 },
-
-
-
                 {
                     "command": "appRun",
                     "when": "viewItem == appStudioProjectActive",
@@ -419,9 +423,6 @@
                     "when": "viewItem == appStudioProjectActive",
                     "group": "groupB@4"
                 },
-
-
-
                 {
                     "command": "appRun",
                     "when": "viewItem == appStudioProjectActiveworkspace",
@@ -496,6 +497,7 @@
     "dependencies": {
         "@types/js-beautify": "^1.8.0",
         "js-beautify": "^1.8.9",
-        "read-ini-file": "^2.0.0"
+        "read-ini-file": "^2.0.0",
+        "syslog-server": "^1.0.1"
     }
 }
