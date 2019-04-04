@@ -97,6 +97,15 @@ export function activate(context: vscode.ExtensionContext) {
 		getAppStudioProject();
 	});
 
+	workspace.onDidOpenTextDocument(e => {
+		if (path.basename(e.fileName) === 'appinfo.json' && workspace.workspaceFolders.length === 0) {
+			let uri = vscode.Uri.file(path.dirname(e.fileName));
+
+			//workspace.updateWorkspaceFolders(0, null, {uri: uri});
+			vscode.commands.executeCommand('vscode.openFolder', uri);
+		}
+	});
+
 	workspace.onDidSaveTextDocument((e) => {
 		//window.showInformationMessage(path.extname(e.fileName));
 		if (path.extname(e.fileName) === '.qml' && path.dirname(e.fileName) !== activeProjectPath) {

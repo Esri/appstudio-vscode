@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [0.0.12] - 2019-04-02
 ### Added
 - Colourisation of AppRun output based on severity using Syslog protocol
+- Open the project folder automatically when appinfo.json is opened and there is no folder in workspace
 
 ## [0.0.11] - 2019-03-19
 ### Added

@@ -128,6 +128,8 @@ function firstCharToUpperCase(str: string): string {
 
 function readQmltypeJson(fullFilePath: string) {
 
+	const excludedModules = ['ArcGIS.AppBuilder'];
+
 	let data = fs.readFileSync(fullFilePath);
 	allQmlComponents = JSON.parse(data.toString()).components;
 
@@ -171,7 +173,7 @@ function readQmltypeJson(fullFilePath: string) {
 				}
 			}
 
-			if (!hasModule) {
+			if (!hasModule && !excludedModules.includes(m[1])) {
 				allQmlModules.push(
 					{
 						name: m[1],
