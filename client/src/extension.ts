@@ -15,12 +15,20 @@ import {
 import { AppStudioTreeItem, AppStudioTreeView } from './appStudioViewProvider';
 import * as beautify from 'js-beautify';
 import { createSyslogServer } from './syslog';
+import { autoSelectAppStudioPath, getAppStudioProject } from './functions';
+import { registerAllCommands } from './commandController';
+import { ProjectController } from './projectController';
 
 export interface AppStudioProjInfo {
 	projectPath: string;
 	title: string;
 	mainFilePath: string;
 	isActive: boolean;
+}
+
+export interface AppStudioProjStatus {
+	appStudioProjects: AppStudioProjInfo[];
+	activeProjectPath: string;
 }
 
 let client: LanguageClient;
@@ -46,55 +54,78 @@ export function activate(context: vscode.ExtensionContext) {
 		autoSelectAppStudioPath();
 	}
 
-	// Array containing the paths of all AppStudio projects in the workspace
-	let appStudioProjects: AppStudioProjInfo[];
+	let projectController = new ProjectController();
 
-	let activeProjectPath: string;
+	// Array containing the paths of all AppStudio projects in the workspace
+	//let appStudioProjects: AppStudioProjInfo[];
+	//let activeProjectPath: string;
+
+	/*
+	let projectsStatus: AppStudioProjStatus = {
+		appStudioProjects: [],
+		activeProjectPath: undefined
+	}
 
 	// Console ouput for the AppStudio Apps
 	let consoleOutput = window.createOutputChannel('AppStudio tools stdout');
 	let syslogOutput = window.createOutputChannel('AppRun Syslog Message');
 
-	let appStudioTreeView = new AppStudioTreeView(appStudioProjects);
+	let appStudioTreeView = new AppStudioTreeView(projectsStatus.appStudioProjects);
 
 	let syslogServer;
+	if (syslogServer === undefined || !syslogServer.isRunning()) {
+		syslogServer = createSyslogServer(syslogOutput);
+	}
+	let projectStatusBar = window.createStatusBarItem();
+	projectStatusBar.show();
+	*/
 
-	appStudioTreeView.treeview.onDidChangeSelection( e => {
+	projectController.treeView.treeview.onDidChangeSelection( e => {
 
 		if (e.selection.length === 1 && e.selection[0].projectPath) {
-			activeProjectPath = e.selection[0].projectPath;
+			//projectsStatus.activeProjectPath = e.selection[0].projectPath;
+			projectController.activeProjectPath = e.selection[0].projectPath;
 
-			for (let proj of appStudioProjects) {
+			for (let proj of projectController.projectInfos) {
 				if (proj.projectPath === e.selection[0].projectPath) {
 					proj.isActive = true;
 				} else {
 					proj.isActive = false;
 				}
 			}
-			appStudioTreeView.treeData.refresh();
+			projectController.treeView.treeData.refresh();
 
-			projectStatusBar.text = "Active AppStudio Project: " + e.selection[0].label;
+			projectController.projectStatusBar.text = "Active AppStudio Project: " + e.selection[0].label;
 		} /*else {
 			appStudioTreeView.reveal(appStudioProjects.find( proj => { return proj.projectPath === activeProjectPath;})).then( () => {},
 			reason => console.log(reason));
 		} */
 	});
 
+	/*
 	// Add any AppStudio projects when the extension is activated
-	getAppStudioProject();
+	getAppStudioProject(appStudioTreeView, projectStatusBar).then( result => {
+		projectsStatus.appStudioProjects = result.projects;
+		projectsStatus.activeProjectPath = result.path;
+		//console.log(activeProjectPath);
+	});
+	*/
+
+
+	registerAllCommands(context, projectController);
 
 	// Event emitted when any appinfo.json file is created or deleted in the workspace
 	let appinfoWatcher = workspace.createFileSystemWatcher('**/appinfo.json');
 	appinfoWatcher.onDidCreate(() => {
-		getAppStudioProject();
+		//getAppStudioProject();
 	});
 	appinfoWatcher.onDidDelete(() => {
-		getAppStudioProject();
+		//getAppStudioProject();
 	});
 
 	// Event emitted when a workspace folder is added or removed
 	workspace.onDidChangeWorkspaceFolders(() => {
-		getAppStudioProject();
+		//getAppStudioProject();
 	});
 
 	workspace.onDidOpenTextDocument(e => {
@@ -108,7 +139,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	workspace.onDidSaveTextDocument((e) => {
 		//window.showInformationMessage(path.extname(e.fileName));
-		if (path.extname(e.fileName) === '.qml' && path.dirname(e.fileName) !== activeProjectPath) {
+		if (path.extname(e.fileName) === '.qml' && path.dirname(e.fileName) !== projectController.activeProjectPath) {
 			if (workspace.getConfiguration().get('changeActiveProjectRemember')) {
 				if (workspace.getConfiguration().get('changeActiveProject')) {
 					changeActiveProject(path.dirname(e.fileName));
@@ -136,7 +167,7 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	function changeActiveProject(projPath: string) {
-		appStudioTreeView.reveal(appStudioProjects.find( proj => { return proj.projectPath === projPath;})).then( () => {},
+		projectController.treeView.reveal(projectController.projectInfos.find( proj => { return proj.projectPath === projPath;})).then( () => {},
 		reason => console.log(reason));
 	}
 	/*
@@ -148,8 +179,7 @@ export function activate(context: vscode.ExtensionContext) {
 	*/
 
 	// Create status bar items for all commands
-	let projectStatusBar = window.createStatusBarItem();
-	projectStatusBar.show();
+
 	//createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
 	function createStatusBarItem(itemText: string, itemCommand: string, itemTooltip: string) {
 		const statusBarItem = window.createStatusBarItem(vscode.StatusBarAlignment.Left);

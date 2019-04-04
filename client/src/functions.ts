@@ -4,10 +4,13 @@ import { window, workspace, commands } from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as loadIniFile from 'read-ini-file';
+import { AppStudioTreeView } from './appStudioViewProvider';
+import { AppStudioProjStatus } from './extension';
 
 // Function to select the AppStudio folder automatically from the AppStudio.ini file
 export function autoSelectAppStudioPath () {
 
+	const osVer = process.platform;
 	let filePath: string;
 
 	if (osVer === 'darwin' || osVer === 'linux') {
@@ -56,11 +59,11 @@ export function openMainFile (mainfilePath: string, title: string) {
 
 // Function to find 'appinfo.json' across all workspace folders,
 // and add the project paths to the appStudioProjectPaths array
-export function getAppStudioProject () {
-	appStudioProjects = [];
-	activeProjectPath = undefined;
+export async function getAppStudioProject (appStudioTreeView: AppStudioTreeView, projectStatusBar: vscode.StatusBarItem) {
+	let appStudioProjects = [];
+	let activeProjectPath = undefined;
 
-	workspace.findFiles('**/appinfo.json').then(result => {
+	let result = await workspace.findFiles('**/appinfo.json'); //then(result => {
 
 		if (result.length > 0) {
 
@@ -100,126 +103,27 @@ export function getAppStudioProject () {
 			activeProjectPath = appStudioProjects[0].projectPath;
 			openMainFile(appStudioProjects[0].mainFilePath, appStudioProjects[0].title);
 
-			// Create a syslog server 
+			/* Create a syslog server 
 			if (syslogServer === undefined || !syslogServer.isRunning()) {
 				syslogServer = createSyslogServer(syslogOutput);
 			}
+			*/
 		} else {
 			projectStatusBar.text = 'No AppStudio Project found';
 
-			// Close the syslog server
+			/* Close the syslog server
 			if (syslogServer) {
 				syslogServer.stop();
 			}
+			*/
 		}
 
 		appStudioTreeView.treeData.projects = appStudioProjects;
 		appStudioTreeView.treeData.refresh();
 
-	});
-}
+	//});
+	return {projects: appStudioProjects, path: activeProjectPath};
 
-
-
-
-
-// Register all the executable commands with the corresponding command names and executable paths
-export function registerExecutableCommands(cmdPaths: string[]) {
-
-	commandNames.forEach((value, index) => {
-
-		let cmd = commands.registerCommand(value, (proj: AppStudioTreeItem) => {
-			runAppStudioCommand(cmdPaths[index], proj.projectPath);
-		});
-		context.subscriptions.push(cmd);
-	});
-
-	activeCommandNames.forEach((value, index) => {
-
-		let cmd = commands.registerCommand(value, () => {
-			runAppStudioCommand(cmdPaths[index]);
-		});
-		context.subscriptions.push(cmd);
-	});
-}
-
-// Run commands to run the executables
-export function runAppStudioCommand(executable: string, projectPath?: string) {
-	let appStudioPath: string = workspace.getConfiguration().get('installationPath');
-
-	if (appStudioPath === "") {
-		window.showWarningMessage("Please select the AppStudio folder first.");
-		return;
-	}
-
-	if (!workspace.workspaceFolders) {
-		window.showWarningMessage('No folder opened.');
-	} else {
-
-		if (!activeProjectPath) {
-			//appStudioProjectPaths.length === 0 ||
-			window.showErrorMessage("No appinfo.json found.");
-		} else {
-			if (projectPath) {
-				runProcess(appStudioPath, executable, projectPath);
-			} else {
-				runProcess(appStudioPath, executable, activeProjectPath);
-			}
-		}
-	}
-}
-
-let hasWarnedSyslogError = false;
-// run the executable with the corresponding paths and parameters
-export async function runProcess(appStudioPath: string, executable: string, appStudioProjectPath: string) {
-
-	let isSaved = await checkDocIsSaved(appStudioProjectPath);
-	if (!isSaved) return;
-
-	let syslogPath: string;
-	try {
-		let syslogPort = syslogServer.server().address().port;
-		syslogPath = 'syslog://127.0.0.1:' + syslogPort;
-	} catch {}
-
-	if (!syslogPath && path.basename(executable, path.extname(executable)).toUpperCase() === 'APPRUN') {
-		consoleOutput.show();
-		if (!hasWarnedSyslogError) {
-			window.showErrorMessage('Syslog server failed to start, AppRun will show stdout instead');
-			hasWarnedSyslogError = true;
-		}			
-	}
-
-	consoleOutput.appendLine("Starting external tool " + "\"" + appStudioPath + executable + " " + appStudioProjectPath + "\"");
-
-	// Add the necessary environment variables 
-	process.env.QT_ASSUME_STDERR_HAS_CONSOLE = '1';
-	process.env.QT_FORCE_STDERR_LOGGING = '1';
-
-	let childProcess = ChildProcess.spawn(appStudioPath + executable, [appStudioProjectPath, '-L', syslogPath], { env: process.env });
-
-	childProcess.stdout.on('data', data => {
-		consoleOutput.show();
-		consoleOutput.append(data.toString());
-	});
-
-	childProcess.stderr.on('data', data => {
-		//consoleOutput.show();
-		consoleOutput.append(data.toString());
-	});
-
-	childProcess.on('error', err => {
-		window.showErrorMessage('Error occured during execution, see console output for more details.');
-		window.showWarningMessage('Please ensure correct path for AppStudio folder is selected.');
-		consoleOutput.show();
-		consoleOutput.appendLine(err.name + ': ' + err.message);
-		console.error(`exec error: ${err}`);
-	});
-
-	childProcess.on('exit', (code) => {
-		console.log(`child process exited with code ${code}`);
-		consoleOutput.appendLine("\"" + appStudioPath + executable + "\"" + " finished");
-	});
 }
 
 export async function checkDocIsSaved (activeProjectPath: string) {
