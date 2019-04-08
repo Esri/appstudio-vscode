@@ -5,7 +5,8 @@ import {
 	Range,
 	CompletionItem
 } from 'vscode-languageserver';
-import { QmlComponent, ObjectId, QmlModule, hasCompletionItem } from './server';
+import { QmlComponent, ObjectId, QmlModule } from './server';
+import { hasCompletionItem} from './completion';
 
 export class DocController {
 

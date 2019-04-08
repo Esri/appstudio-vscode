@@ -108,7 +108,7 @@ export class AppStudioTreeView {
 
 	}
 
-	get treeview() {
+	get treeView() {
 		return this.appStudioTreeView;
 	}
 

@@ -1,11 +1,7 @@
 import * as vscode from 'vscode';
-import * as ChildProcess from 'child_process';
 import { window, workspace, commands } from 'vscode';
 import * as path from 'path';
-import * as fs from 'fs';
 import * as loadIniFile from 'read-ini-file';
-import { AppStudioTreeView } from './appStudioViewProvider';
-import { AppStudioProjStatus } from './extension';
 
 // Function to select the AppStudio folder automatically from the AppStudio.ini file
 export function autoSelectAppStudioPath () {
@@ -57,75 +53,6 @@ export function openMainFile (mainfilePath: string, title: string) {
 	}
 }
 
-// Function to find 'appinfo.json' across all workspace folders,
-// and add the project paths to the appStudioProjectPaths array
-export async function getAppStudioProject (appStudioTreeView: AppStudioTreeView, projectStatusBar: vscode.StatusBarItem) {
-	let appStudioProjects = [];
-	let activeProjectPath = undefined;
-
-	let result = await workspace.findFiles('**/appinfo.json'); //then(result => {
-
-		if (result.length > 0) {
-
-			for (let uri of result) {
-				let projectPath = path.dirname(uri.fsPath);
-
-				let label: string;
-				try {
-					let data = fs.readFileSync(path.join(projectPath, 'iteminfo.json')).toString();
-					let title = JSON.parse(data).title;
-					if (title) {
-						label = title + ' (' + path.basename(projectPath) + ')';
-					} else {
-						label = path.basename(projectPath);
-					}
-				} catch {
-					label = path.basename(projectPath);
-
-				}
-
-				let data = fs.readFileSync(uri.fsPath).toString();
-				let mainFile = JSON.parse(data).mainFile;
-				let mainFilePath: string;
-				if (mainFile) {
-					mainFilePath = path.join(projectPath, mainFile);
-				}
-
-				appStudioProjects.push({
-					projectPath: projectPath,
-					title: label,
-					mainFilePath: mainFilePath,
-					isActive: result.indexOf(uri) === 0
-				});
-				
-			}
-			projectStatusBar.text = 'Active AppStudio Project: ' + appStudioProjects[0].title;
-			activeProjectPath = appStudioProjects[0].projectPath;
-			openMainFile(appStudioProjects[0].mainFilePath, appStudioProjects[0].title);
-
-			/* Create a syslog server 
-			if (syslogServer === undefined || !syslogServer.isRunning()) {
-				syslogServer = createSyslogServer(syslogOutput);
-			}
-			*/
-		} else {
-			projectStatusBar.text = 'No AppStudio Project found';
-
-			/* Close the syslog server
-			if (syslogServer) {
-				syslogServer.stop();
-			}
-			*/
-		}
-
-		appStudioTreeView.treeData.projects = appStudioProjects;
-		appStudioTreeView.treeData.refresh();
-
-	//});
-	return {projects: appStudioProjects, path: activeProjectPath};
-
-}
-
 export async function checkDocIsSaved (activeProjectPath: string) {
 	let unsavedDocsInActiveProj = workspace.textDocuments.filter(doc => { return path.dirname(doc.fileName) === activeProjectPath && doc.isDirty;});
 	if (unsavedDocsInActiveProj.length > 0) {
@@ -160,4 +87,13 @@ export async function checkDocIsSaved (activeProjectPath: string) {
 		}
 	}
 	return true;
+}
+
+//createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
+function createStatusBarItem(itemText: string, itemCommand: string, itemTooltip: string) {
+	const statusBarItem = window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+	statusBarItem.text = itemText;
+	statusBarItem.command = itemCommand;
+	statusBarItem.tooltip = itemTooltip;
+	statusBarItem.show();
 }

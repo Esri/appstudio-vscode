@@ -280,4 +280,62 @@ function addAppStudioProject () {
 			projectStatusBar.text = 'No AppStudio Project found';
 		}
 	}
+
+	-------------------------------------------- Codes Before refactor -------------------------------
+
+	// Array containing the paths of all AppStudio projects in the workspace
+	//let appStudioProjects: AppStudioProjInfo[];
+	//let activeProjectPath: string;
+
+	/*
+	let projectsStatus: AppStudioProjStatus = {
+		appStudioProjects: [],
+		activeProjectPath: undefined
+	}
+
+	// Console ouput for the AppStudio Apps
+	let consoleOutput = window.createOutputChannel('AppStudio tools stdout');
+	let syslogOutput = window.createOutputChannel('AppRun Syslog Message');
+
+	let appStudioTreeView = new AppStudioTreeView(projectsStatus.appStudioProjects);
+
+	let syslogServer;
+	if (syslogServer === undefined || !syslogServer.isRunning()) {
+		syslogServer = createSyslogServer(syslogOutput);
+	}
+	let projectStatusBar = window.createStatusBarItem();
+	projectStatusBar.show();
+	*/
+
+	/*
+	projectController.treeView.treeView.onDidChangeSelection( e => {
+
+		if (e.selection.length === 1 && e.selection[0].projectPath) {
+			//projectsStatus.activeProjectPath = e.selection[0].projectPath;
+			projectController.activeProjectPath = e.selection[0].projectPath;
+
+			for (let proj of projectController.projectInfos) {
+				if (proj.projectPath === e.selection[0].projectPath) {
+					proj.isActive = true;
+				} else {
+					proj.isActive = false;
+				}
+			}
+			projectController.treeView.treeData.refresh();
+
+			projectController.projectStatusBar.text = "Active AppStudio Project: " + e.selection[0].label;
+		} 
+	});
+
+	
+	// Add any AppStudio projects when the extension is activated
+	getAppStudioProject(appStudioTreeView, projectStatusBar).then( result => {
+		projectsStatus.appStudioProjects = result.projects;
+		projectsStatus.activeProjectPath = result.path;
+		//console.log(activeProjectPath);
+	});
+	*/
+
+
+	// Create status bar items for all commands
 			
