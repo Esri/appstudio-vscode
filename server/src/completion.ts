@@ -13,6 +13,7 @@ export function registerCompletionProvider(server: LanguageServer) {
 
 			let doc = server.documents.get(params.textDocument.uri);
 			let pos = params.position;
+			let items: CompletionItem[] = [];
 
 			let controller = server.docControllers.find( controller => {
 				return controller.getDoc() === doc;
@@ -20,9 +21,24 @@ export function registerCompletionProvider(server: LanguageServer) {
 
 			let importedComponents = controller.getImportedComponents();
 
-			if (params.context.triggerCharacter === '.') {
+			let firstPrecedingWordPos = controller.getFirstPrecedingRegex(Position.create(pos.line, pos.character - 1), /\w/);
+			let word = controller.getFirstPrecedingWordString(firstPrecedingWordPos);
+			let secondword = controller.getSecondPrecedingWordString(pos, firstPrecedingWordPos);
 
-				let items: CompletionItem[] = [];
+			// return only qml modules for import
+			if (word === 'import' || secondword === 'import') {
+
+				for (let module of server.allQmlModules) {
+					items.push(CompletionItem.create(module.name + ' ' + module.version));
+				}
+				return items;
+			}
+
+			// return nothing after id
+			if (word === 'id') { return null;}
+
+			// return the attributes of the component after .
+			if (params.context.triggerCharacter === '.') {
 
 				let componentName = controller.getFirstPrecedingWordString({ line: pos.line, character: pos.character - 1 });
 
@@ -30,7 +46,7 @@ export function registerCompletionProvider(server: LanguageServer) {
 					// Assume that the componentName part of different exports statements of the same component are the same, 
 					// therefore only checks the first element in the info array.
 					if (c.info && componentName === c.info[0].componentName) {
-						addComponenetAttributes(c, items, false, true);
+						addComponenetAttributes(c, items, true, true);
 					}
 				}
 
@@ -39,7 +55,7 @@ export function registerCompletionProvider(server: LanguageServer) {
 
 						for (let c of importedComponents) {
 							if (c.info && id.type === c.info[0].componentName) {
-								addComponenetAttributes(c, items, false, true);
+								addComponenetAttributes(c, items, true, true);
 							}
 						}
 					}
@@ -48,37 +64,10 @@ export function registerCompletionProvider(server: LanguageServer) {
 				return items;
 			}
 
-			let firstPrecedingWordPos = controller.getFirstPrecedingRegex(Position.create(pos.line, pos.character - 1), /\w/);
-			let word = controller.getFirstPrecedingWordString(firstPrecedingWordPos);
-
-			if (word === 'import') {
-				let items: CompletionItem[] = [];
-
-				for (let module of server.allQmlModules) {
-
-					if (module.name === 'QtQuick.Controls2') {
-						items.push(CompletionItem.create('QtQuick.Controls 2'));
-						continue;
-					}
-					items.push(CompletionItem.create(module.name + ' ' + module.version));
-				}
-
-				return items;
-			}
-
-			if (word === 'id') { return null;}
-
+			// return the attributes of the component inside a block 
 			let componentName = controller.getQmlType(pos);
 
-			//connection.console.log('####### Object Found: ' + componentName);
-
-			//isInPropertyOrSignal(doc, Position.create(pos.line, pos.character-1), pos);
-
-			//addBuiltinKeyword(completionItem);
-
 			if (componentName !== null) {
-
-				let items: CompletionItem[] = [];
 
 				for (let c of importedComponents) {
 					// Assume that the componentName part of different exports statements of the same component are the same, 
@@ -94,6 +83,7 @@ export function registerCompletionProvider(server: LanguageServer) {
 			return controller.getCompletionItem();
 		}
 	);
+
 
 	function addComponenetAttributes(component: QmlComponent, items: CompletionItem[], withSignal:boolean, withEnum: boolean) {
 		if (component.properties !== undefined) {
@@ -147,7 +137,6 @@ export function registerCompletionProvider(server: LanguageServer) {
 		}
 	}
 }
-
 
 
 export function hasCompletionItem(label: string, kind: number, completionItems: CompletionItem[]): boolean {

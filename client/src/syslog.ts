@@ -68,7 +68,7 @@ export class SyslogServer {
 		});
 
 		this.socket.addListener('listening', () => {
-			console.log('Syslog Server started: ', this.socket.address());
+			//console.log('Syslog Server started: ', this.socket.address());
 		});
 	}
 }

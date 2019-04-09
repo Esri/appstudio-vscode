@@ -199,6 +199,17 @@ export class DocController {
 		return Position.create(0, 0);
 	}
 
+	public getSecondPrecedingWordString(currentPos: Position, firstPrecedingWordPos: Position): string {
+		
+		if (currentPos.line !== firstPrecedingWordPos.line) {
+			return null;
+		}
+		
+		let firstNonWordPos = this.getFirstPrecedingRegex(firstPrecedingWordPos, /\W/);
+
+		return this.getFirstPrecedingWordString(this.getFirstPrecedingRegex(firstNonWordPos, /\w/));
+	}
+
 	// return true if position A is greater than B, false if A is equal or less than B
 	public comparePosition(posA: Position, posB: Position): boolean {
 		if (posA.line > posB.line) {

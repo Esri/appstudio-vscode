@@ -208,7 +208,11 @@
             {
                 "language": "qml",
                 "scopeName": "source.qml",
-                "path": "./syntaxes/qml.tmLanguage.json"
+                "path": "./syntaxes/qml.tmLanguage.json",
+                "embeddedLanguages": {
+                    "meta.embedded.block.js": "source.js",
+                    "meta.embedded.line.js": "source.js"
+                }
             },
             {
                 "language": "syslog-output",
