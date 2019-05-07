@@ -2,13 +2,7 @@ import {
 	createConnection,
 	TextDocuments,
 	ProposedFeatures,
-	InitializeParams,
-	CompletionItem,
-	CompletionParams,
-	Position,
-	TextDocumentPositionParams,
-	Hover,
-	MarkupContent
+	InitializeParams
 } from 'vscode-languageserver';
 import { DocController } from './docController';
 import * as fs from 'fs';
@@ -19,7 +13,8 @@ export interface QmlComponent {
 	exports: string[];
 	prototype: string;
 	properties: [{
-		name: string
+		name: string,
+		type: string
 	}];
 	signals: [{
 		name: string
@@ -86,7 +81,7 @@ export class LanguageServer {
 					// Tell the client that the server supports code completion
 					completionProvider: {
 						resolveProvider: false,
-						triggerCharacters: ['.', '?']
+						triggerCharacters: ['.']
 					},
 					hoverProvider: true
 				}

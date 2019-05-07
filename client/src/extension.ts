@@ -15,6 +15,7 @@ import { autoSelectAppStudioPath } from './functions';
 import { registerAllCommands } from './commands';
 import { ProjectController } from './projectController';
 import { registerWorkspaceEvents } from './workspace';
+import * as ChildProcess from 'child_process';
 
 export interface AppStudioProjInfo {
 	projectPath: string;
@@ -82,11 +83,12 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	/*
 	let testCmd = commands.registerCommand('testCmd', () => {
+		convertAllQmltoJson();
 	});
 	function convertAllQmltoJson() {
 		let appStudioPath: string = workspace.getConfiguration().get('installationPath');
 
-		let qmlTypes = findFilesInDir(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio2\\bin\\qml',/\.qmltypes/i);
+		let qmlTypes = findFilesInDir(process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudio\\bin\\qml',/\.qmltypes/i);
 
 		console.log(qmlTypes);
 		let appNameArg: string [] = [path.join(__dirname,'../../QMLTYPEStoJSON')];
@@ -106,7 +108,15 @@ export function activate(context: vscode.ExtensionContext) {
 		console.log(args);
 		let cp = ChildProcess.spawnSync(appStudioPath + '\\bin\\appRun.exe ',args);
 	}
-	*/
+
+	createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
+	function createStatusBarItem(itemText: string, itemCommand: string, itemTooltip: string) {
+		const statusBarItem = window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+		statusBarItem.text = itemText;
+		statusBarItem.command = itemCommand;
+		statusBarItem.tooltip = itemTooltip;
+		statusBarItem.show();
+	}
 
 	// find all QMLTYPES file for language features 
 
@@ -133,6 +143,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		return results;
 	}
+	*/
 
 	// identify sources of unhandled promise rejection
 	process.on('unhandledRejection', (reason, p) => {

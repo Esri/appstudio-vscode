@@ -22,7 +22,7 @@ export function registerCompletionProvider(server: LanguageServer) {
 			let importedComponents = controller.getImportedComponents();
 
 			let firstPrecedingWordPos = controller.getFirstPrecedingRegex(Position.create(pos.line, pos.character - 1), /\w/);
-			let word = controller.getFirstPrecedingWordString(firstPrecedingWordPos);
+			let word = controller.getFirstPrecedingWordString(firstPrecedingWordPos).word;
 			let secondword = controller.getSecondPrecedingWordString(pos, firstPrecedingWordPos);
 
 			// return only qml modules for import
@@ -40,8 +40,17 @@ export function registerCompletionProvider(server: LanguageServer) {
 			// return the attributes of the component after .
 			if (params.context.triggerCharacter === '.') {
 
-				let componentName = controller.getFirstPrecedingWordString({ line: pos.line, character: pos.character - 1 });
-
+				let componentName = controller.getFirstPrecedingWordString({ line: pos.line, character: pos.character - 1 }).word;
+				let p = controller.getStringBeforeFullstop(Position.create(pos.line, pos.character-1));
+				if (p) {
+					for (let c of importedComponents) {
+						if (c.info && p.component === c.info[0].componentName) {
+							addAttributesFromProperties(p.property, c, items);
+							return items;
+						}
+					}
+				}
+					
 				for (let c of importedComponents) {
 					// Assume that the componentName part of different exports statements of the same component are the same, 
 					// therefore only checks the first element in the info array.
@@ -127,11 +136,27 @@ export function registerCompletionProvider(server: LanguageServer) {
 			}
 		}
 	
-		if (component.prototype !== undefined) {
+		if (component.prototype) {
 			for (let prototypeComponent of server.allQmlComponents) {
 				if (prototypeComponent.name === component.prototype) {
 					// recursively add attributes of prototype component
 					addComponenetAttributes(prototypeComponent, items, withSignal, withEnum);
+				}
+			}
+		}
+	}
+
+	function addAttributesFromProperties(keyword: String ,component: QmlComponent, items: CompletionItem[]) {
+		if (component.properties !== undefined) {
+			for (let p of component.properties) {
+				//server.connection.console.log(p.name + ' ' + p.type);
+				if (keyword === p.name) {
+					
+					for (let c of server.allQmlComponents) {
+						if (c.name === p.type) {
+							addComponenetAttributes(c, items, true, true);
+						}
+					}
 				}
 			}
 		}

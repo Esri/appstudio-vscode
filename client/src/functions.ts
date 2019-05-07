@@ -89,11 +89,3 @@ export async function checkDocIsSaved (activeProjectPath: string) {
 	return true;
 }
 
-//createStatusBarItem('$(rocket)', 'testCmd', 'testCommand');
-function createStatusBarItem(itemText: string, itemCommand: string, itemTooltip: string) {
-	const statusBarItem = window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-	statusBarItem.text = itemText;
-	statusBarItem.command = itemCommand;
-	statusBarItem.tooltip = itemTooltip;
-	statusBarItem.show();
-}

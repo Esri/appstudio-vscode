@@ -337,5 +337,41 @@ function addAppStudioProject () {
 	*/
 
 
-	// Create status bar items for all commands
+	
+	-------------------- Create additional language server for JavaScript
+
+	
+	const jsServerOptions: ServerOptions = async () => {
+		const childProcess = spawn(process.execPath, [path.resolve(__dirname, '../..', 'javascript-langserver', 'lib', 'language-server-stdio.js')]);
+		childProcess.stderr.on('data', (chunk: Buffer) => {
+			client.error(chunk + '');
+		});
+		return childProcess;
+	};
+
+	const jsClientOptions: LanguageClientOptions = {
+		// Register the server for php documents
+		documentSelector: [ 'javascript','js' ],
+		uriConverters: {
+			// VS Code by default %-encodes even the colon after the drive letter
+			// NodeJS handles it much better
+			code2Protocol: uri => url.format(url.parse(uri.toString(true))),
+			protocol2Code: str => vscode.Uri.parse(str)
+		},
+		synchronize: {
+			// Synchronize the setting section 'php' to the server
+			// configurationSection: 'typescript',
+			// Notify the server about changes to PHP files in the workspace
+			// fileEvents: vscode.workspace.createFileSystemWatcher('**/*.ts')
+		}
+	};
+
+	let jsClient = new LanguageClient(
+		'JSLanguageServer',
+		'JS Language Server',
+		jsServerOptions,
+		jsClientOptions
+	);
+
+	jsClient.start();
 			

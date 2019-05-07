@@ -5,7 +5,7 @@ import {
 	Range,
 	CompletionItem
 } from 'vscode-languageserver';
-import { QmlComponent, ObjectId, QmlModule } from './server';
+import { QmlComponent, ObjectId, QmlModule, LanguageServer } from './server';
 import { hasCompletionItem} from './completion';
 
 export class DocController {
@@ -15,9 +15,15 @@ export class DocController {
 	private importedComponents: QmlComponent[];
 	private completionItem: CompletionItem[];
 	private objectIds: ObjectId[];
+	private _server: LanguageServer;
 
-	constructor(doc: TextDocument) {
+	constructor(doc: TextDocument, server: LanguageServer) {
 		this.doc = doc;
+		this._server = server;
+	}
+
+	get server() {
+		return this._server;
 	}
 
 	public getDoc() {
@@ -53,7 +59,10 @@ export class DocController {
 		while ((m = pattern.exec(text))) {
 			
 			for (let module of allModules) {
-				if (module.name === m[1] && parseFloat(module.version) <= parseFloat(m[3]) ) {
+				if (
+				(module.name === m[1] && parseFloat(module.version) <= parseFloat(m[3]))
+				|| (m[1] === 'QtQuick' && module.name === 'QtQml') // import QtQml module when QtQuick is imported
+				) {
 					this.importedModules.push(module);
 		
 					for (let c of module.components) {
@@ -70,6 +79,7 @@ export class DocController {
 					}
 				}
 			}
+			
 		}
 		this.addBuiltinKeyword(this.completionItem);
 	}
@@ -83,9 +93,7 @@ export class DocController {
 		let m: RegExpExecArray | null;
 	
 		while (m = pattern.exec(text)) {
-	
-			//connection.console.log('ID match : ' + m[0] + ' at: ' + m.index + '\n' + 'Position: ' + doc.positionAt(m.index).line + ':' + doc.positionAt(m.index).character);
-	
+		
 			let type = this.getQmlType(doc.positionAt(m.index));
 			if (type === null) continue;
 
@@ -97,7 +105,6 @@ export class DocController {
 			item.detail = 'Type of: ' + type;
 			this.completionItem.push(item);
 	
-			//connection.console.log('ID match : ' + m[1] + ' type: ' + type);
 		}
 	
 	}
@@ -105,7 +112,7 @@ export class DocController {
 	public getQmlType(pos: Position): string {
 
 		let firstPrecedingWordPos = this.getFirstPrecedingRegex(this.getFirstCharOutsideBracketPairs(pos, /\{/), /\w/);
-		let result = this.getFirstPrecedingWordString(firstPrecedingWordPos);
+		let result = this.getFirstPrecedingWordString(firstPrecedingWordPos).word;
 	
 		if (!result) { return null; }
 	
@@ -170,7 +177,7 @@ export class DocController {
 
 	}
 
-	public getFirstPrecedingWordString(pos: Position): string {
+	public getFirstPrecedingWordString(pos: Position): {word: string, startPos: Position} {
 
 		let i = 0;
 		let char = this.doc.getText(Range.create(Position.create(pos.line, pos.character - 1), pos));
@@ -182,14 +189,17 @@ export class DocController {
 			// { start: {line: pos.line, character: pos.character - i - 1}, end: {line: pos.line, character: pos.character - i}}
 		}
 
-		return this.doc.getText({ start: { line: pos.line, character: pos.character - i }, end: pos });
+		return {
+			word: this.doc.getText({ start: { line: pos.line, character: pos.character - i }, end: pos }),
+			startPos: Position.create(pos.line, pos.character - i)
+		};
 	}
 
 	public getFirstPrecedingRegex(pos: Position, regex: RegExp): Position {
 
 		for (let lineOffset = pos.line; lineOffset >= 0; --lineOffset) {
 
-			for (let charOffset = (lineOffset === pos.line) ? pos.character : this.getLineLength(this.doc, lineOffset); charOffset > 0; --charOffset) {
+			for (let charOffset = (lineOffset === pos.line) ? pos.character : this.getLineLength(lineOffset); charOffset > 0; --charOffset) {
 				let char = this.getTextInRange(lineOffset, charOffset - 1, lineOffset, charOffset);
 				if (regex.test(char)) {
 					return Position.create(lineOffset, charOffset);
@@ -207,7 +217,23 @@ export class DocController {
 		
 		let firstNonWordPos = this.getFirstPrecedingRegex(firstPrecedingWordPos, /\W/);
 
-		return this.getFirstPrecedingWordString(this.getFirstPrecedingRegex(firstNonWordPos, /\w/));
+		return this.getFirstPrecedingWordString(this.getFirstPrecedingRegex(firstNonWordPos, /\w/)).word;
+	}
+
+	public getStringBeforeFullstop(pos: Position) {
+		let property = this.getFirstPrecedingWordString(pos);
+		if (property.word === '') {
+			return null;
+		}
+		let firstNonSpacePos = this.getFirstPrecedingRegex(property.startPos, /\S/);
+		let secondNonSpacePos = Position.create(firstNonSpacePos.line, firstNonSpacePos.character-1);
+		let char = this.doc.getText(Range.create(firstNonSpacePos, secondNonSpacePos));
+		if (char !== '.') {
+			return null;
+		} 
+		let nonSpacePos = this.getFirstPrecedingRegex(secondNonSpacePos, /\S/);
+	
+		return { property: property.word, component: this.getFirstPrecedingWordString(nonSpacePos).word};
 	}
 
 	// return true if position A is greater than B, false if A is equal or less than B
@@ -229,7 +255,7 @@ export class DocController {
 		return this.doc.getText(Range.create(Position.create(startLine, startChac), Position.create(endLine, endChar)));
 	}
 
-	public getLineLength(doc: TextDocument, line: number) {
+	public getLineLength(line: number) {
 
 		let i = 0;
 		let char = this.getTextInRange(line, i, line, i + 1);
@@ -244,7 +270,7 @@ export class DocController {
 	public getFirstCharOutsideBracketPairs(pos: Position, regex: RegExp): Position {
 		let closingCount = 0;
 		for (let lineOffset = pos.line; lineOffset >= 0; --lineOffset) {
-			for (let charOffset = (lineOffset === pos.line) ? pos.character : this.getLineLength(this.doc, lineOffset); charOffset > 0; --charOffset) {
+			for (let charOffset = (lineOffset === pos.line) ? pos.character : this.getLineLength(lineOffset); charOffset > 0; --charOffset) {
 
 				let char = this.getTextInRange(lineOffset, charOffset - 1, lineOffset, charOffset);
 
@@ -261,9 +287,6 @@ export class DocController {
 					if (closingCount > 0) {
 						closingCount--;
 					}
-					/*else {
-						return Position.create(lineOffset, charOffset);	
-					}*/
 				}
 			}
 		}

@@ -14,7 +14,7 @@ export function registerDocumentsEvents(server: LanguageServer) {
 		});
 	
 		if (controller === undefined) {
-			controller = new DocController(change.document);
+			controller = new DocController(change.document, server);
 			docControllers.push(controller);
 		}
 		controller.lookforImport(allQmlModules);

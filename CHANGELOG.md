@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.0.13] - 2019-05-07
+### Fixed
+- Code completion works for second full stop, e.g.AppFramework.clipboard.copy 
+- Code completion works for QML Component type
+
+### Changed
+- QMLTypes file updated to match AppStudio for ArcGIS 3.3 final release (AppStudio version 3.3.110)
+- Colour in Syslog message console output
+
 ## [0.0.12] - 2019-04-02
 ### Added
 - Colourisation of AppRun output based on severity using Syslog protocol
