@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.0.15] - 2019-05-09
+### Changed
+- Update format and colour of syslog console output
+
+## [0.0.14] - 2019-05-09
+### Changed 
+- Remove package-lock.json from the repository, move vsix file to Release section on Github 
+
 ## [0.0.13] - 2019-05-07
 ### Fixed
 - Code completion works for second full stop, e.g.AppFramework.clipboard.copy 
