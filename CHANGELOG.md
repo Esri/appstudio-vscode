@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.0.16] - 2019-08-02
+### Fixed
+- Cursor will not jump to the console output window when a new message appears in the console 
+
 ## [0.0.15] - 2019-05-09
 ### Changed
 - Update format and colour of syslog console output
