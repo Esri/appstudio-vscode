@@ -57,8 +57,8 @@ export class SyslogServer {
 				severityCode = '[debug]';
 			}
 			//syslogOutput.appendLine(`${severityCode} [${m.hostname}] [${m.appName}] <${m.severity}> ${m.message} <${m.severity}>`);
+			this.syslogChannel.show(true);
 			this.syslogChannel.appendLine(`[${m.hostname}] [${m.appName}] ${severityCode} ${m.message}`);
-			this.syslogChannel.show();
 
 		});
 
