@@ -1,9 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [0.0.16] - 2019-08-02
+## [0.0.16] - 2019-08-07
 ### Fixed
 - Cursor will not jump to the console output window when a new message appears in the console 
+### Added
+- Tool to run AppStudio apps in AppStudio Player
+- The tool can be enabled and disabled via extension setting
 
 ## [0.0.15] - 2019-05-09
 ### Changed
