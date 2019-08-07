@@ -30,6 +30,15 @@
                 "category": "AppStudio"
             },
             {
+                "command": "enablePlayer",
+                "title": "Enable/Disable AppStudio Player",
+                "icon": {
+                    "dark": "resources/dark/player-dark.svg",
+                    "light": "resources/light/player-light.svg"
+                },
+                "category": "AppStudio"
+            },
+            {
                 "command": "openAppinfo",
                 "title": "Open appinfo.json",
                 "category": "AppStudio"
@@ -66,7 +75,8 @@
                     "dark": "resources/dark/player-dark.svg",
                     "light": "resources/light/player-light.svg"
                 },
-                "category": "AppStudio"
+                "category": "AppStudio",
+                "enablement": "config.enablePlayer"
             },
             {
                 "command": "appRun",
@@ -156,7 +166,8 @@
                     "dark": "resources/dark/player-dark.svg",
                     "light": "resources/light/player-light.svg"
                 },
-                "category": "AppStudio"
+                "category": "AppStudio",
+                "enablement": "config.enablePlayer"
             }
         ],
         "keybindings": [
@@ -218,6 +229,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Remember your choice for saving all files when a project is run."
+                },
+                "enablePlayer": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Enable the AppStudio apps to run in AppStudio Player directly from VS Code"
                 }
             }
         },
@@ -305,6 +321,11 @@
                 },
                 {
                     "command": "openApiRefLink",
+                    "when": "view == appstudioProjects",
+                    "group": "navigation"
+                },
+                {
+                    "command": "enablePlayer",
                     "when": "view == appstudioProjects",
                     "group": "navigation"
                 }

@@ -5,7 +5,7 @@
 	"patterns": [
 
 		{
-			"begin": "\\[\\w*\\]\\s*\\[\\w*\\]",
+			"begin": "\\[(\\w|-)*\\]\\s*\\[(\\w|-)*\\]",
 			"beginCaptures": {
 				"0": {
 					"name": "constant.numeric"
@@ -20,7 +20,7 @@
 						"name": "token.debug-token"
 						}
 					},
-					"end": "(?=\\[\\w*\\]\\s*\\[\\w*\\]\\s*\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])"
+					"end": "(?=\\[(\\w|-)*\\]\\s*\\[(\\w|-)*\\]\\s*\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])"
 				},
 				{
 				"begin": "\\[info\\]",
@@ -29,7 +29,7 @@
 					"name": "token.debug-token"
 					}
 				},
-				"end": "(?=\\[\\w*\\]\\s*\\[\\w*\\]\\s*\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])",
+				"end": "(?=\\[(\\w|-)*\\]\\s*\\[(\\w|-)*\\]\\s*\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])",
 				"name": "token.info-token"
 				},
 				{
@@ -39,7 +39,7 @@
 						"name": "token.debug-token"
 						}
 					},
-					"end": "(?=\\[\\w*\\]\\s*\\[\\w*\\]\\s*\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])",
+					"end": "(?=\\[(\\w|-)*\\]\\s*\\[(\\w|-)*\\]\\s*\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])",
 					"name": "token.warn-token"
 				},
 				{
@@ -49,11 +49,11 @@
 						"name": "token.debug-token"
 						}
 					},
-					"end": "(?=\\[\\w*\\]\\s*\\[\\w*\\]\\s*\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])",
+					"end": "(?=\\[(\\w|-)*\\]\\s*\\[(\\w|-)*\\]\\s*\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])",
 					"name": "token.error-token"
 				}
 			],
-			"end": "(?=\\[\\w*\\]\\s*\\[\\w*\\]\\s*\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])"
+			"end": "(?=\\[(\\w|-)*\\]\\s*\\[(\\w|-)*\\]\\s*\\[(emerg|alert|crit|err|warning|notice|info|debug)\\])"
 		}
   
 	]

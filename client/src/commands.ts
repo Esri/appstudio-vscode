@@ -108,6 +108,11 @@ export function registerAllCommands(context: ExtensionContext, projController: P
 	});
 	context.subscriptions.push(removeCmd);
 
+	let enablePlayerCmd = commands.registerCommand('enablePlayer', () => {
+		let isEnabled = workspace.getConfiguration().get('enablePlayer');
+		workspace.getConfiguration().update('enablePlayer', !isEnabled, true);
+	});
+	context.subscriptions.push(enablePlayerCmd);
 
 	// Register all the executable related commands with the appropriate paths for the operating system
 	const commandNames = ['appRun', 'appMake', 'appSetting', 'appUpload'];
