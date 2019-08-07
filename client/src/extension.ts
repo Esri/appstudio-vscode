@@ -11,7 +11,7 @@ import {
 	TransportKind
 } from 'vscode-languageclient';
 import * as beautify from 'js-beautify';
-import { autoSelectAppStudioPath } from './functions';
+import { autoSelectAppStudioPath, selectDefaultPlayerPath } from './functions';
 import { registerAllCommands } from './commands';
 import { ProjectController } from './projectController';
 import { registerWorkspaceEvents } from './workspace';
@@ -52,6 +52,10 @@ export function activate(context: vscode.ExtensionContext) {
 		autoSelectAppStudioPath();
 	}
 
+	if (workspace.getConfiguration().get('playerInstallationPath') === '') {
+		selectDefaultPlayerPath();
+	}
+
 	let projectController = ProjectController.getInstance();
 	registerAllCommands(context, projectController);
 	registerWorkspaceEvents(projectController);
@@ -85,6 +89,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let testCmd = commands.registerCommand('testCmd', () => {
 		convertAllQmltoJson();
 	});
+	
 	function convertAllQmltoJson() {
 		let appStudioPath: string = workspace.getConfiguration().get('installationPath');
 
@@ -102,7 +107,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		let jsonArgs: string[] = [];
 		jsonArgs.push('--json');
-		jsonArgs.push(path.join(__dirname,'../..', 'QMLTypes2.json'));
+		jsonArgs.push(path.join(__dirname,'../..', 'QMLTypes_new.json'));
 		
 		let args = appNameArg.concat(qmlTypesArgs).concat(jsonArgs);
 		console.log(args);

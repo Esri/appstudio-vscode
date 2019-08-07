@@ -55,8 +55,22 @@
                 "category": "AppStudio"
             },
             {
+                "command": "manualSelectPlayerPath",
+                "title": "Select AppStudio Player Installation Path Manually",
+                "category": "AppStudio"
+            },
+            {
+                "command": "appPlayer",
+                "title": "Player",
+                "icon": {
+                    "dark": "resources/dark/player-dark.svg",
+                    "light": "resources/light/player-light.svg"
+                },
+                "category": "AppStudio"
+            },
+            {
                 "command": "appRun",
-                "title": "AppRun",
+                "title": "Run",
                 "icon": {
                     "dark": "resources/dark/app-run-dark.svg",
                     "light": "resources/light/app-run-light.svg"
@@ -65,7 +79,7 @@
             },
             {
                 "command": "appMake",
-                "title": "AppMake",
+                "title": "Make",
                 "icon": {
                     "dark": "resources/dark/hammer-dark.svg",
                     "light": "resources/light/hammer-light.svg"
@@ -74,7 +88,7 @@
             },
             {
                 "command": "appSetting",
-                "title": "AppSettings",
+                "title": "Settings",
                 "icon": {
                     "dark": "resources/dark/gear-dark.svg",
                     "light": "resources/light/gear-light.svg"
@@ -83,7 +97,7 @@
             },
             {
                 "command": "appUpload",
-                "title": "AppUpload",
+                "title": "Upload",
                 "icon": {
                     "dark": "resources/dark/upload-dark.svg",
                     "light": "resources/light/upload-light.svg"
@@ -101,7 +115,7 @@
             },
             {
                 "command": "appRunActive",
-                "title": "AppRun for Active Project",
+                "title": "Run",
                 "icon": {
                     "dark": "resources/dark/app-run-dark.svg",
                     "light": "resources/light/app-run-light.svg"
@@ -110,7 +124,7 @@
             },
             {
                 "command": "appMakeActive",
-                "title": "AppMake for Active Project",
+                "title": "Make",
                 "icon": {
                     "dark": "resources/dark/hammer-dark.svg",
                     "light": "resources/light/hammer-light.svg"
@@ -119,7 +133,7 @@
             },
             {
                 "command": "appSettingActive",
-                "title": "AppSettings for Active Project",
+                "title": "Settings",
                 "icon": {
                     "dark": "resources/dark/gear-dark.svg",
                     "light": "resources/light/gear-light.svg"
@@ -128,15 +142,28 @@
             },
             {
                 "command": "appUploadActive",
-                "title": "AppUpload for Active Project",
+                "title": "Upload",
                 "icon": {
                     "dark": "resources/dark/upload-dark.svg",
                     "light": "resources/light/upload-light.svg"
                 },
                 "category": "AppStudio"
+            },
+            {
+                "command": "appPlayerActive",
+                "title": "Player",
+                "icon": {
+                    "dark": "resources/dark/player-dark.svg",
+                    "light": "resources/light/player-light.svg"
+                },
+                "category": "AppStudio"
             }
         ],
         "keybindings": [
+            {
+                "command": "appPlayerActive",
+                "key": "alt+shift+p"
+            },
             {
                 "command": "appRunActive",
                 "key": "alt+shift+r"
@@ -163,7 +190,14 @@
                         "string"
                     ],
                     "default": "",
-                    "description": "Installation path of AppStudio for ArcGIS. If you have installed AppStudio to a non default location, modify this path by running `Select AppStudio Installation Path Manually` command in the command palette (Ctrl+Shift+P)."
+                    "description": "Installation path of AppStudio for ArcGIS. If you have installed AppStudio to a non default location, modify this path by running 'Select AppStudio Installation Path Manually' command in the command palette (Ctrl+Shift+P)."
+                },
+                "playerInstallationPath": {
+                    "type": [
+                        "string"
+                    ],
+                    "default": "",
+                    "description": "Installation path of AppStudio Player. If you have installed AppStudio Player to a non default location, modify this path by running 'Select AppStudio Player Installation Path Manually' command in the command palette (Ctrl+Shift+P)."
                 },
                 "changeActiveProject": {
                     "type": "boolean",
@@ -231,6 +265,10 @@
         "menus": {
             "commandPalette": [
                 {
+                    "command": "appPlayer",
+                    "when": "false"
+                },
+                {
                     "command": "appRun",
                     "when": "false"
                 },
@@ -273,6 +311,11 @@
             ],
             "view/item/context": [
                 {
+                    "command": "appPlayer",
+                    "when": "viewItem == appStudioProject",
+                    "group": "inline@0"
+                },
+                {
                     "command": "appRun",
                     "when": "viewItem == appStudioProject",
                     "group": "inline@4"
@@ -321,6 +364,19 @@
                     "command": "appSetting",
                     "when": "viewItem == appStudioProject",
                     "group": "groupB@4"
+                },
+                {
+                    "command": "appPlayer",
+                    "when": "viewItem == appStudioProject",
+                    "group": "groupB@5"
+                },
+
+
+                
+                {
+                    "command": "appPlayer",
+                    "when": "viewItem == appStudioProjectworkspace",
+                    "group": "inline@0"
                 },
                 {
                     "command": "appRun",
@@ -378,6 +434,19 @@
                     "group": "groupB@4"
                 },
                 {
+                    "command": "appPlayer",
+                    "when": "viewItem == appStudioProjectworkspace",
+                    "group": "groupB@5"
+                },
+
+
+
+                {
+                    "command": "appPlayer",
+                    "when": "viewItem == appStudioProjectActive",
+                    "group": "inline@0"
+                },
+                {
                     "command": "appRun",
                     "when": "viewItem == appStudioProjectActive",
                     "group": "inline@4"
@@ -426,6 +495,19 @@
                     "command": "appSettingActive",
                     "when": "viewItem == appStudioProjectActive",
                     "group": "groupB@4"
+                },
+                {
+                    "command": "appPlayerActive",
+                    "when": "viewItem == appStudioProjectActive",
+                    "group": "groupB@5"
+                },
+
+
+
+                {
+                    "command": "appPlayer",
+                    "when": "viewItem == appStudioProjectActiveworkspace",
+                    "group": "inline@0"
                 },
                 {
                     "command": "appRun",
@@ -481,6 +563,11 @@
                     "command": "appSettingActive",
                     "when": "viewItem == appStudioProjectActiveworkspace",
                     "group": "groupB@4"
+                },
+                {
+                    "command": "appPlayerActive",
+                    "when": "viewItem == appStudioProjectActiveworkspace",
+                    "group": "groupB@5"
                 }
             ]
         }

@@ -42,6 +42,14 @@ export function manualSelectAppStudioPath () {
 	commands.executeCommand('manualSelectAppStudioPath');
 }
 
+export function selectDefaultPlayerPath() {
+	if (process.platform === 'win32') {
+		workspace.getConfiguration().update('playerInstallationPath', process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudioPlayer', true);
+	} else if (process.platform === 'darwin' || process.platform === 'linux') {
+		workspace.getConfiguration().update('playerInstallationPath', '~/Applications/ArcGIS/AppStudioPlayer', true);
+	} 
+}
+
 export function openMainFile (mainfilePath: string, title: string) {
 	if (mainfilePath) {
 		window.showTextDocument(vscode.Uri.file(mainfilePath), {preview: false}).then(null, (reason) => {

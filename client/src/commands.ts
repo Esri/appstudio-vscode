@@ -4,6 +4,7 @@ import { AppStudioTreeItem } from './appStudioViewProvider';
 import * as ChildProcess from 'child_process';
 import * as path from 'path';
 import { ProjectController } from './projectController';
+import * as fs from 'fs';
 
 export function registerAllCommands(context: ExtensionContext, projController: ProjectController) {
 
@@ -16,11 +17,31 @@ export function registerAllCommands(context: ExtensionContext, projController: P
 	});
 	context.subscriptions.push(openApiRefCmd);
 
+	let manualSelectPlayerPathCmd = commands.registerCommand('manualSelectPlayerPath', () => {
+		window.showQuickPick(['Yes', 'No'], {
+			placeHolder: 'Would you like to select the installation path of AppStudio Player manually?',
+		}).then(choice => {
+			if (choice === 'Yes') {
+				window.showOpenDialog({
+					canSelectFolders: true,
+					canSelectFiles: false,
+					canSelectMany: false
+				}).then(folder => {
+					if (folder !== undefined && folder.length === 1) {
+						workspace.getConfiguration().update('playerInstallationPath', folder[0].fsPath.toString(), true);
+						window.showInformationMessage('AppStudio Player installation path updated: ' + folder[0].fsPath);
+					}
+				});
+			}
+		});
+	});
+	context.subscriptions.push(manualSelectPlayerPathCmd);
+
 	// Command to manually select the AppStudio installation path
 	let manualSelectPathCmd = commands.registerCommand('manualSelectAppStudioPath', function () {
 
 		window.showQuickPick(['Yes', 'No'], {
-			placeHolder: 'Would you like to select the installation path of AppStudio manually? NOTE: This will override the current path.',
+			placeHolder: 'Would you like to select the installation path of AppStudio manually?',
 		}).then(choice => {
 			if (choice === 'Yes') {
 				window.showOpenDialog({
@@ -99,7 +120,8 @@ export function registerAllCommands(context: ExtensionContext, projController: P
 			'/AppMake.app/Contents/MacOS/AppMake',
 			'/AppSettings.app/Contents/MacOS/AppSettings',
 			'/AppUpload.app/Contents/MacOS/AppUpload'
-		]);
+		],
+		'/AppStudioPlayer.app/Contents/MacOS/AppStudioPlayer');
 
 	} else if (osVer === 'win32') {
 
@@ -108,7 +130,8 @@ export function registerAllCommands(context: ExtensionContext, projController: P
 			'\\bin\\appMake.exe',
 			'\\bin\\appSettings.exe',
 			'\\bin\\appUpload.exe'
-		]);
+		],
+		'\\AppStudioPlayer.exe');
 
 	} else if (osVer === 'linux') {
 
@@ -117,16 +140,17 @@ export function registerAllCommands(context: ExtensionContext, projController: P
 			'/scripts/AppMake.sh',
 			'/scripts/AppSettings.sh',
 			'/scripts/AppUpload.sh'
-		]);
+		],
+		'/scripts/Application.sh');
 	}
 		
 	// Register all the executable commands with the corresponding command names and executable paths
-	function registerExecutableCommands(cmdPaths: string[]) {
+	function registerExecutableCommands(appStudioExecutable: string[], playerExecutable: string) {
 
 		commandNames.forEach((value, index) => {
 
 			let cmd = commands.registerCommand(value, (proj: AppStudioTreeItem) => {
-				runAppStudioCommand(cmdPaths[index], proj.projectPath);
+				runAppStudioCommand(appStudioExecutable[index], proj.projectPath);
 			});
 			context.subscriptions.push(cmd);
 		});
@@ -134,10 +158,20 @@ export function registerAllCommands(context: ExtensionContext, projController: P
 		activeCommandNames.forEach((value, index) => {
 
 			let cmd = commands.registerCommand(value, () => {
-				runAppStudioCommand(cmdPaths[index]);
+				runAppStudioCommand(appStudioExecutable[index]);
 			});
 			context.subscriptions.push(cmd);
 		});
+
+		let cmd = commands.registerCommand('appPlayer', (proj: AppStudioTreeItem) => {
+			runAppPlayer(playerExecutable, proj.projectPath);
+		});
+		context.subscriptions.push(cmd);
+
+		let cmd2 = commands.registerCommand('appPlayerActive', () => {
+			runAppPlayer(playerExecutable);
+		});
+		context.subscriptions.push(cmd2);
 	}
 
 	// Run commands to run the executables
@@ -149,19 +183,38 @@ export function registerAllCommands(context: ExtensionContext, projController: P
 			return;
 		}
 
-		if (!workspace.workspaceFolders) {
-			window.showWarningMessage('No folder opened.');
+		if (!projController.activeProjectPath) {
+			window.showErrorMessage("No AppStudio project found.");
 		} else {
-
-			if (!projController.activeProjectPath) {
-				//appStudioProjectPaths.length === 0 ||
-				window.showErrorMessage("No appinfo.json found.");
+			if (projectPath) {
+				runProcess(appStudioPath, executable, projectPath);
 			} else {
-				if (projectPath) {
-					runProcess(appStudioPath, executable, projectPath);
-				} else {
-					runProcess(appStudioPath, executable, projController.activeProjectPath);
-				}
+				runProcess(appStudioPath, executable, projController.activeProjectPath);
+			}
+		}
+	}
+
+	function runAppPlayer(playerExecutable: string, projectPath?:string) {
+		let playerPath: string = workspace.getConfiguration().get('playerInstallationPath') + playerExecutable;
+
+		if (!fs.existsSync(playerPath)) {
+			window.showErrorMessage('Cannot find AppStudio Player installation on the default path. Select Yes above if you wish to find the installation manually.');
+			commands.executeCommand('manualSelectPlayerPath');
+			return;
+		} 
+		let syslogPath: string;
+		try {
+			let syslogPort = projController.syslogServer.port;
+			syslogPath = 'syslog://127.0.0.1:' + syslogPort;
+		} catch {}
+
+		if (!projController.activeProjectPath) {
+			window.showErrorMessage("No AppStudio project found.");
+		} else {
+			if (projectPath) {
+				ChildProcess.spawn(playerPath, ['--app', projectPath, '-L', syslogPath]);
+			} else {
+				ChildProcess.spawn(playerPath, ['--app', projController.activeProjectPath, '-L', syslogPath]);
 			}
 		}
 	}
