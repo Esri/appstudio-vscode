@@ -28,7 +28,7 @@ export function registerAllCommands(context: ExtensionContext, projController: P
 					canSelectMany: false
 				}).then(folder => {
 					if (folder !== undefined && folder.length === 1) {
-						workspace.getConfiguration().update('playerInstallationPath', folder[0].fsPath.toString(), true);
+						workspace.getConfiguration().update('installationPathPlayer', folder[0].fsPath.toString(), true);
 						window.showInformationMessage('AppStudio Player installation path updated: ' + folder[0].fsPath);
 					}
 				});
@@ -194,7 +194,7 @@ export function registerAllCommands(context: ExtensionContext, projController: P
 	}
 
 	function runAppPlayer(playerExecutable: string, projectPath?:string) {
-		let playerPath: string = workspace.getConfiguration().get('playerInstallationPath') + playerExecutable;
+		let playerPath: string = workspace.getConfiguration().get('installationPathPlayer') + playerExecutable;
 
 		if (!fs.existsSync(playerPath)) {
 			window.showErrorMessage('Cannot find AppStudio Player installation on the default path. Select Yes above if you wish to find the installation manually.');

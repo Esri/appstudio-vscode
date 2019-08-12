@@ -44,9 +44,9 @@ export function manualSelectAppStudioPath () {
 
 export function selectDefaultPlayerPath() {
 	if (process.platform === 'win32') {
-		workspace.getConfiguration().update('playerInstallationPath', process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudioPlayer', true);
+		workspace.getConfiguration().update('installationPathPlayer', process.env.USERPROFILE + '\\Applications\\ArcGIS\\AppStudioPlayer', true);
 	} else if (process.platform === 'darwin' || process.platform === 'linux') {
-		workspace.getConfiguration().update('playerInstallationPath', process.env.HOME + '/Applications/ArcGIS/AppStudioPlayer', true);
+		workspace.getConfiguration().update('installationPathPlayer', process.env.HOME + '/Applications/ArcGIS/AppStudioPlayer', true);
 	} 
 }
 

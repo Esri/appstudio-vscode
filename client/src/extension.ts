@@ -52,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
 		autoSelectAppStudioPath();
 	}
 
-	if (workspace.getConfiguration().get('playerInstallationPath') === '') {
+	if (workspace.getConfiguration().get('installationPathPlayer') === '') {
 		selectDefaultPlayerPath();
 	}
 

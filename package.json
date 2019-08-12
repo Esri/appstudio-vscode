@@ -174,7 +174,7 @@
                     "default": "",
                     "description": "Installation path of AppStudio for ArcGIS. If you have installed AppStudio to a non default location, modify this path by running 'Select AppStudio Installation Path Manually' command in the command palette (Ctrl+Shift+P)."
                 },
-                "playerInstallationPath": {
+                "installationPathPlayer": {
                     "type": [
                         "string"
                     ],
