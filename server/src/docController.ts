@@ -195,6 +195,22 @@ export class DocController {
 		};
 	}
 
+	public getFirstPrecedingNonSpaceString(pos: Position) {
+
+		let i = 0;
+		let char = this.doc.getText(Range.create(Position.create(pos.line, pos.character - 1), pos));
+
+		while (/\s/.test(char) && pos.character - i !== 0) {
+			i++;
+			char = this.getTextInRange(pos.line, pos.character - i - 1, pos.line, pos.character - i);
+		}
+
+		return {
+			char: char,
+			pos: Position.create(pos.line, pos.character - i - 1)
+		};
+	}
+
 	public getFirstPrecedingRegex(pos: Position, regex: RegExp): Position {
 
 		for (let lineOffset = pos.line; lineOffset >= 0; --lineOffset) {

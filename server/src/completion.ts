@@ -24,6 +24,7 @@ export function registerCompletionProvider(server: LanguageServer) {
 			let firstPrecedingWordPos = controller.getFirstPrecedingRegex(Position.create(pos.line, pos.character - 1), /\w/);
 			let word = controller.getFirstPrecedingWordString(firstPrecedingWordPos).word;
 			let secondword = controller.getSecondPrecedingWordString(pos, firstPrecedingWordPos);
+			let firstNonSpace = controller.getFirstPrecedingNonSpaceString(Position.create(pos.line, pos.character - 1));
 
 			// return only qml modules for import
 			if (word === 'import' || secondword === 'import') {
@@ -38,9 +39,13 @@ export function registerCompletionProvider(server: LanguageServer) {
 			if (word === 'id') { return null;}
 
 			// return the attributes of the component after .
-			if (params.context.triggerCharacter === '.') {
+			if (params.context.triggerCharacter === '.' || firstNonSpace.char === '.') {
 
-				let componentName = controller.getFirstPrecedingWordString({ line: pos.line, character: pos.character - 1 }).word;
+				let componentName = controller.getFirstPrecedingWordString({ line: pos.line, character: pos.character - 1}).word;
+				// When the first preceding non space character is .
+				if (firstNonSpace.char === '.') {
+					componentName = controller.getFirstPrecedingWordString(firstNonSpace.pos).word;
+				}
 				let p = controller.getStringBeforeFullstop(Position.create(pos.line, pos.character-1));
 				if (p) {
 					for (let c of importedComponents) {
