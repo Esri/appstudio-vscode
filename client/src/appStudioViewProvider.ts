@@ -44,7 +44,7 @@ export class AppStudioTreeDataProvider implements vscode.TreeDataProvider<AppStu
 						dark: path.join(__dirname, '..', '..', 'resources', 'appstudio-logo.svg'),
 						light: path.join(__dirname, '..','..', 'resources', 'appstudio-logo.svg')
 					};
-					treeItem.contextValue += 'Active';
+					treeItem.contextValue = 'active';
 				}
 
 				for (let folder of vscode.workspace.workspaceFolders) {
@@ -91,7 +91,7 @@ export class AppStudioTreeItem extends vscode.TreeItem {
 		light: path.join(__dirname, '..','..', 'resources', 'light', 'folder-light.svg')
 	};
 
-	contextValue = 'appStudioProject';
+	contextValue = 'project';
 }
 
 export class AppStudioTreeView {
