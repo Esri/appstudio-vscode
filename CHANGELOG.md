@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.0.17] - 2019-08-12
+### Changed
+- Enable/disable AppStudio Player button is removed from the AppStudio project menu title
+- Updated name of setting for installation path of AppStudio Player 
+
 ## [0.0.16] - 2019-08-07
 ### Fixed
 - Cursor will not jump to the console output window when a new message appears in the console 
