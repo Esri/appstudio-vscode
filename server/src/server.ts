@@ -27,6 +27,7 @@ export interface QmlComponent {
 		values: {}
 	}];
 	info: QmlInfo[];
+	attachedType: string;
 }
 
 export interface QmlInfo {

@@ -69,7 +69,8 @@ export function registerCompletionProvider(server: LanguageServer) {
 
 						for (let c of importedComponents) {
 							if (c.info && id.type === c.info[0].componentName) {
-								addComponenetAttributes(c, items, true, true);
+								// do not add signal after an id
+								addComponenetAttributes(c, items, false, true);
 							}
 						}
 					}
@@ -107,6 +108,16 @@ export function registerCompletionProvider(server: LanguageServer) {
 					item.kind = 10;
 					items.push(item);
 				}
+
+				// create a signal for each property and add it to completion item list
+				if (withSignal) {
+					let signal = 'on' + firstCharToUpperCase(p.name) + 'Changed: ';
+					if (!hasCompletionItem(signal, 23, items)) {
+						let item = CompletionItem.create(signal);
+						item.kind = 23;
+						items.push(item);
+					}
+				}
 			}
 		}
 		if (component.methods !== undefined) {
@@ -141,11 +152,20 @@ export function registerCompletionProvider(server: LanguageServer) {
 			}
 		}
 	
+		// recursively add attributes of prototype component
 		if (component.prototype) {
 			for (let prototypeComponent of server.allQmlComponents) {
-				if (prototypeComponent.name === component.prototype) {
-					// recursively add attributes of prototype component
+				if (prototypeComponent.name === component.prototype) {					
 					addComponenetAttributes(prototypeComponent, items, withSignal, withEnum);
+				}
+			}
+		}
+
+		// recursively add attributes of attachedType component
+		if(component.attachedType) {
+			for(let attachedComponent of server.allQmlComponents) {
+				if (attachedComponent.name === component.attachedType) {
+					addComponenetAttributes(attachedComponent, items, withSignal, withEnum);
 				}
 			}
 		}
@@ -154,7 +174,6 @@ export function registerCompletionProvider(server: LanguageServer) {
 	function addAttributesFromProperties(keyword: String ,component: QmlComponent, items: CompletionItem[]) {
 		if (component.properties !== undefined) {
 			for (let p of component.properties) {
-				//server.connection.console.log(p.name + ' ' + p.type);
 				if (keyword === p.name) {
 					
 					for (let c of server.allQmlComponents) {
