@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [0.0.18] - 2019-08-14
+### Fixed
+- Code completion now picks up attributes from attachedType, and creates signal for each property
+- Code completion now does not show signals when typing . after an id
+
+### Changed
+- qmltypes.json updated to match AppStudio 4.0.85 release
+
 ## [0.0.17] - 2019-08-12
 ### Changed
 - Enable/disable AppStudio Player button is removed from the AppStudio project menu title
