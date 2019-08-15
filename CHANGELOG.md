@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.1] - 2019-08-16
+### Changed
+- First release to Visual Studio Code extension Marketplace
+
 ## [0.0.18] - 2019-08-14
 ### Fixed
 - Code completion now picks up attributes from attachedType, and creates signal for each property
