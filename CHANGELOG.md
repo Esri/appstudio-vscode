@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2019-08-17
+### Changed
+- Updated the extension icon 
+- Updated 'how to use the app' instruction in README
+
 ## [1.0.1] - 2019-08-16
 ### Changed
 - First release to Visual Studio Code extension Marketplace

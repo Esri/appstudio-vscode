@@ -3,13 +3,13 @@
     "displayName": "AppStudio for ArcGIS",
     "description": "Build AppStudio for ArcGIS apps in Visual Studio Code",
     "license": "SEE LICENSE IN LICENSE",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "publisher": "Esri",
     "repository": {
         "type": "git",
         "url": "https://github.com/ArcGIS/appstudio-vscode"
     },
-    "icon": "resources/appstudio-logo.png",
+    "icon": "resources/esri-logo.png",
     "categories": [],
     "engines": {
         "vscode": "^1.30.0"
