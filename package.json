@@ -3,7 +3,7 @@
     "displayName": "ArcGIS AppStudio",
     "description": "Build ArcGIS AppStudio apps in Visual Studio Code",
     "license": "SEE LICENSE IN LICENSE",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "publisher": "Esri",
     "repository": {
         "type": "git",
