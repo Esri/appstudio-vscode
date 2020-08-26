@@ -110,7 +110,12 @@ export function activate(context: vscode.ExtensionContext) {
 		jsonArgs.push(path.join(__dirname,'../..', 'QMLTypes_new.json'));
 		
 		let args = appNameArg.concat(qmlTypesArgs).concat(jsonArgs);
-		console.log(args);
+		//console.log(args);
+		let str = '';
+		for (let arg of args) {
+			str += " " + arg;
+		}
+		console.log(str);
 		let cp = ChildProcess.spawnSync(appStudioPath + '\\bin\\appRun.exe ',args);
 	}
 
@@ -152,7 +157,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// identify sources of unhandled promise rejection
 	process.on('unhandledRejection', (reason, p) => {
-		console.log(reason.stack);
+		//console.log(reason.stack);
 		console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
 	});
 	// Code below is for creating client for the QML language server
