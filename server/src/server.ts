@@ -120,6 +120,7 @@ export class LanguageServer {
 	private readQmltypeJson(fullFilePath: string) {
 
 		const excludedModules = ['ArcGIS.AppBuilder'];
+		const excludedComponents = ['DocumentDialogPrivate'];
 	
 		let data = fs.readFileSync(fullFilePath);
 		this._allQmlComponents = JSON.parse(data.toString()).components;
@@ -155,7 +156,7 @@ export class LanguageServer {
 								break;
 							}
 						}
-						if (!hasComponent) {
+						if (!hasComponent && !excludedComponents.includes(m[2])) {
 							module.components.push(component);
 						}
 	
