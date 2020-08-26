@@ -1,7 +1,7 @@
 {
     "name": "appstudio-vscode",
-    "displayName": "AppStudio for ArcGIS",
-    "description": "Build AppStudio for ArcGIS apps in Visual Studio Code",
+    "displayName": "ArcGIS AppStudio",
+    "description": "Build ArcGIS AppStudio apps in Visual Studio Code",
     "license": "SEE LICENSE IN LICENSE",
     "version": "1.0.2",
     "publisher": "Esri",
@@ -165,14 +165,14 @@
         ],
         "configuration": {
             "type": "object",
-            "title": "AppStudio for ArcGIS",
+            "title": "ArcGIS AppStudio",
             "properties": {
                 "installationPath": {
                     "type": [
                         "string"
                     ],
                     "default": "",
-                    "description": "Installation path of AppStudio for ArcGIS. If you have installed AppStudio to a non default location, modify this path by running 'Select AppStudio Installation Path Manually' command in the command palette (Ctrl+Shift+P)."
+                    "description": "Installation path of ArcGIS AppStudio. If you have installed AppStudio to a non default location, modify this path by running 'Select AppStudio Installation Path Manually' command in the command palette (Ctrl+Shift+P)."
                 },
                 "installationPathPlayer": {
                     "type": [

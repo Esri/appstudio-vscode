@@ -50,7 +50,7 @@ export function registerWorkspaceEvents(projectController: ProjectController) {
 
 							workspace.getConfiguration().update('changeActiveProject', choice === 'Yes', true);
 
-							window.showInformationMessage('The extension has remembered the choice you made and will not ask again. You can change this option at Settings -> Extensions -> AppStudio for ArcGIS');
+							window.showInformationMessage('The extension has remembered the choice you made and will not ask again. You can change this option at Settings -> Extensions -> ArcGIS AppStudio');
 						}
 					});
 				});

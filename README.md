@@ -1,6 +1,6 @@
-# About AppStudio for ArcGIS extension for Visual Studio Code
+# About ArcGIS AppStudio extension for Visual Studio Code
 
-The AppStudio for ArcGIS extension for Visual Studio Code acts as an alternative for using Qt Creator. You will still use AppStudio Desktop to create new apps, but all the actions that you would have previously performed in Qt Creator, can now be completed in Visual Studio Code. You can edit, upload and run your AppStudio apps from within Visual Studio Code.
+The ArcGIS AppStudio extension for Visual Studio Code acts as an alternative for using Qt Creator. You will still use AppStudio Desktop to create new apps, but all the actions that you would have previously performed in Qt Creator, can now be completed in Visual Studio Code. You can edit, upload and run your AppStudio apps from within Visual Studio Code.
 
 ## How to use the app
 
@@ -8,7 +8,7 @@ Choose **Add Folder to Workspace** to browse and add your AppStudio projects to 
 
 ## Requirements
 
-<a href="http://www.esri.com/landing-pages/appstudio">AppStudio for ArcGIS</a> is required to use this extension.
+<a href="http://www.esri.com/landing-pages/appstudio">ArcGIS AppStudio</a> is required to use this extension.
 
 ## Issues
 
@@ -36,4 +36,4 @@ limitations under the License.
 
 A copy of the license is available in the repository's [LICENSE](./LICENSE) file.
 
-This AppStudio for ArcGIS extension for Visual Studio Code, uses code from this repo https://github.com/seanwu1105/vscode-qt-for-python. The licence for this code is here https://github.com/seanwu1105/vscode-qt-for-python/blob/master/LICENSE.
+This ArcGIS AppStudio extension for Visual Studio Code, uses code from this repo https://github.com/seanwu1105/vscode-qt-for-python. The licence for this code is here https://github.com/seanwu1105/vscode-qt-for-python/blob/master/LICENSE.

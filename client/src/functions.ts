@@ -90,7 +90,7 @@ export async function checkDocIsSaved (activeProjectPath: string) {
 
 				workspace.getConfiguration().update('saveFilesOnRun', choice === 'Save All', true);
 
-				window.showInformationMessage('The extension has remembered the choice you made and will not ask again. You can change this option at Settings -> Extensions -> AppStudio for ArcGIS');
+				window.showInformationMessage('The extension has remembered the choice you made and will not ask again. You can change this option at Settings -> Extensions -> ArcGIS AppStudio');
 			}
 		}
 	}

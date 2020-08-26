@@ -1,6 +1,6 @@
 {
 	"name": "appstudio-vscode-server",
-	"description": "Qml language server for the AppStudio for ArcGIS extension.",
+	"description": "Qml language server for the ArcGIS AppStudio extension.",
 	"version": "0.0.10",
 	"license": "MIT",
 	"engines": {

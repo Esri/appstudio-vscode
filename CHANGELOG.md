@@ -44,7 +44,7 @@ All notable changes to this project will be documented in this file.
 - Code completion works for QML Component type
 
 ### Changed
-- QMLTypes file updated to match AppStudio for ArcGIS 3.3 final release (AppStudio version 3.3.110)
+- QMLTypes file updated to match ArcGIS AppStudio 3.3 final release (AppStudio version 3.3.110)
 - Colour in Syslog message console output
 
 ## [0.0.12] - 2019-04-02
@@ -62,7 +62,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.0.9] - 2019-02-27
 ### Changed
-- QMLTypes file updated to match AppStudio for ArcGIS 3.3 beta release
+- QMLTypes file updated to match ArcGIS AppStudio 3.3 beta release
 - Language used in the extension settings page updated
 
 ## [0.0.8] - 2019-02-25
