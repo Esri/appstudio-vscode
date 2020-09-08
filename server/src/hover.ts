@@ -8,6 +8,10 @@ import { LanguageServer, QmlComponent, QmlInfo } from './server';
 
 export function registerHoverProvider(server: LanguageServer) {
 
+	const APPFRAMEWORK_REF_URL: string = 'https://developers.arcgis.com/appstudio/api-reference/qml-';
+	const ESRI_REF_URL: string = 'https://developers.arcgis.com/qt/latest/qml/api-reference/qml-';
+	const QT_REF_URL: string = 'https://doc.qt.io/qt-5/qml-';
+
 	function constructApiRefUrl(qmlInfo: QmlInfo): string {
 		let moduleNames = qmlInfo.dividedModuleName;
 		let url: string;
@@ -20,12 +24,12 @@ export function registerHoverProvider(server: LanguageServer) {
 		}
 	
 		if (moduleNames[0] === 'ArcGIS.') {
-			url = 'https://doc.arcgis.com/en/appstudio/api/reference/framework/qml-';
+			url = APPFRAMEWORK_REF_URL;
 		} else if (moduleNames[0] === 'Esri.') {
-			url = 'https://developers.arcgis.com/qt/latest/qml/api-reference/qml-';
+			url = ESRI_REF_URL;
 			html = '.html';
 		} else {
-			url = 'https://doc.qt.io/qt-5/qml-';
+			url = QT_REF_URL;
 			html = '.html';
 		}
 		url = url + qmlInfo.completeModuleName.replace(/\./g, '-').toLowerCase() + '-' + qmlInfo.componentName.toLowerCase() + html;

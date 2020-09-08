@@ -12,7 +12,7 @@ export function registerAllCommands(context: ExtensionContext, projController: P
 	
 	let openApiRefCmd = commands.registerCommand('openApiRefLink', function () {
 
-		commands.executeCommand('vscode.open', Uri.parse('https://doc.arcgis.com/en/appstudio/api/reference/'));
+		commands.executeCommand('vscode.open', Uri.parse('https://developers.arcgis.com/appstudio/api-reference/'));
 
 	});
 	context.subscriptions.push(openApiRefCmd);
