@@ -1,10 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [1.0.3] - 2020-08-26
+## [1.0.3] - 2020-09-08
 ### Changed
 - qmltypes.json updated to match AppStudio 4.3 final release 
 - Updated product name to ArcGIS AppStudio
+- Updated url for AppFramework API reference
 
 ## [1.0.2] - 2019-08-17
 ### Changed
