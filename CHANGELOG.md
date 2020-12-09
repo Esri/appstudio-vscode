@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2020-12-09
+### Changed
+- qmltypes.json updated to match AppStudio 4.4 final release
+
 ## [1.1.1] - 2020-09-08
 ### Changed
 - Updated url for AppFramework API reference
