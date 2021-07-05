@@ -2,7 +2,7 @@ import QtQuick 2.0
 
 Item {
     property string name
-    property string type : null
+    property string type
     property bool isList : false
     property bool isReadonly : false
     property bool isPointer: false
