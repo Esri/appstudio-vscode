@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.6.0] - 2022-06-29
+### Changed
+- qmltypes.json updated to match AppStudio 5.4 final release
+
 ## [1.5.0] - 2021-11-17
 ### Changed
 - qmltypes.json updated to match AppStudio 5.2 final release
