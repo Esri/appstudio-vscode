@@ -44,6 +44,7 @@ App {
     property string notifyString: ""
     property var qmlTypesFileUrls: ([ ])
     property url outputFileUrl
+    property bool autorun: false
 
     ColumnLayout {
         anchors.fill: parent
@@ -100,7 +101,7 @@ App {
             NumberedTextArea {
                 anchors.fill: parent
 
-                text: jsonText
+                //text: jsonText
             }
 
         }
@@ -238,6 +239,8 @@ App {
             if (moduleJson.json.dependencies) {
                 Array.prototype.push.apply(outputJson.dependencies, moduleJson.json.dependencies);
             }
+
+            qmlModule.destroy();
         }
         catch (err) {
             errorString = qsTr("%1:%2 %3 %4")
@@ -255,10 +258,15 @@ App {
         };
 
         for (var i = 0; i < fileUrls.length; i++) {
+            console.log("# Start parsing %1".arg(fileUrls[i]));
+
             openFileUrl(fileUrls[i]);
+
+            console.log("Finished (%2/%3)".arg(i+1).arg(fileUrls.length));
         }
 
         jsonText = JSON.stringify(outputJson, undefined, 2);
+        console.log("Finished parsing qmltypes to json");
     }
 
     function saveFileUrl(fileUrl) {
@@ -344,18 +352,55 @@ App {
                     console.log("outputFileUrl: ", outputFileUrl);
                     continue;
                 }
+
+                if (arg.match(/^--auto/)) {
+                    autorun = true;
+                    continue;
+                }
             }
         }
+    }
+
+    function findFiles(folderPath, nameFilter) {
+        var results = [];
+
+        var folder = AppFramework.fileFolder(folderPath);
+        if (!folder.exists) {
+            return [];
+        }
+
+        for (let subfolderName of folder.folderNames()) {
+            let subfolderPath = folder.filePath(subfolderName);
+            results = results.concat(findFiles(subfolderPath, nameFilter));
+        }
+
+        for (let fileName of folder.fileNames(nameFilter)) {
+            results.push(folder.filePath(fileName));
+        }
+
+        return results;
     }
 
     function run() {
         parseArgs(Qt.application.arguments.slice(1));
 
+        if (autorun) {
+            var path = AppFramework.resolvedPathUrl("~/Applications/ArcGIS/AppStudio/bin/qml");
+            qmlTypesFileUrls = findFiles(path, "*.qmltypes");
+
+            if (outputFileUrl == "") {
+                var qmltypesName = "QMLTypes_%1.json".arg(AppFramework.version);
+                outputFileUrl = app.folder.filePath(qmltypesName);
+            }
+        }
+
         console.log("qmlTypesFileUrls: ", JSON.stringify(qmlTypesFileUrls));
         console.log("outputFileUrl: ", outputFileUrl);
 
         if (!qmlTypesFileUrls.length) {
-            openFileUrls( [defaultUrl] );
+            console.warn("No qmltypes files passed as argument");
+            return;
+//            openFileUrls( [defaultUrl] );
         }
 
         if (outputFileUrl == "") {

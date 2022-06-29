@@ -31,6 +31,10 @@
         {
             "description": "Path to destination .json file",
             "name": "json"
+        },
+        {
+            "description": "automatically detect .qmltypes files from default AppStudio install location and destination file",
+            "name": "auto"
         }
     ],
     "deployment": {
