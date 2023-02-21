@@ -20,7 +20,7 @@ Esri welcomes contributions from anyone and everyone. Please see our [guidelines
 
 ## Copyright and License
 
-Copyright © 2021 Esri Inc.
+Copyright © 2023 Esri Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
